@@ -10,6 +10,20 @@
   var geometry, material, plane;
   var sphereGeometry, sphereMaterial, sphere;
 
+  var ikGeometry, ikMaterial, ik;
+
+  function ikGeometryFromArray( initialValue, lengths ) {
+    var geometry = new THREE.Geometry();
+
+    // Creates a vertical line point down from the origin.
+    lengths.reduce(function( z, length ) {
+      geometry.vertices.push( new THREE.Vector3( 0, 0, z ) );
+      return z + length;
+    }, initialValue || 0 );
+
+    return geometry;
+  }
+
   function init() {
     container = document.createElement( 'div' );
     document.body.appendChild( container );
@@ -45,6 +59,15 @@
     });
     sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
     scene.add( sphere );
+
+    // IK.
+    ikGeometry = ikGeometryFromArray( -100, [ 80, 30, 50, 70, 40 ] );
+    ikMaterial = new THREE.LineBasicMaterial({
+      color: '#f43',
+      linewidth: 5
+    });
+    ik = new THREE.Line( ikGeometry, ikMaterial );
+    scene.add( ik );
   }
 
   function animate() {
