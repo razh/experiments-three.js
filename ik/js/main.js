@@ -68,6 +68,7 @@
       df = vf.distanceTo( point );
 
       while ( df > EPSILON ) {
+        // Set end effector to target.
         vf.copy( point );
 
         // Stage 1: Forward reaching.
@@ -82,8 +83,8 @@
           vi.copy( temp );
         }
 
-        vi = vertices[0];
-        vi.set( 0, 0, 0 );
+        // Move first vertex back to origin.
+        vertices[0].set( 0, 0, 0 );
 
         // Stage 2: Backward reaching.
         for ( i = 0; i < count - 1; i++ ) {
@@ -122,6 +123,9 @@
 
     // Projector.
     projector = new THREE.Projector();
+
+    // Fog.
+    scene.fog = new THREE.Fog( 0x00000 );
 
     // Plane.
     planeGeometry = new THREE.PlaneGeometry( 500, 500, 20, 20 );
