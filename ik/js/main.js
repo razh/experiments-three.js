@@ -157,7 +157,6 @@
 
   function animate() {
     renderer.render( scene, camera );
-    requestAnimationFrame( animate );
   }
 
   init();
@@ -183,6 +182,8 @@
       sphere.position.copy( intersections[0].point );
       ikSet( sphere.position, ik, ikLengths );
     }
+
+    requestAnimationFrame( animate );
   });
 
   window.addEventListener( 'wheel', function( event ) {
@@ -194,6 +195,8 @@
     plane.position.z += event.deltaY;
     sphere.position.z = plane.position.z;
     ikSet( sphere.position, ik, ikLengths );
+
+    requestAnimationFrame( animate );
   });
 
 }) ( window, document );
