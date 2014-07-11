@@ -54,6 +54,23 @@
     };
   }
 
+  /**
+   * Multiply two complex numbers together (by components).
+   *
+   *   (a + bi)(c + di) = (ac - bd) + (ad + bc)i
+   *
+   * This is a 2D rotation in the complex plane:
+   *
+   *   x * cos - y * sin
+   *   x * sin + y * cos
+   */
+  function muli( r0, i0, r1, i1 ) {
+    return {
+      real: r0 * r1 - i0 * i1,
+      imag: r0 * i1 + i0 * r1
+    };
+  }
+
   function init() {
     container = document.createElement( 'div' );
     document.body.appendChild( container );
