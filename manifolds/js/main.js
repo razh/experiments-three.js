@@ -71,6 +71,36 @@
     };
   }
 
+  /**
+   * Calculate values where:
+   *
+   *   z0^n + z1^n = 1
+   *
+   * And:
+   *
+   *   z0k = exp(2PIik / n) * cosh(a, b)^(2 / n)
+   *   z1k = exp(2PIik / n) * sinh(a, b)^(2 / n)
+   */
+  function z0k( r, i, n, k ) {
+    var phase = phaseFactor( k, n );
+    var amplitude = Math.pow( cosh( r, i ), 2 / n );
+
+    phase.real *= amplitude;
+    phase.imag *= amplitude;
+
+    return phase;
+  }
+
+  function z1k( r, i, n, k ) {
+    var phase = phaseFactor( k, n );
+    var amplitude = Math.pow( cosh( r, i ), 2 / n );
+
+    phase.real *= amplitude;
+    phase.imag *= amplitude;
+
+    return phase;
+  }
+
   function init() {
     container = document.createElement( 'div' );
     document.body.appendChild( container );
