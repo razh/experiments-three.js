@@ -136,6 +136,19 @@
     return data;
   }
 
+  function calabiGeometry() {
+    var data = calabi( 5, Math.PI / 2, 15, -1, 1 );
+    var geometry = new THREE.Geometry();
+
+    for ( var i = 0, il = data.length / 3; i < il; i++ ) {
+      geometry.vertices.push(
+        new THREE.Vector3( data[i], data[ i + 1 ], data[ i + 2 ] )
+      );
+    }
+
+    return geometry;
+  }
+
   function init() {
     container = document.createElement( 'div' );
     document.body.appendChild( container );
