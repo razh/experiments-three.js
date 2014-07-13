@@ -78,8 +78,8 @@
    *
    * And:
    *
-   *   z0k = exp(2PIik / n) * cosh(a, b)^(2 / n)
-   *   z1k = exp(2PIik / n) * sinh(a, b)^(2 / n)
+   *   z0k(a, b, n, k) = exp(2PIik / n) * cosh(a, b)^(2 / n)
+   *   z1k(a, b, n, k) = exp(2PIik / n) * sinh(a, b)^(2 / n)
    */
   function z0k( r, i, n, k ) {
     var phase = phaseFactor( k, n );
@@ -93,12 +93,47 @@
 
   function z1k( r, i, n, k ) {
     var phase = phaseFactor( k, n );
-    var amplitude = Math.pow( cosh( r, i ), 2 / n );
+    var amplitude = Math.pow( sinh( r, i ), 2 / n );
 
     phase.real *= amplitude;
     phase.imag *= amplitude;
 
     return phase;
+  }
+
+  function calabi( n, alpha, count, rmin, rmax ) {
+    var cos = Math.cos( alpha ),
+        sin = Math.sin( alpha );
+
+    var dr = ( rmax - rmin ) / ( count - 1 ),
+        di = ( 0.5 * Math.PI ) / ( count - 1 );
+
+    var data = new Float32Array( 3 * n * n * count * count );
+    var k0, k1;
+    var r, i;
+    var ir, ii;
+    var z0, z1;
+    var index = 0;
+    for ( k0 = 0; k0 < n; k0++ ) {
+      for ( k1 = 0; k1 < n; k1++ ) {
+        for ( ir = 0; ir < count; ir++ ) {
+          r = rmin + ir * dr;
+
+          for ( ii = 0; ii < count; ii++ ) {
+            i = ii * di;
+
+            z0 = z0k( r, i, n, k0 );
+            z1 = z1k( r, i, n, k1 );
+
+            data[ index++ ] = z0.real;
+            data[ index++ ] = z1.real;
+            data[ index++ ] = cos * z0.imag + sin * z1.imag;
+          }
+        }
+      }
+    }
+
+    return data;
   }
 
   function init() {
