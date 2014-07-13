@@ -153,12 +153,28 @@
     container = document.createElement( 'div' );
     document.body.appendChild( container );
 
-    renderer = new THREE.WebGLRenderer();
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setClearColor( 0x222222 );
     renderer.setSize( window.innerWidth, window.innerHeight );
     container.appendChild( renderer.domElement );
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
+
+    var geometry = calabiGeometry();
+    geometry.computeBoundingSphere();
+    camera.position.set( 0, 0, -2 * geometry.boundingSphere.radius );
+    camera.lookAt( geometry.boundingSphere.center );
+
+    scene.add( camera );
+
+    var material = new THREE.LineBasicMaterial({
+      transparent: true,
+      opacity: 0.2
+    });
+
+    var mesh = new THREE.Line( geometry, material );
+    scene.add( mesh );
   }
 
   function animate() {
