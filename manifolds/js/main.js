@@ -71,6 +71,37 @@
     };
   }
 
+  function polari( real, imag ) {
+    return {
+      radius: Math.sqrt( real * real + imag * imag ),
+      angle: Math.atan2( imag, real )
+    };
+  }
+
+  /**
+   * Roots of complex numbers (fractional exponents):
+   *
+   * Let z be the complex number a + bi, which has the polar form,
+   * r(cos(t) + i * sin(t)). To determine the roots, we use:
+   *
+   *   z^(1/n) = r^(1/n) * [cos((t + 2PIk) / n) + i * sin((t + 2PIk) / n)]
+   *
+   * For k in [0, n - 1].
+   */
+  function powi( real, imag, n, k ) {
+    k = k || 0;
+
+    var polar = polari( real, imag );
+
+    var radius = Math.pow( polar.radius, n );
+    var angle = ( polar.angle + TAU * k ) * n;
+
+    return  {
+      real: radius * Math.cos( angle ),
+      imag: radius * Math.sin( angle )
+    };
+  }
+
   /**
    * Calculate values where:
    *
