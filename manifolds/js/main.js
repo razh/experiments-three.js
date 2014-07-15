@@ -102,6 +102,35 @@
     };
   }
 
+  function expi( real, imag ) {
+    var exp = Math.exp( real );
+
+    return {
+      real: exp * Math.cos( imag ),
+      imag: exp * Math.sin( imag )
+    };
+  }
+
+  function u0( real, imag ) {
+    var a = expi( real, imag ),
+        b = expi( -real, -imag );
+
+    a.real = 0.5 * ( a.real + b.real );
+    a.imag = 0.5 * ( a.imag + b.imag );
+
+    return a;
+  }
+
+  function u1( real, imag ) {
+    var a = expi( real, imag ),
+        b = expi( -real, -imag );
+
+    a.real = 0.5 * ( a.real - b.real );
+    a.imag = 0.5 * ( a.imag - b.imag );
+
+    return a;
+  }
+
   /**
    * Calculate values where:
    *
