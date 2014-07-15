@@ -199,7 +199,7 @@
 
   function calabiGeometry() {
     var n = 5;
-    var vertexCount = 65;
+    var vertexCount = 15;
 
     console.time( 'calabi' );
     var data = calabi( n, Math.PI / 4, vertexCount, -1, 1 );
@@ -211,6 +211,42 @@
       geometry.vertices.push(
         new THREE.Vector3( data[i], data[ i + 1 ], data[ i + 2 ] )
       );
+    }
+
+    // The geometry is composed of n^2 patches, each with m^2 vertices.
+    // m is represented by vertexCount. subdivs represents the number of
+    // subdivisions along an axis in a patch.
+    var patchVertexCount = vertexCount * vertexCount;
+    var subdivs = vertexCount - 1;
+    var offset;
+    var x, y;
+    var v0, v1, v2, v3;
+    for ( i = 0, il = n * n; i < il; i++ ) {
+      offset = i * patchVertexCount;
+
+      for ( y = 0; y < subdivs; y++ ) {
+        for ( x = 0; x < subdivs; x++ ) {
+          v0 = y * vertexCount + x;
+          v1 = y * vertexCount + ( x + 1 );
+          v2 = ( y + 1 ) * vertexCount + x;
+          v3 = ( y + 1 ) * vertexCount + ( x + 1 );
+
+          v0 += offset;
+          v1 += offset;
+          v2 += offset;
+          v3 += offset;
+
+          /**
+           *   0     1
+           *    o---o
+           *    | \ |
+           *    o---o
+           *   2     3
+           */
+          geometry.faces.push( new THREE.Face3( v0, v2, v3 ) );
+          geometry.faces.push( new THREE.Face3( v0, v3, v1 ) );
+        }
+      }
     }
 
     return geometry;
@@ -250,8 +286,8 @@
       opacity: 0.2
     });
 
-    mesh = new THREE.ParticleSystem( geometry, particleMaterial );
-    scene.add( mesh );
+    // mesh = new THREE.ParticleSystem( geometry, particleMaterial );
+    // scene.add( mesh );
 
     var meshMaterial = new THREE.MeshBasicMaterial({
       wireframe: true,
@@ -259,8 +295,8 @@
       opacity: 0.2
     });
 
-    // mesh = new THREE.Mesh( geometry, meshMaterial );
-    // scene.add( mesh );
+    mesh = new THREE.Mesh( geometry, meshMaterial );
+    scene.add( mesh );
 
     axisHelper = new THREE.AxisHelper( 2 );
     scene.add( axisHelper );
