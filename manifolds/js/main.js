@@ -232,13 +232,32 @@
 
     scene.add( camera );
 
-    var material = new THREE.LineBasicMaterial({
+    var lineMaterial = new THREE.LineBasicMaterial({
+      transparent: true,
+      opacity: 0.1
+    });
+
+    // mesh = new THREE.Line( geometry, lineMaterial );
+    // scene.add( mesh );
+
+    var particleMaterial = new THREE.ParticleSystemMaterial({
+      fog: true,
+      size: 0.02,
       transparent: true,
       opacity: 0.2
     });
 
-    var mesh = new THREE.Line( geometry, material );
+    mesh = new THREE.ParticleSystem( geometry, particleMaterial );
     scene.add( mesh );
+
+    var meshMaterial = new THREE.MeshBasicMaterial({
+      wireframe: true,
+      transparent: true,
+      opacity: 0.2
+    });
+
+    // mesh = new THREE.Mesh( geometry, meshMaterial );
+    // scene.add( mesh );
   }
 
   function animate() {
