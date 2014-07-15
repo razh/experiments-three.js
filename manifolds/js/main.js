@@ -195,10 +195,16 @@
   }
 
   function calabiGeometry() {
-    var data = calabi( 5, Math.PI / 2, 15, -1, 1 );
-    var geometry = new THREE.Geometry();
+    var n = 5;
+    var vertexCount = 65;
 
-    for ( var i = 0, il = data.length / 3; i < il; i++ ) {
+    console.time( 'calabi' );
+    var data = calabi( n, Math.PI / 4, vertexCount, -1, 1 );
+    console.timeEnd( 'calabi' );
+
+    var geometry = new THREE.Geometry();
+    var i, il;
+    for ( i = 0, il = data.length; i < il; i += 3 ) {
       geometry.vertices.push(
         new THREE.Vector3( data[i], data[ i + 1 ], data[ i + 2 ] )
       );
