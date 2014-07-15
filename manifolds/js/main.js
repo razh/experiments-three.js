@@ -138,27 +138,25 @@
    *
    * And:
    *
-   *   z0k(a, b, n, k) = exp(2PIik / n) * cosh(a, b)^(2 / n)
-   *   z1k(a, b, n, k) = exp(2PIik / n) * sinh(a, b)^(2 / n)
+   *   z0k(a, b, n, k) = exp(2PIik / n) * cosi(a, b)^(2 / n)
+   *   z1k(a, b, n, k) = exp(2PIik / n) * sini(a, b)^(2 / n)
    */
   function z0k( r, i, n, k ) {
     var phase = phaseFactor( k, n );
-    var amplitude = Math.pow( cosh( r, i ), 2 / n );
 
-    phase.real *= amplitude;
-    phase.imag *= amplitude;
+    var cos = u0( r, i );
+    var powcos = powi( cos.real, cos.imag, 2 / n );
 
-    return phase;
+    return muli( phase.real, phase.imag, powcos.real, powcos.imag );
   }
 
   function z1k( r, i, n, k ) {
     var phase = phaseFactor( k, n );
-    var amplitude = Math.pow( sinh( r, i ), 2 / n );
 
-    phase.real *= amplitude;
-    phase.imag *= amplitude;
+    var sin = u1( r, i );
+    var powsin = powi( sin.real, sin.imag, 2 / n );
 
-    return phase;
+    return muli( phase.real, phase.imag, powsin.real, powsin.imag );
   }
 
   function calabi( n, alpha, count, rmin, rmax ) {
