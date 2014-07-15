@@ -8,6 +8,9 @@
 
   var scene, camera, renderer;
 
+  var mesh;
+  var axisHelper;
+
   // Hyperbolic trigonometric functions.
   // Cached Math.exp(x) is significantly less accurate.
   var cosh = Math.cosh || function cosh( x ) {
@@ -258,11 +261,16 @@
 
     // mesh = new THREE.Mesh( geometry, meshMaterial );
     // scene.add( mesh );
+
+    axisHelper = new THREE.AxisHelper( 2 );
+    scene.add( axisHelper );
   }
 
   function animate() {
     renderer.render( scene, camera );
     requestAnimationFrame( animate );
+    mesh.rotation.y += 0.01;
+    axisHelper.rotation.copy( mesh.rotation );
   }
 
   init();
