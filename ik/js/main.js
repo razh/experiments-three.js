@@ -125,7 +125,7 @@
     projector = new THREE.Projector();
 
     // Fog.
-    scene.fog = new THREE.Fog( 0x00000 );
+    scene.fog = new THREE.Fog( 0x000000 );
 
     // Plane.
     planeGeometry = new THREE.PlaneGeometry( 500, 500, 20, 20 );
@@ -197,6 +197,13 @@
     ikSet( sphere.position, ik, ikLengths );
 
     requestAnimationFrame( animate );
+  });
+
+  window.addEventListener( 'resize', function() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize( window.innerWidth, window.innerHeight );
   });
 
 }) ( window, document );
