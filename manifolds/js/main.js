@@ -197,22 +197,22 @@
     return data;
   }
 
-  function calabiGeometry() {
-    var n = 5;
-    var vertexCount = 15;
-
+  function calabiGeometry( n, angle, vertexCount ) {
     console.time( 'calabi' );
-    var data = calabi( n, Math.PI / 4, vertexCount, -1, 1 );
+    var data = calabi( n, angle, vertexCount, -1, 1 );
     console.timeEnd( 'calabi' );
 
     var geometry = new THREE.Geometry();
-    var i, il;
-    for ( i = 0, il = data.length; i < il; i += 3 ) {
+    for ( var i = 0, il = data.length; i < il; i += 3 ) {
       geometry.vertices.push(
         new THREE.Vector3( data[i], data[ i + 1 ], data[ i + 2 ] )
       );
     }
 
+    return geometry;
+  }
+
+  function calabiFaces( geometry, n, vertexCount ) {
     // The geometry is composed of n^2 patches, each with m^2 vertices.
     // m is represented by vertexCount. subdivs represents the number of
     // subdivisions along an axis in a patch.
@@ -221,7 +221,7 @@
     var offset;
     var x, y;
     var v0, v1, v2, v3;
-    for ( i = 0, il = n * n; i < il; i++ ) {
+    for ( var i = 0, il = n * n; i < il; i++ ) {
       offset = i * patchVertexCount;
 
       for ( y = 0; y < subdivs; y++ ) {
@@ -252,6 +252,12 @@
     return geometry;
   }
 
+  var config = {
+    n: 5,
+    vertexCount: 15,
+    angle: Math.PI / 4
+  };
+
   function init() {
     container = document.createElement( 'div' );
     document.body.appendChild( container );
@@ -264,7 +270,9 @@
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
 
-    var geometry = calabiGeometry();
+    var geometry = calabiGeometry( config.n, config.angle, config.vertexCount );
+    calabiFaces( geometry, config.n, config.vertexCount );
+
     geometry.computeBoundingSphere();
     camera.position.set( 0, 0, -2 * geometry.boundingSphere.radius );
     camera.lookAt( geometry.boundingSphere.center );
