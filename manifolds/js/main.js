@@ -287,14 +287,14 @@
     // mesh = new THREE.Line( geometry, lineMaterial );
     // scene.add( mesh );
 
-    var particleMaterial = new THREE.ParticleSystemMaterial({
+    var pointMaterial = new THREE.PointCloudMaterial({
       fog: true,
       size: 0.02,
       transparent: true,
       opacity: 0.2
     });
 
-    // mesh = new THREE.ParticleSystem( geometry, particleMaterial );
+    // mesh = new THREE.PointCloud( geometry, pointMaterial );
     // scene.add( mesh );
 
     var meshMaterial = new THREE.MeshBasicMaterial({
