@@ -1,4 +1,4 @@
-/*globals THREE, requestAnimationFrame*/
+/*globals THREE, requestAnimationFrame, dat*/
 (function( window, document, undefined ) {
   'use strict';
 
@@ -308,6 +308,24 @@
 
     axisHelper = new THREE.AxisHelper( 2 );
     scene.add( axisHelper );
+
+    var gui = new dat.GUI();
+
+    gui.add( config, 'angle', 0, Math.PI )
+      .step( Math.PI / 180 )
+      .onChange(function( value ) {
+        var data = calabi( config.n, value, config.vertexCount, -1, 1 );
+
+        for ( var i = 0, il = data.length / 3; i < il; i++ ) {
+          geometry.vertices[i].set(
+            data[ 3 * i ],
+            data[ 3 * i + 1 ],
+            data[ 3 * i + 2 ]
+          );
+        }
+
+        geometry.verticesNeedUpdate = true;
+      });
   }
 
   function animate() {
