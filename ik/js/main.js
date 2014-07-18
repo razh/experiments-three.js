@@ -12,9 +12,11 @@
 
   var ikGeometry, ikMaterial, ik;
   var ikLengths = [ 80, 30, 50, 70, 40 ];
+  var ikLengthsInput = document.querySelector( '#ik-lengths' );
+  ikLengthsInput.value = ikLengths;
 
   var EPSILON = 1e-2;
-  var MAX_ITERATIONS = 20;
+  var MAX_ITERATIONS = 32;
 
   function ikGeometryFromArray( lengths ) {
     var geometry = new THREE.Geometry();
@@ -106,7 +108,7 @@
       }
     }
 
-    ik.geometry.verticesNeedUpdate = true;
+    line.geometry.verticesNeedUpdate = true;
   }
 
   function init() {
@@ -208,6 +210,29 @@
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
+  });
+
+  ikLengthsInput.addEventListener( 'input', function() {
+    var lengths = ikLengthsInput.value
+      .split( ',' )
+      .map( parseFloat )
+      .filter(function( value ) {
+        return value && isFinite( value );
+      });
+
+    if ( !lengths.length ) {
+      return;
+    }
+
+    scene.remove( ik );
+
+    ikLengths = lengths;
+    ikGeometry = ikGeometryFromArray( lengths );
+    ik = new THREE.Line( ikGeometry, ikMaterial );
+    ik.position.z = 100;
+
+    scene.add( ik );
+    requestAnimationFrame( animate );
   });
 
 }) ( window, document );

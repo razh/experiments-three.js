@@ -9,9 +9,25 @@
       margin: 0;
       background-color: #000;
     }
+
+    input {
+      position: absolute;
+      z-index: 1;
+
+      left: 1em;
+      top: 1em;
+
+      background-color: #000;
+      color: #fff;
+      opacity: 0.8;
+
+      border: 1px solid #fff;
+      border-radius: 0.2em;
+    }
   </style>
 </head>
 <body>
+  <input type="text" id='ik-lengths'>
 
   <script src="../app/bower_components/threejs/build/three.js"></script>
   <script src="./js/main.js"></script>
