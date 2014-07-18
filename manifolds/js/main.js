@@ -4,11 +4,14 @@
 
   var TAU = 2 * Math.PI;
 
+  var RAD_TO_DEG = 180 / Math.PI;
+  var DEG_TO_RAD = Math.PI / 180;
+
   var container;
 
   var scene, camera, renderer;
 
-  var mesh;
+  var geometry, mesh;
   var axisHelper;
 
   // Hyperbolic trigonometric functions.
@@ -254,9 +257,24 @@
 
   var config = {
     n: 5,
-    vertexCount: 15,
-    angle: Math.PI / 4
+    vertexCount: 11,
+    angle: Math.PI / 4,
+    animateAngle: false
   };
+
+  function updateCalabiVertices() {
+    var data = calabi( config.n, config.angle, config.vertexCount, -1, 1 );
+
+    for ( var i = 0, il = data.length / 3; i < il; i++ ) {
+      geometry.vertices[i].set(
+        data[ 3 * i ],
+        data[ 3 * i + 1 ],
+        data[ 3 * i + 2 ]
+      );
+    }
+
+    geometry.verticesNeedUpdate = true;
+  }
 
   function init() {
     container = document.createElement( 'div' );
@@ -270,7 +288,7 @@
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
 
-    var geometry = calabiGeometry( config.n, config.angle, config.vertexCount );
+    geometry = calabiGeometry( config.n, config.angle, config.vertexCount );
     calabiFaces( geometry, config.n, config.vertexCount );
 
     geometry.computeBoundingSphere();
@@ -311,28 +329,38 @@
 
     var gui = new dat.GUI();
 
-    gui.add( config, 'angle', 0, Math.PI )
+    gui.add( config, 'angle', 0, TAU )
       .step( Math.PI / 180 )
-      .onChange(function( value ) {
-        var data = calabi( config.n, value, config.vertexCount, -1, 1 );
+      .listen()
+      .onChange( updateCalabiVertices );
 
-        for ( var i = 0, il = data.length / 3; i < il; i++ ) {
-          geometry.vertices[i].set(
-            data[ 3 * i ],
-            data[ 3 * i + 1 ],
-            data[ 3 * i + 2 ]
-          );
-        }
-
-        geometry.verticesNeedUpdate = true;
-      });
+    gui.add( config, 'animateAngle' );
   }
 
+  var prevTime = Date.now(),
+      currTime;
+
   function animate() {
+    currTime = Date.now();
+    var dt = currTime - prevTime;
+    prevTime = currTime;
+
+    if ( dt > 1e2 ) {
+      dt = 1e2;
+    }
+
+    dt *= 1e-3;
+
     renderer.render( scene, camera );
     requestAnimationFrame( animate );
-    mesh.rotation.y += 0.01;
+
+    mesh.rotation.y += 10 * DEG_TO_RAD * dt;
     axisHelper.rotation.copy( mesh.rotation );
+
+    if ( config.animateAngle ) {
+      config.angle = ( config.angle + 90 * DEG_TO_RAD * dt ) % TAU;
+      updateCalabiVertices();
+    }
   }
 
   init();
