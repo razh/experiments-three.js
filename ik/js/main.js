@@ -14,6 +14,7 @@
   var ikLengths = [ 80, 30, 50, 70, 40 ];
 
   var EPSILON = 1e-2;
+  var MAX_ITERATIONS = 20;
 
   function ikGeometryFromArray( lengths ) {
     var geometry = new THREE.Geometry();
@@ -45,6 +46,7 @@
     var vertices = geometry.vertices;
     var count = vertices.length;
     var temp = new THREE.Vector3();
+    var iterations = 0;
     var vi, vj, vf;
     var di, dj, df;
     var t;
@@ -67,7 +69,9 @@
       vf = vertices[ count - 1 ];
       df = vf.distanceTo( point );
 
-      while ( df > EPSILON ) {
+      while ( df > EPSILON && iterations < MAX_ITERATIONS ) {
+        iterations++;
+
         // Set end effector to target.
         vf.copy( point );
 
