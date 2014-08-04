@@ -2,6 +2,13 @@
 (function( window, document, undefined ) {
   'use strict';
 
+  /**
+   * Adapted from:
+   *
+   * A.J. Hanson. A construction for computer visualization of certain complex
+   * curves. Notices of the Amer. Math. Soc., 41(9):1156-1163,
+   * November/December 1994.
+   */
   var TAU = 2 * Math.PI;
 
   var RAD_TO_DEG = 180 / Math.PI;
@@ -174,7 +181,9 @@
 
     var data = new Float32Array( 3 * n * n * count * count );
     var k0, k1;
+    // Real and imaginary values.
     var r, i;
+    // Real and imaginary indices.
     var ir, ii;
     var z0, z1;
     var index = 0;
