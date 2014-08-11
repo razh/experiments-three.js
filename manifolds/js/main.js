@@ -16,7 +16,7 @@
 
   var container;
 
-  var scene, camera, renderer;
+  var scene, camera, controls, renderer;
 
   var geometry, mesh;
   var axisHelper;
@@ -296,6 +296,7 @@
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
+    controls = new THREE.OrbitControls( camera, renderer.domElement );
 
     geometry = calabiGeometry( config.n, config.angle, config.vertexCount );
     calabiFaces( geometry, config.n, config.vertexCount );
@@ -303,6 +304,7 @@
     geometry.computeBoundingSphere();
     camera.position.set( 0, 0, -2 * geometry.boundingSphere.radius );
     camera.lookAt( geometry.boundingSphere.center );
+    controls.target.copy( geometry.boundingSphere.center );
 
     scene.add( camera );
 
@@ -363,7 +365,6 @@
     renderer.render( scene, camera );
     requestAnimationFrame( animate );
 
-    mesh.rotation.y += 10 * DEG_TO_RAD * dt;
     axisHelper.rotation.copy( mesh.rotation );
 
     if ( config.animateAngle ) {
