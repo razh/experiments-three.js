@@ -8,6 +8,9 @@
 
   var shipGeometry, shipMaterial, shipMesh;
 
+  var ambient;
+  var light;
+
   function init() {
     container = document.createElement( 'div' );
     document.body.appendChild( container );
@@ -19,17 +22,29 @@
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight );
-    camera.position.set( 0, 0, 12 );
+    camera.position.set( 0, 3, 16 );
     scene.add( camera );
 
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
     shipGeometry = createShipGeometry();
-    shipMaterial = new THREE.LineBasicMaterial({
-      side: THREE.DoubleSide
+    shipMaterial = new THREE.MeshPhongMaterial({
+      color: 0xdddddd,
+      specular: 0xffffff
     });
     shipMesh = new THREE.Mesh( shipGeometry, shipMaterial );
+    shipMesh.rotation.x = -Math.PI / 2;
     scene.add( shipMesh );
+
+    light = new THREE.PointLight( 0xffffff );
+    light.position.set( 6, 6, 12 );
+    scene.add( light );
+
+    ambient = new THREE.AmbientLight( 0x333333 );
+    scene.add( ambient );
+
+    var pointLightHelper = new THREE.PointLightHelper( light, 1 );
+    scene.add( pointLightHelper );
   }
 
   function animate() {

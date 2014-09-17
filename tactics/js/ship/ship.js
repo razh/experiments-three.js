@@ -40,7 +40,11 @@ var createShipGeometry = (function() {
       0, halfLength
     );
 
-    return new THREE.ShapeGeometry( shape );
+    return new THREE.ExtrudeGeometry( shape, {
+      amount: 0.4,
+      curveSegments: 32,
+      bevelEnabled: false
+    });
   }
 
   return createShipGeometry;
