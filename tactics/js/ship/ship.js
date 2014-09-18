@@ -50,3 +50,36 @@ var createShipGeometry = (function() {
   return createShipGeometry;
 
 }) ();
+
+/*exported createTurretGeometry*/
+var createTurretGeometry = (function() {
+  'use strict';
+
+  function createTurretGeometry() {
+    // 14 meter barrel length.
+    var gunLength = 1.4;
+    var gunOffsetX = 0.1;
+    var gunOffsetY = 0.4;
+    var gunRadius = 0.05;
+
+    var gunLeft  = new THREE.CylinderGeometry( gunRadius, gunRadius, gunLength, 16 );
+    var gunRight = new THREE.CylinderGeometry( gunRadius, gunRadius, gunLength, 16 );
+    var turret = new THREE.BoxGeometry( 0.8, 0.8, 0.3 );
+
+    var matrix = new THREE.Matrix4();
+
+    matrix.identity().makeTranslation( -gunOffsetX, gunOffsetY, 0 );
+    gunLeft.applyMatrix( matrix );
+
+    matrix.identity().makeTranslation( gunOffsetX, gunOffsetY, 0 );
+    gunRight.applyMatrix( matrix );
+
+    turret.merge( gunLeft );
+    turret.merge( gunRight );
+
+    return turret;
+  }
+
+  return createTurretGeometry;
+
+}) ();

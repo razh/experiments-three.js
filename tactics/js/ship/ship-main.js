@@ -1,4 +1,4 @@
-/*global THREE, requestAnimationFrame, createShipGeometry*/
+/*global THREE, requestAnimationFrame, createShipGeometry, createTurretGeometry*/
 (function( window, document, undefined ) {
   'use strict';
 
@@ -7,6 +7,7 @@
   var scene, camera, controls, renderer;
 
   var shipGeometry, shipMaterial, shipMesh;
+  var turretGeometry, turretMesh;
 
   var ambient;
   var light;
@@ -35,6 +36,11 @@
     shipMesh = new THREE.Mesh( shipGeometry, shipMaterial );
     shipMesh.rotation.x = -Math.PI / 2;
     scene.add( shipMesh );
+
+    turretGeometry = createTurretGeometry();
+    turretMesh = new THREE.Mesh( turretGeometry, shipMaterial );
+    turretMesh.position.z = 0.5;
+    shipMesh.add( turretMesh );
 
     light = new THREE.PointLight( 0xffffff );
     light.position.set( 6, 6, 12 );
