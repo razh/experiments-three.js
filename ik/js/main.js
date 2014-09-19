@@ -168,11 +168,12 @@
   init();
   animate();
 
-  window.addEventListener( 'mousemove', function( event ) {
+
+  function onMove( x, y ) {
     // Calculate intersection.
     var vector = new THREE.Vector3(
-      ( event.pageX / window.innerWidth ) * 2 - 1,
-      -( event.pageY / window.innerHeight ) * 2 + 1,
+      ( x / window.innerWidth ) * 2 - 1,
+      -( y / window.innerHeight ) * 2 + 1,
       0
     );
 
@@ -190,6 +191,15 @@
     }
 
     requestAnimationFrame( animate );
+  }
+
+  window.addEventListener( 'mousemove', function( event ) {
+    onMove( event.pageX, event.pageY );
+  });
+
+  window.addEventListener( 'touchmove', function( event ) {
+    event.preventDefault();
+    onMove( event.touches[0].pageX, event.touches[0].pageY );
   });
 
   window.addEventListener( 'wheel', function( event ) {
@@ -210,6 +220,8 @@
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
+
+    requestAnimationFrame( animate );
   });
 
   ikLengthsInput.addEventListener( 'input', function() {
