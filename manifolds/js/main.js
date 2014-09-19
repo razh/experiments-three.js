@@ -295,7 +295,7 @@
     container.appendChild( renderer.domElement );
 
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
+    camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 1000 );
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
     geometry = calabiGeometry( config.n, config.angle, config.vertexCount );
