@@ -60,7 +60,7 @@ var createTurretGeometry = (function() {
     var gunLength = 1.4;
     var gunOffsetX = 0.1;
     var gunOffsetY = 0.4;
-    var gunRadius = 0.05;
+    var gunRadius = 0.04;
 
     var gunLeft  = new THREE.CylinderGeometry( gunRadius, gunRadius, gunLength, 16 );
     var gunRight = new THREE.CylinderGeometry( gunRadius, gunRadius, gunLength, 16 );

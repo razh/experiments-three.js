@@ -37,10 +37,34 @@
     shipMesh.rotation.x = -Math.PI / 2;
     scene.add( shipMesh );
 
+    // (x, y) coordinates.
+    var turretPositions = [
+      // Aft turrets.
+      [ 0, 4 ],
+      [ 0, 1 ],
+      // Wing turrets.
+      [ 0.5, -1.5 ],
+      [ -0.5, -1.5 ],
+      // Fore turret.
+      [ 0, -4 ]
+    ];
+
     turretGeometry = createTurretGeometry();
-    turretMesh = new THREE.Mesh( turretGeometry, shipMaterial );
-    turretMesh.position.z = 0.5;
-    shipMesh.add( turretMesh );
+    for ( var i = 0; i < 5; i++ ) {
+      turretMesh = new THREE.Mesh( turretGeometry, shipMaterial );
+      turretMesh.position.set(
+        turretPositions[i][0],
+        turretPositions[i][1],
+        0.5
+      );
+
+      // Aft turrets.
+      if ( i > 1 ) {
+        turretMesh.rotation.x = Math.PI;
+      }
+
+      shipMesh.add( turretMesh );
+    }
 
     light = new THREE.PointLight( 0xffffff );
     light.position.set( 6, 6, 12 );
