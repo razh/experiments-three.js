@@ -1,4 +1,4 @@
-/*global THREE, requestAnimationFrame, createShipGeometry, createTurretGeometry*/
+/*global THREE, requestAnimationFrame, createShipGeometry, createGunGeometry, createTurretGeometry*/
 (function( window, document, undefined ) {
   'use strict';
 
@@ -7,6 +7,7 @@
   var scene, camera, controls, renderer;
 
   var shipGeometry, shipMaterial, shipMesh;
+  var gunGeometry, gunMesh;
   var turretGeometry, turretMesh;
 
   var ambient;
@@ -50,6 +51,7 @@
     ];
 
     turretGeometry = createTurretGeometry();
+    gunGeometry = createGunGeometry();
     for ( var i = 0; i < 5; i++ ) {
       turretMesh = new THREE.Mesh( turretGeometry, shipMaterial );
       turretMesh.position.set(
@@ -57,6 +59,10 @@
         turretPositions[i][1],
         0.5
       );
+
+      gunMesh = new THREE.Mesh( gunGeometry, shipMaterial );
+      gunMesh.position.y = 0.4;
+      turretMesh.add( gunMesh );
 
       // Aft turrets.
       if ( i > 1 ) {
