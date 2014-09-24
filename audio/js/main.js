@@ -2,12 +2,18 @@
 (function( window, document, undefined ) {
   'use strict';
 
+  var keys = [];
+
   var container;
 
   var scene, camera, controls, renderer;
 
+  var clock = new THREE.Clock();
+
   var planeGeometry, planeMaterial, planeMesh;
+
   var sourceGeometry, sourceMaterial, sourceMesh;
+  var sourceSpeed = 12;
 
   // Front direction vector used for AudioListener orientation.
   var front = new THREE.Vector3();
@@ -106,6 +112,23 @@
       camera.up.z
     );
 
+    // Update source mesh position.
+    var dt = clock.getDelta();
+    // I. Forward.
+    if ( keys[ 73 ] ) { sourceMesh.position.z -= sourceSpeed * dt; }
+    // K. Backward.
+    if ( keys[ 75 ] ) { sourceMesh.position.z += sourceSpeed * dt; }
+    // J. Left.
+    if ( keys[ 74 ] ) { sourceMesh.position.x -= sourceSpeed * dt; }
+    // L. Right.
+    if ( keys[ 76 ] ) { sourceMesh.position.x += sourceSpeed * dt; }
+
+    panner.setPosition(
+      sourceMesh.position.x,
+      sourceMesh.position.y,
+      sourceMesh.position.z
+    );
+
     renderer.render( scene, camera );
     requestAnimationFrame( animate );
   }
@@ -114,6 +137,8 @@
   animate();
 
   document.addEventListener( 'keydown', function( event ) {
+    keys[ event.which ] = true;
+
     // Spacebar.
     if ( event.which === 32 ) {
       playing = !playing;
@@ -124,6 +149,10 @@
         gain.gain.setTargetAtTime( 0, audioCtx.currentTime, 1 );
       }
     }
+  });
+
+  document.addEventListener( 'keyup', function( event ) {
+    keys[ event.which ] = false;
   });
 
 }) ( window, document );
