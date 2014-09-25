@@ -19,6 +19,7 @@
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.shadowMapEnabled = true;
     container.appendChild( renderer.domElement );
 
     scene = new THREE.Scene();
@@ -54,6 +55,7 @@
     gunGeometry = createGunGeometry();
     for ( var i = 0; i < 5; i++ ) {
       turretMesh = new THREE.Mesh( turretGeometry, shipMaterial );
+      turretMesh.castShadow = true;
       turretMesh.position.set(
         turretPositions[i][0],
         turretPositions[i][1],
@@ -61,6 +63,8 @@
       );
 
       gunMesh = new THREE.Mesh( gunGeometry, shipMaterial );
+      gunMesh.castShadow = true;
+      gunMesh.receiveShadow = true;
       gunMesh.position.y = 0.4;
       turretMesh.add( gunMesh );
 
@@ -72,15 +76,19 @@
       shipMesh.add( turretMesh );
     }
 
-    light = new THREE.PointLight( 0xffffff );
-    light.position.set( 6, 6, 12 );
+    light = new THREE.SpotLight( 0xffffff, 2 );
+    light.position.set( 4, 6, 16 );
+    light.castShadow = true;
+    light.shadowCameraNear = 6;
+    light.shadowCameraFar = 32;
+    light.shadowCameraVisible = true;
     scene.add( light );
 
     ambient = new THREE.AmbientLight( 0x333333 );
     scene.add( ambient );
 
-    var pointLightHelper = new THREE.PointLightHelper( light, 1 );
-    scene.add( pointLightHelper );
+    var lightHelper = new THREE.SpotLightHelper( light, 1 );
+    scene.add( lightHelper );
   }
 
   function animate() {
