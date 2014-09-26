@@ -2,9 +2,13 @@
 (function( window, document, undefined ) {
   'use strict';
 
+  var keys = [];
+
   var container;
 
   var scene, camera, controls, renderer;
+
+  var clock = new THREE.Clock();
 
   var shipGeometry, shipMaterial, shipMesh;
   var gunGeometry, gunMesh;
@@ -12,6 +16,7 @@
 
   var ambient;
   var light;
+  var lightSpeed = 8;
 
   function init() {
     container = document.createElement( 'div' );
@@ -80,7 +85,7 @@
     light.position.set( 4, 6, 16 );
     light.castShadow = true;
     light.shadowCameraNear = 6;
-    light.shadowCameraFar = 32;
+    light.shadowCameraFar = 128;
     light.shadowCameraVisible = true;
     scene.add( light );
 
@@ -92,11 +97,30 @@
   }
 
   function animate() {
+    // Update light position.
+    var dt = clock.getDelta();
+    // I. Forward.
+    if ( keys[ 73 ] ) { light.position.z -= lightSpeed * dt; }
+    // K. Backward.
+    if ( keys[ 75 ] ) { light.position.z += lightSpeed * dt; }
+    // J. Left.
+    if ( keys[ 74 ] ) { light.position.x -= lightSpeed * dt; }
+    // L. Right.
+    if ( keys[ 76 ] ) { light.position.x += lightSpeed * dt; }
+
     renderer.render( scene, camera );
     requestAnimationFrame( animate );
   }
 
   init();
   animate();
+
+  document.addEventListener( 'keydown', function( event ) {
+    keys[ event.which ] = true;
+  });
+
+  document.addEventListener( 'keyup', function( event ) {
+    keys[ event.which ] = false;
+  });
 
 }) ( window, document );
