@@ -1,4 +1,4 @@
-/*global THREE, requestAnimationFrame*/
+/*global THREE, requestAnimationFrame, createArrow*/
 (function( window, document, undefined ) {
   'use strict';
 
@@ -54,6 +54,38 @@
     mesh.position.y = 1;
     mesh.castShadow = true;
     scene.add( mesh );
+
+    // Arrows.
+    var arrowOptions = {
+      color: 0xff0000,
+      markerWidth: 0.1,
+      markerLength: 0.2,
+      linewidth: 1,
+      divisions: 32
+    };
+
+    var arrowShape, arrow;
+
+    arrowShape = new THREE.Shape();
+    arrowShape.moveTo( 4, 4 );
+    arrowShape.bezierCurveTo( 4, 1, 3, 0, 0, 0 );
+    arrow = createArrow( arrowShape, arrowOptions );
+    arrow.position.y = 1.5;
+    scene.add( arrow );
+
+    // Reverse direction.
+    arrowShape = new THREE.Shape();
+    arrowShape.moveTo( 0, 0 );
+    arrowShape.bezierCurveTo( 3, 0, 4, 0, 4, 4 );
+    arrow = createArrow( arrowShape, arrowOptions );
+    arrow.position.set( -2, 1.5, 2 );
+    scene.add( arrow );
+
+    // Shear.
+    arrowOptions.markerShear = Math.PI / 7;
+    arrow = createArrow( arrowShape, arrowOptions );
+    arrow.position.set( -3, 1.5, 3 );
+    scene.add( arrow );
 
     camera.lookAt( mesh.position );
     controls.target.copy( mesh.position );
