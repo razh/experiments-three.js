@@ -5,6 +5,70 @@ var createArrow = (function() {
 
   var matrix = new THREE.Matrix4();
 
+  function inverseLerp( a, b, x ) {
+    return ( x - a ) / ( b - a );
+  }
+
+  function lerpGeometryFn( geometry ) {
+    var clone = geometry.clone();
+
+    var vertices = geometry.vertices;
+    var cloneVertices = clone.vertices;
+
+    var vector3 = new THREE.Vector3();
+    var sum = 0;
+    var length;
+    var lengths = [];
+    var subtotals = [];
+    var i, il;
+    for ( i = 1, il = vertices.length; i < il; i++ ) {
+      length = vector3.copy( vertices[i] )
+        .distanceTo( vertices[ i - 1 ] );
+
+      lengths.push( length );
+      sum += length;
+      subtotals.push( sum );
+    }
+
+    return {
+      geometry: clone,
+
+      lerp: function lerp( t ) {
+        var td = t * sum;
+        var ti;
+        var prev;
+        var subtotal;
+        var found = false;
+        var position;
+        for ( i = subtotals.length - 1; i > 0; i-- ) {
+          if ( !found ) {
+            subtotal = subtotals[i];
+            prev = subtotals[ i - 1 ];
+            if ( !prev || ( prev && td >= prev ) ) {
+              found = true;
+
+              prev = prev || 0;
+              ti = inverseLerp( prev, subtotal, td );
+
+              position = vector3.copy( vertices[ i - 1 ] )
+                .lerp( vertices[ i ], ti );
+            }
+          }
+
+          // Move vertices.
+          if ( found ) {
+            cloneVertices[i].copy( position );
+          } else {
+            cloneVertices[i].copy( vertices[i] );
+          }
+        }
+
+        cloneVertices[0].copy( position || vertices[0] );
+        clone.verticesNeedUpdate = true;
+      }
+    };
+  }
+
   function createArrow( path, options ) {
     options = options || {};
 
@@ -25,6 +89,9 @@ var createArrow = (function() {
     var lineGeometry = path.createSpacedPointsGeometry( divisions );
     matrix.makeRotationX( -Math.PI / 2 );
     lineGeometry.applyMatrix( matrix );
+
+    var lerper = lerpGeometryFn( lineGeometry );
+    lineGeometry = lerper.geometry;
 
     var lineMaterial = new THREE.LineBasicMaterial({
       color: color,
@@ -75,11 +142,15 @@ var createArrow = (function() {
     matrix.makeTranslation( endpoint.x, endpoint.y, endpoint.z );
     markerGeometry.applyMatrix( matrix );
 
-    var markerMaterial = new THREE.MeshBasicMaterial({ color: color });
-    var markerMesh = new THREE.Mesh( markerGeometry, markerMaterial );
+    var markerMaterial = new THREE.MeshBasicMaterial({
+      color: color,
+      side: THREE.DoubleSide
+    });
 
+    var markerMesh = new THREE.Mesh( markerGeometry, markerMaterial );
     arrow.add( markerMesh );
 
+    arrow.lerp = lerper.lerp;
     return arrow;
   }
 

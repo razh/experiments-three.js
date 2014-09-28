@@ -2,6 +2,8 @@
 (function( window, document, undefined ) {
   'use strict';
 
+  var clock = new THREE.Clock();
+
   var container;
 
   var scene, camera, controls, renderer;
@@ -11,6 +13,8 @@
 
   var planeGeometry, planeMaterial, planeMesh;
   var geometry, material, mesh;
+
+  var arrowShape, arrow;
 
   function init() {
     container = document.createElement( 'div' );
@@ -64,8 +68,6 @@
       divisions: 32
     };
 
-    var arrowShape, arrow;
-
     arrowShape = new THREE.Shape();
     arrowShape.moveTo( 4, 4 );
     arrowShape.bezierCurveTo( 4, 1, 3, 0, 0, 0 );
@@ -94,6 +96,10 @@
   function animate() {
     renderer.render( scene, camera );
     requestAnimationFrame( animate );
+
+    var time = clock.getElapsedTime();
+    var t = 0.5 * ( Math.sin( time ) + 1 );
+    arrow.lerp( THREE.Math.smootherstep( t, 0, 1 ) );
   }
 
   init();
