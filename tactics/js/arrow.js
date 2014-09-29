@@ -16,10 +16,11 @@ var createArrow = (function() {
     var cloneVertices = clone.vertices;
 
     var vector3 = new THREE.Vector3();
+
     var sum = 0;
     var length;
     var lengths = [];
-    var subtotals = [];
+    var subtotals = [0];
     var i, il;
     for ( i = 1, il = vertices.length; i < il; i++ ) {
       length = vector3.copy( vertices[i] )
@@ -36,22 +37,22 @@ var createArrow = (function() {
       lerp: function lerp( t ) {
         var td = t * sum;
         var ti;
-        var prev;
+        var next;
         var subtotal;
         var found = false;
         var position;
-        for ( i = subtotals.length - 1; i > 0; i-- ) {
+        for ( i = 0, il = subtotals.length - 1; i < il; i++ ) {
           if ( !found ) {
             subtotal = subtotals[i];
-            prev = subtotals[ i - 1 ];
-            if ( !prev || ( prev && td >= prev ) ) {
+            next = subtotals[ i + 1 ];
+            if ( !next || ( next && td <= next ) ) {
               found = true;
 
-              prev = prev || 0;
-              ti = inverseLerp( prev, subtotal, td );
+              next = next || sum;
+              ti = inverseLerp( subtotal, next, td );
 
-              position = vector3.copy( vertices[ i - 1 ] )
-                .lerp( vertices[ i ], ti );
+              position = vector3.copy( vertices[i] )
+                .lerp( vertices[ i + 1 ], ti );
             }
           }
 
@@ -63,7 +64,9 @@ var createArrow = (function() {
           }
         }
 
-        cloneVertices[0].copy( position || vertices[0] );
+        cloneVertices[ cloneVertices.length - 1 ]
+          .copy( position || vertices[ vertices.length - 1 ] );
+
         clone.verticesNeedUpdate = true;
       }
     };
