@@ -6,13 +6,15 @@ var createArrow = (function() {
   var lineMatrix = new THREE.Matrix4();
   var matrix = new THREE.Matrix4();
 
+  var direction = new THREE.Vector3();
+
   function lerpPathFn( path, divisions ) {
     var geometry = path.createSpacedPointsGeometry( divisions );
 
     return {
       geometry: geometry,
 
-      lerp: function lerpGeometry( t ) {
+      lerp: function lerp( t ) {
         var point;
         for ( var i = 0; i < divisions; i++ ) {
           point = path.getPoint( t * i / divisions );
@@ -60,8 +62,6 @@ var createArrow = (function() {
     var endpoint = lineGeometry.vertices[ lastIndex ];
     var prev = lineGeometry.vertices[ lastIndex - 1 ];
 
-    var direction = endpoint.clone().sub( prev );
-
     // Marker shape.
     var markerShape = new THREE.Shape();
     var halfWidth = markerWidth / 2;
@@ -88,25 +88,28 @@ var createArrow = (function() {
     matrix.makeRotationX( -Math.PI / 2 );
     markerGeometry.applyMatrix( matrix );
 
-    // Rotate to point in direction.
-    matrix.makeRotationY( Math.atan2( direction.x, direction.z ) + Math.PI );
-    markerGeometry.applyMatrix( matrix );
-
-    // Translate to endpoint.
-    matrix.makeTranslation( endpoint.x, endpoint.y, endpoint.z );
-    markerGeometry.applyMatrix( matrix );
-
     var markerMaterial = new THREE.MeshBasicMaterial({
       color: color,
       side: THREE.DoubleSide
     });
 
     var markerMesh = new THREE.Mesh( markerGeometry, markerMaterial );
+
+    function setMarkerTransform() {
+      // Translate to endpoint.
+      markerMesh.position.copy( endpoint );
+      // Rotate to tangent.
+      direction.copy( endpoint ).sub( prev );
+      markerMesh.rotation.y = Math.atan2( direction.x, direction.z ) + Math.PI;
+    }
+
+    setMarkerTransform();
     arrow.add( markerMesh );
 
     arrow.lerp = function( t ) {
       lerper.lerp( t );
       lineGeometry.applyMatrix( lineMatrix );
+      setMarkerTransform();
     };
 
     return arrow;
