@@ -3,71 +3,24 @@
 var createArrow = (function() {
   'use strict';
 
+  var lineMatrix = new THREE.Matrix4();
   var matrix = new THREE.Matrix4();
 
-  function inverseLerp( a, b, x ) {
-    return ( x - a ) / ( b - a );
-  }
-
-  function lerpGeometryFn( geometry ) {
-    var clone = geometry.clone();
-
-    var vertices = geometry.vertices;
-    var cloneVertices = clone.vertices;
-
-    var vector3 = new THREE.Vector3();
-
-    var sum = 0;
-    var length;
-    var lengths = [];
-    var subtotals = [0];
-    var i, il;
-    for ( i = 1, il = vertices.length; i < il; i++ ) {
-      length = vector3.copy( vertices[i] )
-        .distanceTo( vertices[ i - 1 ] );
-
-      lengths.push( length );
-      sum += length;
-      subtotals.push( sum );
-    }
+  function lerpPathFn( path, divisions ) {
+    var geometry = path.createSpacedPointsGeometry( divisions );
 
     return {
-      geometry: clone,
+      geometry: geometry,
 
-      lerp: function lerp( t ) {
-        var td = t * sum;
-        var ti;
-        var next;
-        var subtotal;
-        var found = false;
-        var position;
-        for ( i = 0, il = subtotals.length - 1; i < il; i++ ) {
-          if ( !found ) {
-            subtotal = subtotals[i];
-            next = subtotals[ i + 1 ];
-            if ( !next || ( next && td <= next ) ) {
-              found = true;
-
-              next = next || sum;
-              ti = inverseLerp( subtotal, next, td );
-
-              position = vector3.copy( vertices[i] )
-                .lerp( vertices[ i + 1 ], ti );
-            }
-          }
-
-          // Move vertices.
-          if ( found ) {
-            cloneVertices[i].copy( position );
-          } else {
-            cloneVertices[i].copy( vertices[i] );
-          }
+      lerp: function lerpGeometry( t ) {
+        var point;
+        for ( var i = 0; i < divisions; i++ ) {
+          point = path.getPoint( t * i / divisions );
+          geometry.vertices[i].set( point.x, point.y, point.z || 0 );
         }
 
-        cloneVertices[ cloneVertices.length - 1 ]
-          .copy( position || vertices[ vertices.length - 1 ] );
-
-        clone.verticesNeedUpdate = true;
+        geometry.verticesNeedUpdate = true;
+        return geometry;
       }
     };
   }
@@ -89,12 +42,10 @@ var createArrow = (function() {
 
     var arrow = new THREE.Object3D();
 
-    var lineGeometry = path.createSpacedPointsGeometry( divisions );
-    matrix.makeRotationX( -Math.PI / 2 );
-    lineGeometry.applyMatrix( matrix );
-
-    var lerper = lerpGeometryFn( lineGeometry );
-    lineGeometry = lerper.geometry;
+    var lerper = lerpPathFn( path, divisions );
+    var lineGeometry = lerper.geometry;
+    lineMatrix.makeRotationX( -Math.PI / 2 );
+    lineGeometry.applyMatrix( lineMatrix );
 
     var lineMaterial = new THREE.LineBasicMaterial({
       color: color,
@@ -153,7 +104,11 @@ var createArrow = (function() {
     var markerMesh = new THREE.Mesh( markerGeometry, markerMaterial );
     arrow.add( markerMesh );
 
-    arrow.lerp = lerper.lerp;
+    arrow.lerp = function( t ) {
+      lerper.lerp( t );
+      lineGeometry.applyMatrix( lineMatrix );
+    };
+
     return arrow;
   }
 
