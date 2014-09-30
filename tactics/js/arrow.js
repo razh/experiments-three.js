@@ -6,8 +6,6 @@ var createArrow = (function() {
   var lineMatrix = new THREE.Matrix4();
   var matrix = new THREE.Matrix4();
 
-  var direction = new THREE.Vector3();
-
   function lerpPathFn( path, divisions ) {
     var geometry = path.createSpacedPointsGeometry( divisions );
 
@@ -23,6 +21,10 @@ var createArrow = (function() {
 
         geometry.verticesNeedUpdate = true;
         return geometry;
+      },
+
+      getTangent: function getTangent( t ) {
+        return path.getTangent( t );
       }
     };
   }
@@ -44,10 +46,13 @@ var createArrow = (function() {
 
     var arrow = new THREE.Object3D();
 
+    // Create path.
     var lerper = lerpPathFn( path, divisions );
     var lineGeometry = lerper.geometry;
     lineMatrix.makeRotationX( -Math.PI / 2 );
-    lineGeometry.applyMatrix( lineMatrix );
+
+    // Cache endpoint vertex.
+    var endpoint = lineGeometry.vertices[ lineGeometry.vertices.length - 1 ];
 
     var lineMaterial = new THREE.LineBasicMaterial({
       color: color,
@@ -57,11 +62,7 @@ var createArrow = (function() {
     var line = new THREE.Line( lineGeometry, lineMaterial );
     arrow.add( line );
 
-    // Continue arrow marker along direction of last subdivision.
-    var lastIndex = lineGeometry.vertices.length - 1;
-    var endpoint = lineGeometry.vertices[ lastIndex ];
-    var prev = lineGeometry.vertices[ lastIndex - 1 ];
-
+    // Create marker.
     // Marker shape.
     var markerShape = new THREE.Shape();
     var halfWidth = markerWidth / 2;
@@ -83,7 +84,6 @@ var createArrow = (function() {
     markerShape.lineTo( 0, markerLength );
 
     var markerGeometry = new THREE.ShapeGeometry( markerShape );
-
     // Rotate to XZ plane.
     matrix.makeRotationX( -Math.PI / 2 );
     markerGeometry.applyMatrix( matrix );
@@ -95,23 +95,30 @@ var createArrow = (function() {
 
     var markerMesh = new THREE.Mesh( markerGeometry, markerMaterial );
 
-    function setMarkerTransform() {
+    function setMarkerTransform( t ) {
+      t = t !== undefined ? t : 1;
+
       // Translate to endpoint.
       markerMesh.position.copy( endpoint );
+
       // Rotate to tangent.
-      direction.copy( endpoint ).sub( prev );
-      markerMesh.rotation.y = Math.atan2( direction.x, direction.z ) + Math.PI;
+      var tangent = lerper.getTangent( t );
+      markerMesh.rotation.y = -Math.atan2( tangent.x, tangent.y );
     }
 
-    setMarkerTransform();
     arrow.add( markerMesh );
 
     arrow.lerp = function( t ) {
+      t = t || 0;
+      // Resample line geometry.
       lerper.lerp( t );
       lineGeometry.applyMatrix( lineMatrix );
-      setMarkerTransform();
+      // Translate and rotate marker.
+      setMarkerTransform( t );
     };
 
+    // Initial lerp.
+    arrow.lerp( 1 );
     return arrow;
   }
 
