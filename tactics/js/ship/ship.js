@@ -66,10 +66,10 @@ var createGunGeometry = (function() {
     var gunLeft = new THREE.CylinderGeometry( gunRadius, gunRadius, gunLength, 16 );
     var gunRight = new THREE.CylinderGeometry( gunRadius, gunRadius, gunLength, 16 );
 
-    matrix.identity().makeTranslation( -gunOffsetX, 0, 0 );
+    matrix.makeTranslation( -gunOffsetX, 0, 0 );
     gunLeft.applyMatrix( matrix );
 
-    matrix.identity().makeTranslation( gunOffsetX, 0, 0 );
+    matrix.makeTranslation( gunOffsetX, 0, 0 );
     gunRight.applyMatrix( matrix );
 
     gunLeft.merge( gunRight );
@@ -85,9 +85,37 @@ var createGunGeometry = (function() {
 var createTurretGeometry = (function() {
   'use strict';
 
+  var matrix = new THREE.Matrix4();
+
   function createTurretGeometry() {
-    var turret = new THREE.BoxGeometry( 0.8, 0.8, 0.3 );
-    return turret;
+    var turretRadius = 0.5;
+    var turretHeight = 0.25;
+
+    var turretShape = new THREE.Shape();
+
+    // Pentagon.
+    var subdivAngle = 2 * Math.PI / 5;
+    var angle;
+
+    turretShape.moveTo( 0, turretRadius );
+    for ( var i = 1; i <= 5; i++ ) {
+      angle = i * subdivAngle;
+      turretShape.lineTo(
+        turretRadius * Math.sin( angle ),
+        turretRadius * Math.cos( angle )
+      );
+    }
+
+    var geometry = new THREE.ExtrudeGeometry( turretShape, {
+      amount: turretHeight,
+      bevelEnabled: false
+    });
+
+    // Center turret vertically.
+    matrix.makeTranslation( 0, 0, -turretHeight / 2 );
+    geometry.applyMatrix( matrix );
+
+    return geometry;
   }
 
   return createTurretGeometry;
