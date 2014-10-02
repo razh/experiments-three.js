@@ -61,15 +61,16 @@ var createGunGeometry = (function() {
     // 14 meter barrel length.
     var gunLength = 1.4;
     var gunOffsetX = 0.1;
-    var gunRadius = 0.04;
+    var gunOffsetY = 0.2;
+    var gunRadius = 0.03;
 
     var gunLeft = new THREE.CylinderGeometry( gunRadius, gunRadius, gunLength, 16 );
     var gunRight = new THREE.CylinderGeometry( gunRadius, gunRadius, gunLength, 16 );
 
-    matrix.makeTranslation( -gunOffsetX, 0, 0 );
+    matrix.makeTranslation( -gunOffsetX, gunOffsetY, 0 );
     gunLeft.applyMatrix( matrix );
 
-    matrix.makeTranslation( gunOffsetX, 0, 0 );
+    matrix.makeTranslation( gunOffsetX, gunOffsetY, 0 );
     gunRight.applyMatrix( matrix );
 
     gunLeft.merge( gunRight );
@@ -89,21 +90,29 @@ var createTurretGeometry = (function() {
 
   function createTurretGeometry() {
     var turretRadius = 0.5;
-    var turretHeight = 0.25;
+    var turretHeight = 0.2;
 
     var turretShape = new THREE.Shape();
-
-    // Pentagon.
-    var subdivAngle = 2 * Math.PI / 5;
-    var angle;
-
     turretShape.moveTo( 0, turretRadius );
-    for ( var i = 1; i <= 5; i++ ) {
-      angle = i * subdivAngle;
-      turretShape.lineTo(
-        turretRadius * Math.sin( angle ),
-        turretRadius * Math.cos( angle )
-      );
+
+    var points = [
+      [ 0.35, 1 ],
+      [ 0.7, 0.6 ],
+      [ 0.7, -0.1 ],
+      [ 0.35, -0.9 ]
+    ];
+
+    var point;
+    var i, il;
+    for ( i = 0, il = points.length; i < il; i++ ) {
+      point = points[i];
+      turretShape.lineTo( point[0] * turretRadius, point[1] * turretRadius );
+    }
+
+    // Mirror.
+    for ( i = points.length - 1; i >= 0; i-- ) {
+      point = points[i];
+      turretShape.lineTo( -point[0] * turretRadius, point[1] * turretRadius );
     }
 
     var geometry = new THREE.ExtrudeGeometry( turretShape, {
