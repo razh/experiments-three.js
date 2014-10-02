@@ -75,13 +75,13 @@
 
       // Aft turrets.
       if ( i > 1 ) {
-        turretMesh.rotation.x = Math.PI;
+        turretMesh.rotation.z = Math.PI;
       }
 
       shipMesh.add( turretMesh );
     }
 
-    light = new THREE.SpotLight( 0xffffff, 2 );
+    light = new THREE.SpotLight( 0xffffff, 1.5 );
     light.position.set( 4, 6, 16 );
     light.castShadow = true;
     light.shadowCameraNear = 6;

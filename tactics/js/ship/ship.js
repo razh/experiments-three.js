@@ -96,10 +96,10 @@ var createTurretGeometry = (function() {
     turretShape.moveTo( 0, turretRadius );
 
     var points = [
-      [ 0.35, 1 ],
-      [ 0.7, 0.6 ],
-      [ 0.7, -0.1 ],
-      [ 0.35, -0.9 ]
+      [ 0.3, 1 ],
+      [ 0.6, 0.8 ],
+      [ 0.6, 0 ],
+      [ 0.3, -0.9 ]
     ];
 
     var point;
@@ -116,8 +116,10 @@ var createTurretGeometry = (function() {
     }
 
     var geometry = new THREE.ExtrudeGeometry( turretShape, {
-      amount: turretHeight,
-      bevelEnabled: false
+      amount: 0,
+      bevelSize: 0.06,
+      bevelThickness: turretHeight,
+      bevelSegments: 1
     });
 
     // Center turret vertically.
