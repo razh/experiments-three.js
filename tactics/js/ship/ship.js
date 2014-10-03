@@ -41,7 +41,7 @@ var createShipGeometry = (function() {
     );
 
     return new THREE.ExtrudeGeometry( shape, {
-      amount: 0.4,
+      amount: 0.35,
       curveSegments: 32,
       bevelEnabled: false
     });
@@ -130,5 +130,65 @@ var createTurretGeometry = (function() {
   }
 
   return createTurretGeometry;
+
+}) ();
+
+/*exported createSmokestackGeometry*/
+var createSmokestackGeometry = (function() {
+  'use strict';
+
+  /**
+   * 2D capsule.
+   *
+   *   |- width -|
+   *      ____      ---
+   *    /      \     |
+   *   |        |    |
+   *   |        |  length
+   *   |        |    |
+   *   |        |    |
+   *    \ ____ /    ---
+   *
+   */
+  function createSmokestackGeometry() {
+    var width = 0.4;
+    var length = 0.35;
+
+    var halfWidth = width / 2;
+    var halfLength = length / 2;
+
+    var shape = new THREE.Shape();
+
+    // Counter-clockwise starting from top-right.
+    shape.moveTo( halfWidth, -halfLength );
+    // NOTE: Arc API is different from that of canvas.
+    shape.arc(
+      -halfWidth,
+      -(halfLength - halfWidth),
+      halfWidth,
+      Math.PI, 2 * Math.PI
+    );
+
+    shape.lineTo( -halfWidth, halfLength );
+    shape.arc(
+      halfWidth,
+      halfLength - halfWidth,
+      halfWidth,
+      0, Math.PI
+    );
+
+    // Close path.
+    shape.lineTo( halfWidth, -halfLength );
+
+    var geometry = new THREE.ExtrudeGeometry( shape, {
+      amount: 1,
+      bevelEnabled: false,
+      curveSegments: 4
+    });
+
+    return geometry;
+  }
+
+  return createSmokestackGeometry;
 
 }) ();

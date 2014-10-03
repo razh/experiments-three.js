@@ -1,4 +1,11 @@
-/*global THREE, requestAnimationFrame, createShipGeometry, createGunGeometry, createTurretGeometry*/
+/*global
+THREE,
+requestAnimationFrame,
+createShipGeometry,
+createGunGeometry,
+createTurretGeometry,
+createSmokestackGeometry
+*/
 (function( window, document, undefined ) {
   'use strict';
 
@@ -44,33 +51,36 @@
     shipMesh.rotation.x = -Math.PI / 2;
     scene.add( shipMesh );
 
+    var shipHeight = 0.35;
+
     // (x, y) coordinates.
     var turretPositions = [
       // Aft turrets.
       [ 0, 4 ],
-      [ 0, 1 ],
+      [ 0, 1.2 ],
       // Wing turrets.
-      [ 0.7, -1.5 ],
-      [ -0.7, -1.5 ],
+      [ 0.7, -1.3 ],
+      [ -0.7, -1.3 ],
       // Fore turret.
       [ 0, -4 ]
     ];
 
     turretGeometry = createTurretGeometry();
     gunGeometry = createGunGeometry();
-    for ( var i = 0; i < 5; i++ ) {
+    for ( var i = 0; i < turretPositions.length; i++ ) {
       turretMesh = new THREE.Mesh( turretGeometry, shipMaterial );
       turretMesh.castShadow = true;
       turretMesh.position.set(
         turretPositions[i][0],
         turretPositions[i][1],
-        0.5
+        // shipHeight + turretHeight / 2.
+        shipHeight + 0.1
       );
 
       gunMesh = new THREE.Mesh( gunGeometry, shipMaterial );
       gunMesh.castShadow = true;
       gunMesh.receiveShadow = true;
-      gunMesh.position.y = 0.4;
+      gunMesh.position.y = shipHeight;
       turretMesh.add( gunMesh );
 
       // Aft turrets.
@@ -79,6 +89,23 @@
       }
 
       shipMesh.add( turretMesh );
+    }
+
+    // (y, z) coordinates.
+    var smokestackPositions = [
+      [ 0, shipHeight ],
+      [ -2.4, shipHeight ]
+    ];
+
+    var smokestackGeometry = createSmokestackGeometry();
+    var smokestackMesh;
+    for ( i = 0; i < smokestackPositions.length; i++ ) {
+      smokestackMesh = new THREE.Mesh( smokestackGeometry, shipMaterial );
+      smokestackMesh.castShadow = true;
+      smokestackMesh.receiveShadow = true;
+      smokestackMesh.position.y = smokestackPositions[i][0];
+      smokestackMesh.position.z = smokestackPositions[i][1];
+      shipMesh.add( smokestackMesh );
     }
 
     light = new THREE.SpotLight( 0xffffff, 1.5 );
