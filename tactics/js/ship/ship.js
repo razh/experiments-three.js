@@ -192,3 +192,34 @@ var createSmokestackGeometry = (function() {
   return createSmokestackGeometry;
 
 }) ();
+
+/*exported createFrontDeckGeometry*/
+var createFrontDeckGeometry = (function() {
+  'use strict';
+
+  function splitBezierCurve( v0, v1, v2, v3, t ) {
+    // Lerp control points.
+    var v01 = v0.clone().lerp( v1, t );
+    var v12 = v1.clone().lerp( v2, t );
+    var v23 = v2.clone().lerp( v3, t );
+
+    // Second iteration.
+    var v012 = v01.clone().lerp( v12, t );
+    var v123 = v12.clone().lerp( v23, t );
+
+    // Finasl iteration.
+    var v0123 = v012.clone().lerp( v123, t );
+
+    return [
+      // First curve, from 0 to t.
+      [ v0, v01, v012, v0123 ],
+      // Second curve, from t to 1.
+      [ v0123, v123, v23, v3 ]
+    ];
+  }
+
+  function createFrontDeckGeometry() {}
+
+  return createFrontDeckGeometry;
+
+}) ();
