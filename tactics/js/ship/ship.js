@@ -218,7 +218,61 @@ var createFrontDeckGeometry = (function() {
     ];
   }
 
-  function createFrontDeckGeometry() {}
+  function createFrontDeckGeometry() {
+    var shape = new THREE.Shape();
+
+    // NOTE: These values are the same as the ship geometry.
+    var width = 2.5;
+    var length = 16;
+
+    var halfWidth = width / 2;
+    var halfLength = length / 2;
+
+    var t = 0.5;
+
+    var rightCurve = [
+      new THREE.Vector2( 0, halfLength ),
+      new THREE.Vector2( halfWidth / 3, halfLength ),
+      new THREE.Vector2( halfWidth, 2 / 3 * halfLength ),
+      new THREE.Vector2( halfWidth, 0 ),
+      t
+    ];
+
+    rightCurve = splitBezierCurve.apply( null, rightCurve )[0];
+
+    var leftCurve = [
+      new THREE.Vector2( -halfWidth, 0 ),
+      new THREE.Vector2( -halfWidth, 2 / 3 * halfLength ),
+      new THREE.Vector2( -halfWidth / 3, halfLength ),
+      new THREE.Vector2( 0, halfLength ),
+      1 - t
+    ];
+
+    leftCurve = splitBezierCurve.apply( null, leftCurve )[1];
+
+    shape.moveTo( 0, halfLength );
+
+    shape.bezierCurveTo(
+      rightCurve[1].x, rightCurve[1].y,
+      rightCurve[2].x, rightCurve[2].y,
+      rightCurve[3].x, rightCurve[3].y
+    );
+
+    shape.lineTo( leftCurve[0].x, leftCurve[0].y );
+
+    shape.bezierCurveTo(
+      leftCurve[1].x, leftCurve[1].y,
+      leftCurve[2].x, leftCurve[2].y,
+      leftCurve[3].x, leftCurve[3].y
+    );
+
+    var geometry = new THREE.ExtrudeGeometry( shape, {
+      amount: 0.2,
+      bevelEnabled: false
+    });
+
+    return geometry;
+  }
 
   return createFrontDeckGeometry;
 

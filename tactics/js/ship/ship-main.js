@@ -4,7 +4,8 @@ requestAnimationFrame,
 createShipGeometry,
 createGunGeometry,
 createTurretGeometry,
-createSmokestackGeometry
+createSmokestackGeometry,
+createFrontDeckGeometry
 */
 (function( window, document, undefined ) {
   'use strict';
@@ -107,6 +108,11 @@ createSmokestackGeometry
       smokestackMesh.position.z = smokestackPositions[i][1];
       shipMesh.add( smokestackMesh );
     }
+
+    var frontDeckGeometry = createFrontDeckGeometry();
+    var frontDeckMesh = new THREE.Mesh( frontDeckGeometry, shipMaterial );
+    frontDeckMesh.position.z = shipHeight;
+    shipMesh.add( frontDeckMesh );
 
     light = new THREE.SpotLight( 0xffffff, 1.5 );
     light.position.set( 4, 6, 16 );
