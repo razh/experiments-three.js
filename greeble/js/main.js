@@ -6,12 +6,37 @@
 
   var scene, camera, controls, renderer;
 
+  // Generic test greebling.
+  function greeblerHelper( geometry ) {
+    var greebles = greeble( geometry, {
+      count: 300,
+      fn: function() {
+        return new THREE.BoxGeometry(
+          THREE.Math.randFloat( 0.1, 1.5 ),
+          THREE.Math.randFloat( 0.1, 1.5 ),
+          THREE.Math.randFloat( 0.1, 1.5 )
+        );
+      }
+    });
+
+    if ( greebles ) {
+      geometry.merge( greebles );
+    }
+
+    return new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( {
+      color: '#dde',
+      specular: '#fff',
+      shading: THREE.FlatShading
+    }));
+  }
+
   function init() {
     container = document.createElement( 'div' );
     document.body.appendChild( container );
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setClearColor( 0x000000 );
     container.appendChild( renderer.domElement );
 
     scene = new THREE.Scene();
@@ -22,25 +47,24 @@
 
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
+    // Icosahedron greebled.
     var geometry = new THREE.IcosahedronGeometry( 2, 1 );
+    scene.add( greeblerHelper( geometry ) );
 
-    geometry = greeble( geometry, {
-      count: 300
-    });
-
-    var mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( {
-      color: 0xdddddd,
-      specular: 0xffffff,
-      shading: THREE.FlatShading
-    }));
-
+    // Plane greebled.
+    geometry = new THREE.PlaneGeometry( 16, 16 );
+    var mesh = greeblerHelper( geometry );
+    mesh.position.y = -3;
+    mesh.rotation.x = -Math.PI / 2;
     scene.add( mesh );
 
-    var light = new THREE.DirectionalLight( 0xffffff, 0.5 );
-    light.position.set( 1, 1, 1 );
+    scene.fog = new THREE.FogExp2( '#000', 0.1 );
+
+    var light = new THREE.DirectionalLight( '#e85', 0.5 );
+    light.position.set( 1, 1, 0 );
     scene.add( light );
 
-    scene.add( new THREE.AmbientLight( 0x333333 ) );
+    scene.add( new THREE.AmbientLight( '#325' ) );
   }
 
   function animate() {
@@ -57,7 +81,15 @@
     return function greeble( geometry, options ) {
       options = options || {};
 
-      var count = options.count || 0;
+      var count = options.count;
+      var fn = options.fn;
+
+
+      if ( !count || !fn ) {
+        return;
+      }
+
+      var greebles = new THREE.Geometry();
 
       var data = randomPointsNormalsInGeometry( geometry, count );
       var points = data.points;
@@ -66,18 +98,17 @@
       points.forEach(function( point, index ) {
         var normal = normals[ index ];
 
-        var tempGeometry = new THREE.BoxGeometry( 0.5, 0.5, 1 );
-
+        // Get orientation and position.
         matrix.identity()
           .lookAt( origin, normal, up )
           .setPosition( point );
 
+        var tempGeometry = fn();
         tempGeometry.applyMatrix( matrix );
-
-        geometry.merge( tempGeometry );
+        greebles.merge( tempGeometry );
       });
 
-      return geometry;
+      return greebles;
     };
   }) ();
 
