@@ -4,7 +4,7 @@
 
   var container;
 
-  var scene, camera, renderer;
+  var scene, camera, controls, renderer;
 
   function init() {
     container = document.createElement( 'div' );
@@ -20,10 +20,27 @@
     camera.position.set( 0, 0, 8 );
     scene.add( camera );
 
-    var boxGeometry = new THREE.BoxGeometry( 1, 1, 1 );
-    greeble( boxGeometry, {
-      count: 10
+    controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+    var geometry = new THREE.IcosahedronGeometry( 2, 1 );
+
+    geometry = greeble( geometry, {
+      count: 300
     });
+
+    var mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( {
+      color: 0xdddddd,
+      specular: 0xffffff,
+      shading: THREE.FlatShading
+    }));
+
+    scene.add( mesh );
+
+    var light = new THREE.DirectionalLight( 0xffffff, 0.5 );
+    light.position.set( 1, 1, 1 );
+    scene.add( light );
+
+    scene.add( new THREE.AmbientLight( 0x333333 ) );
   }
 
   function animate() {
@@ -31,12 +48,38 @@
     requestAnimationFrame( animate );
   }
 
-  function greeble( geometry, options ) {
-    options = options || {};
+  var greeble = (function() {
+    var matrix = new THREE.Matrix4();
 
-    var count = options.count || 0;
-    console.log( randomPointsNormalsInGeometry( geometry, count ) );
-  }
+    var origin = new THREE.Vector3();
+    var up = new THREE.Vector3( 0, 1, 0 );
+
+    return function greeble( geometry, options ) {
+      options = options || {};
+
+      var count = options.count || 0;
+
+      var data = randomPointsNormalsInGeometry( geometry, count );
+      var points = data.points;
+      var normals = data.normals;
+
+      points.forEach(function( point, index ) {
+        var normal = normals[ index ];
+
+        var tempGeometry = new THREE.BoxGeometry( 0.5, 0.5, 1 );
+
+        matrix.identity()
+          .lookAt( origin, normal, up )
+          .setPosition( point );
+
+        tempGeometry.applyMatrix( matrix );
+
+        geometry.merge( tempGeometry );
+      });
+
+      return geometry;
+    };
+  }) ();
 
   /**
    * Copies of various utility functions from THREE.GeometryUtils.
