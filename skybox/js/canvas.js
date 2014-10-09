@@ -27,17 +27,83 @@
       var canvas = canvases[ key ];
       canvas.width = width;
       canvas.height = height;
-
-      var ctx = contexts[ key ];
-      ctx.fillStyle = 'rgb(' +
-        Math.round( Math.random() * 255 ) + ',' +
-        Math.round( Math.random() * 255 ) + ',' +
-        Math.round( Math.random() * 255 ) +
-      ')';
-
-      ctx.fillRect( 0, 0, width, height );
     });
   }
+
+  function drawSkyboxTextures( textureFns ) {
+    Object.keys( textureFns ).forEach(function( key ) {
+      var ctx = contexts[ key ];
+      if ( !ctx ) {
+        return;
+      }
+
+      textureFns[ key ]( ctx );
+    });
+  }
+
+  function fillContext( ctx, style ) {
+    ctx.fillStyle = style;
+    ctx.fillRect( 0, 0, ctx.canvas.width, ctx.canvas.height );
+  }
+
+  function fillRandomColor( ctx ) {
+    var color = 'rgb(' +
+      Math.round( Math.random() * 255 ) + ',' +
+      Math.round( Math.random() * 255 ) + ',' +
+      Math.round( Math.random() * 255 ) +
+    ')';
+
+    fillContext( ctx, color );
+  }
+
+  function createRandomSkyboxTextures() {
+    return {
+      left: fillRandomColor,
+      right: fillRandomColor,
+      top: fillRandomColor,
+      bottom: fillRandomColor,
+      back: fillRandomColor,
+      front: fillRandomColor
+    };
+  }
+
+  var createGradientSkyboxTextures = (function() {
+    var _canvas = document.createElement( 'canvas' );
+    var _ctx = _canvas.getContext( '2d' );
+
+    // From top to bottom.
+    return function( height, colorStops ) {
+      var topColor = colorStops[0][1];
+      var bottomColor = colorStops[ colorStops.length - 1 ][1];
+
+      // Construct gradient from color stops.
+      var gradient = _ctx.createLinearGradient( 0, height, 0, 0 );
+
+      colorStops.forEach(function( colorStop ) {
+        var offset = colorStop[0];
+        var color = colorStop[1];
+
+        gradient.addColorStop( offset, color );
+      });
+
+      function fillGradient( ctx ) {
+        fillContext( ctx, gradient );
+      }
+
+      return {
+        left: fillGradient,
+        right: fillGradient,
+        top: function( ctx ) {
+          fillContext( ctx, topColor );
+        },
+        bottom: function( ctx ) {
+          fillContext( ctx, bottomColor );
+        },
+        back: fillGradient,
+        front: fillGradient
+      };
+    };
+  }) ();
 
   function init() {
     container = document.createElement( 'div' );
@@ -60,6 +126,13 @@
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
     setSkyboxTextureDimensions( 512, 512 );
+    drawSkyboxTextures( createRandomSkyboxTextures() );
+    drawSkyboxTextures(
+      createGradientSkyboxTextures( 512, [
+        [ 0, '#ddd' ],
+        [ 1, '#333' ]
+      ])
+    );
 
     var textures = Object.keys( canvases ).map(function( key ) {
       return canvases[ key ];
