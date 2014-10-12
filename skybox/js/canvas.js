@@ -155,8 +155,20 @@
     var mesh = new THREE.Mesh( new THREE.BoxGeometry( 100, 100, 100 ), material );
     skyboxScene.add( mesh );
 
-    mesh = new THREE.Mesh( new THREE.BoxGeometry( 1, 1, 1 ) );
+    var envMaterial = new THREE.MeshPhongMaterial({
+      color: '#ddd',
+      envMap: textureCube
+    });
+
+    mesh = new THREE.Mesh( new THREE.SphereGeometry( 2, 32, 32 ), envMaterial );
     scene.add( mesh );
+
+    var light = new THREE.DirectionalLight( 0xffffff );
+    light.position.set( 8, 8, 0 );
+    scene.add( light );
+
+    light = new THREE.AmbientLight( 0x888888 );
+    scene.add( light );
   }
 
   function animate() {
