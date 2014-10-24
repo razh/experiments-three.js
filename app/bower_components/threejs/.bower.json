@@ -2,7 +2,7 @@
   "name": "three.js",
   "homepage": "http://threejs.org/",
   "description": "JavaScript 3D library",
-  "main": "build/three.min.js",
+  "main": "build/three.js",
   "keywords": [
     "three",
     "threejs",
@@ -22,13 +22,13 @@
     "utils",
     "LICENSE"
   ],
-  "_release": "r68",
+  "_release": "r69",
   "_resolution": {
     "type": "tag",
-    "tag": "r68",
-    "commit": "1769fbfc6c994b51a54c15a5c096855fd3cb8a1a"
+    "tag": "r69",
+    "commit": "2d59713328c421c3edfc3feda1b116af13140b94"
   },
   "_source": "git://github.com/mrdoob/three.js.git",
-  "_target": "r68",
+  "_target": "r69",
   "_originalSource": "threejs"
 }
