@@ -1,5 +1,3 @@
-precision mediump float;
-
 uniform sampler2D tMatCap;
 
 varying vec2 vN;

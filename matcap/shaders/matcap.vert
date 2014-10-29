@@ -1,10 +1,3 @@
-uniform mat4 modelViewMatrix;
-uniform mat4 projectionMatrix;
-uniform mat3 normalMatrix;
-
-attribute vec3 position;
-attribute vec3 normal;
-
 varying vec2 vN;
 
 void main() {

@@ -1,4 +1,4 @@
-/*global THREE, requestAnimationFrame*/
+/*global THREE, requestAnimationFrame, Promise, fetch*/
 (function() {
   'use strict';
 
@@ -6,7 +6,9 @@
 
   var scene, camera, controls, renderer;
 
-  var mesh;
+  var mesh, texture,  material;
+
+  var shaders = {};
 
   function init() {
     container = document.createElement( 'div' );
@@ -24,9 +26,17 @@
 
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
+    texture = new THREE.Texture( image );
+
+    material = new THREE.ShaderMaterial({
+      uniforms: { tMatCap: { type: 't', value: texture } },
+      vertexShader: shaders.vertex,
+      fragmentShader: shaders.fragment
+    });
+
     mesh = new THREE.Mesh(
-      new THREE.IcosahedronGeometry( 1, 3 ),
-      new THREE.MeshBasicMaterial({ color: '#fff' })
+      new THREE.TorusGeometry( 1, 0.4, 64, 48 ),
+      material
     );
 
     scene.add( mesh );
@@ -37,7 +47,34 @@
     requestAnimationFrame( animate );
   }
 
-  init();
-  animate();
+  Promise.all([
+    fetch( './shaders/matcap.vert' ),
+    fetch( './shaders/matcap.frag' )
+  ]).then(function( responses ) {
+    shaders.vertex = responses[0].body;
+    shaders.fragment = responses[1].body;
+
+    init();
+    animate();
+  });
+
+
+  var image = new Image();
+
+  document.addEventListener( 'drop', function( event ) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    image.onload = function() {
+      texture.needsUpdate = true;
+    };
+
+    image.src = URL.createObjectURL( event.dataTransfer.files[0] );
+  });
+
+  document.addEventListener( 'dragover', function( event ) {
+    event.stopPropagation();
+    event.preventDefault();
+  });
 
 }) ();
