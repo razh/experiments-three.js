@@ -22,10 +22,14 @@
 
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
-    var material = new THREE.MeshPhongMaterial({
-      color: '#777',
-      specular: '#fff',
-    });
+    var materialConfig = {
+      ambient: '#777777',
+      color: '#777777',
+      specular: '#ffffff',
+      shininess: 30
+    };
+
+    var material = new THREE.MeshPhongMaterial( materialConfig );
 
     var mesh = new THREE.Mesh(
       new THREE.IcosahedronGeometry( 2, 4 ),
@@ -41,11 +45,28 @@
 
     var gui = new dat.GUI({ width: 320 });
 
-    gui.add( areaLight, 'width', 1, 8 );
-    gui.add( areaLight, 'height', 1, 8 );
-    gui.add( areaLight, 'constantAttenuation', 0, 2 );
-    gui.add( areaLight, 'linearAttenuation', 0, 2 );
-    gui.add( areaLight, 'quadraticAttenuation', 0, 2 );
+    var lightFolder = gui.addFolder( 'Area Light' );
+    lightFolder.add( areaLight, 'width', 1, 8 );
+    lightFolder.add( areaLight, 'height', 1, 8 );
+    lightFolder.add( areaLight, 'intensity', 1, 4 );
+    lightFolder.add( areaLight, 'constantAttenuation', 0, 2 );
+    lightFolder.add( areaLight, 'linearAttenuation', 0, 2 );
+    lightFolder.add( areaLight, 'quadraticAttenuation', 0, 2 );
+    lightFolder.open();
+
+    function updateMaterial() {
+      mesh.material = new THREE.MeshPhongMaterial( materialConfig );
+      // HACK: This forces a reinitialization of the material within the
+      // deferred context.
+      mesh.userData.deferredInitialized = false;
+    }
+
+    var materialFolder = gui.addFolder( 'Material' );
+    materialFolder.addColor( materialConfig, 'ambient' ).onChange( updateMaterial );
+    materialFolder.addColor( materialConfig, 'color' ).onChange( updateMaterial );
+    materialFolder.addColor( materialConfig, 'specular' ).onChange( updateMaterial );
+    materialFolder.add( materialConfig, 'shininess', 1, 1000 ).onChange( updateMaterial );
+    materialFolder.open();
   }
 
   function animate() {
