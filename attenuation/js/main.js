@@ -43,9 +43,21 @@
     areaLight.normal.subVectors( mesh.position, areaLight.position );
     scene.add( areaLight );
 
+    var lightConfig = {
+      color: areaLight.color.getStyle()
+    };
+
+    function updateColor( object, property ) {
+      return function( newValue ) {
+        object[ property ].set( newValue );
+      };
+    }
+
     var gui = new dat.GUI({ width: 320 });
 
     var lightFolder = gui.addFolder( 'Area Light' );
+    lightFolder.addColor( lightConfig, 'color' )
+      .onChange( updateColor( areaLight, 'color' ) );
     lightFolder.add( areaLight, 'width', 1, 8 );
     lightFolder.add( areaLight, 'height', 1, 8 );
     lightFolder.add( areaLight, 'intensity', 1, 4 );
