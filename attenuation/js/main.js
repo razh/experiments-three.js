@@ -23,17 +23,15 @@
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
     var materialConfig = {
-      ambient: '#777777',
-      color: '#777777',
-      specular: '#ffffff',
+      ambient: '#777',
+      color: '#777',
+      specular: '#fff',
       shininess: 30
     };
 
-    var material = new THREE.MeshPhongMaterial( materialConfig );
-
     var mesh = new THREE.Mesh(
       new THREE.IcosahedronGeometry( 2, 4 ),
-      material
+      new THREE.MeshPhongMaterial( materialConfig )
     );
 
     scene.add( mesh );

@@ -25,18 +25,35 @@
 
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
+    var materialConfig = {
+      ambient: '#fdf',
+      color: '#fdf',
+      specular: '#444',
+      shininess: 200
+    };
+
     mesh = new THREE.Mesh(
       new THREE.IcosahedronGeometry( 1, 4 ),
-      new THREE.MeshPhongMaterial({
-        color: '#fdf',
-        specular: '#444',
-        shininess: 200
-      })
+      new THREE.MeshPhongMaterial( materialConfig )
     );
 
     scene.add( mesh );
 
     var gui = new dat.GUI({ width: 320 });
+
+    function updateMaterial() {
+      mesh.material = new THREE.MeshPhongMaterial( materialConfig );
+      // HACK: This forces a reinitialization of the material within the
+      // deferred context.
+      mesh.userData.deferredInitialized = false;
+    }
+
+    var materialFolder = gui.addFolder( 'Material' );
+    materialFolder.addColor( materialConfig, 'ambient' ).onChange( updateMaterial );
+    materialFolder.addColor( materialConfig, 'color' ).onChange( updateMaterial );
+    materialFolder.addColor( materialConfig, 'specular' ).onChange( updateMaterial );
+    materialFolder.add( materialConfig, 'shininess', 1, 1000 ).onChange( updateMaterial );
+    materialFolder.open();
 
     function createAreaLightFolder( name, light ) {
       var folder = gui.addFolder( name );
