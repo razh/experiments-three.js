@@ -3,12 +3,11 @@
   'use strict';
 
   var container;
-
   var scene, camera, controls, renderer;
-
   var mesh, texture,  material;
-
   var shaders = {};
+
+  var image = new Image();
 
   function init() {
     container = document.createElement( 'div' );
@@ -27,6 +26,9 @@
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
     texture = new THREE.Texture( image );
+    image.onload = function() {
+      texture.needsUpdate = true;
+    };
 
     material = new THREE.ShaderMaterial({
       uniforms: { tMatCap: { type: 't', value: texture } },
@@ -54,20 +56,18 @@
     shaders.vertex = responses[0].body;
     shaders.fragment = responses[1].body;
 
+    // Use default texture.
+    image.src = createDefaultTexture().toDataURL();
+
     init();
     animate();
   });
 
 
-  var image = new Image();
 
   document.addEventListener( 'drop', function( event ) {
     event.stopPropagation();
     event.preventDefault();
-
-    image.onload = function() {
-      texture.needsUpdate = true;
-    };
 
     image.src = URL.createObjectURL( event.dataTransfer.files[0] );
   });
@@ -83,5 +83,37 @@
 
     renderer.setSize( window.innerWidth, window.innerHeight );
   });
+
+
+  function createDefaultTexture() {
+    var canvas = document.createElement( 'canvas' );
+    var ctx = canvas.getContext( '2d' );
+
+    var size = 256;
+    var radius = size / 2;
+
+    canvas.width = canvas.height = size;
+
+    ctx.fillStyle = '#000';
+    ctx.fillRect( 0, 0, size, size );
+
+    ctx.beginPath();
+    ctx.arc( radius, radius, radius, 0, 2 * Math.PI );
+    ctx.fillStyle = '#222';
+    ctx.fill();
+
+    var gradient = ctx.createRadialGradient(
+      radius, 0.5 * radius, 0.25 * radius,
+      radius, radius, radius
+    );
+
+    gradient.addColorStop( 0, '#fff' );
+    gradient.addColorStop( 1, 'transparent' );
+
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    return canvas;
+  }
 
 }) ();
