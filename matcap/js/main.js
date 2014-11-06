@@ -8,6 +8,7 @@
   var shaders = {};
 
   var image = new Image();
+  image.crossOrigin = '';
 
   function init() {
     container = document.createElement( 'div' );
@@ -63,13 +64,29 @@
     animate();
   });
 
+  function getURL( event ) {
+    var files = event.dataTransfer.files;
+    var file = files[0];
+    if ( file ) {
+      return URL.createObjectURL( file );
+    }
 
+    var url = event.dataTransfer.getData( 'url' );
+    if ( url ) {
+      return url;
+    }
+
+    return;
+  }
 
   document.addEventListener( 'drop', function( event ) {
     event.stopPropagation();
     event.preventDefault();
 
-    image.src = URL.createObjectURL( event.dataTransfer.files[0] );
+    var url = getURL( event );
+    if ( url ) {
+      image.src = url;
+    }
   });
 
   document.addEventListener( 'dragover', function( event ) {
