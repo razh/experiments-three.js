@@ -1,4 +1,4 @@
-/*global THREE, requestAnimationFrame*/
+/*global THREE, requestAnimationFrame, Promise, fetch*/
 (function() {
   'use strict';
 
@@ -6,7 +6,10 @@
 
   var scene, camera, controls, renderer;
 
-  var mesh;
+  var mesh, material;
+  var light;
+
+  var shaders = {};
 
   function init() {
     container = document.createElement( 'div' );
@@ -24,6 +27,16 @@
 
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
+    // Create custom BRDF approximation shader.
+    var phong = THREE.ShaderLib.phong;
+    var uniforms = THREE.UniformsUtils.clone( phong.uniforms );
+
+    material = new THREE.ShaderMaterial({
+      uniforms: uniforms,
+      vertexShader: phong.vertexShader,
+      fragmentShader: phong.fragmentShader
+    });
+
     mesh = new THREE.Mesh(
       new THREE.BoxGeometry( 1, 1, 1 ),
       new THREE.MeshBasicMaterial({ color: '#fff' })
@@ -37,7 +50,12 @@
     requestAnimationFrame( animate );
   }
 
-  init();
-  animate();
+  fetch( './shaders/envBRDFApprox.frag' )
+  .then(function( response ) {
+    console.log( response );
+
+    init();
+    animate();
+  });
 
 }) ();
