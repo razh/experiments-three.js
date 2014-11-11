@@ -9,7 +9,7 @@ void main() {
   // Normal vector.
   vec3 n = normalize( normalMatrix * normal );
 
-  vec3 r = reflect( e, n);
+  vec3 r = reflect( e, n );
 
   // Use straight multiplication instead of pow() due to iOS 8 artifacts.
   float m = 2.0 * sqrt(
