@@ -8,7 +8,6 @@
   var shaders = {};
 
   var image = new Image();
-  image.crossOrigin = '';
 
   function init() {
     container = document.createElement( 'div' );
@@ -51,8 +50,8 @@
   }
 
   Promise.all([
-    fetch( './shaders/matcap.vert' ),
-    fetch( './shaders/matcap.frag' )
+    fetch( './shaders/matcap-phong.vert' ),
+    fetch( './shaders/matcap-phong.frag' )
   ]).then(function( responses ) {
     shaders.vertex = responses[0].body;
     shaders.fragment = responses[1].body;
@@ -85,6 +84,7 @@
 
     var url = getURL( event );
     if ( url ) {
+      image.crossOrigin = '';
       image.src = url;
     }
   });
