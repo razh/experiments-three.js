@@ -26,6 +26,7 @@
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
     texture = new THREE.Texture( image );
+    texture.anisotropy = renderer.getMaxAnisotropy();
     image.onload = function() {
       texture.needsUpdate = true;
     };
