@@ -23,8 +23,8 @@ var Grid = (function() {
     canvas.height = height;
 
     var x, y;
-    for ( y = 0; y < widthSegments; y++ ) {
-      for ( x = 0; x < heightSegments; x++ ) {
+    for ( y = 0; y < heightSegments; y++ ) {
+      for ( x = 0; x < widthSegments; x++ ) {
         ctx.fillStyle = callback( x, y );
         ctx.fillRect(
           x * segmentWidth, y * segmentHeight,
