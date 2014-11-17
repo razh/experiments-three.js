@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Distortion Grids</title>
+
+  <style>
+    body {
+      margin: 0;
+      background-color: #222;
+    }
+  </style>
+</head>
+<body>
+  <script src="./js/grids.js"></script>
+  <script>
+    'use strict';
+
+    var grid = Grid.checkerboard({
+      size: 1024,
+      segments: 16,
+      colors: [ '#222', '#555' ]
+    });
+
+    var image = new Image();
+    image.src = grid.toDataURL();
+    document.body.appendChild( image );
+  </script>
+</body>
+</html>
