@@ -6,11 +6,8 @@ varying vec3 n;
 void main() {
   vec3 r = reflect( e, n );
 
-  float m = 2.0 * sqrt(
-    r.x * r.x +
-    r.y * r.y +
-    ( r.z + 1.0 ) * ( r.z + 1.0 )
-  );
+  r.z += 1.0;
+  float m = 2.0 * length( r );
 
   vec2 vN = r.xy / m + 0.5;
 
