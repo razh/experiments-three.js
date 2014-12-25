@@ -51,11 +51,15 @@
   }
 
   Promise.all([
-    fetch( './shaders/matcap-phong.vert' ),
-    fetch( './shaders/matcap-phong.frag' )
-  ]).then(function( responses ) {
-    shaders.vertex = responses[0].body;
-    shaders.fragment = responses[1].body;
+    './shaders/matcap-phong.vert',
+    './shaders/matcap-phong.frag'
+  ].map(function( url ) {
+    return fetch( url ).then(function( response ) {
+      return response.text();
+    });
+  })).then(function( responses ) {
+    shaders.vertex = responses[0];
+    shaders.fragment = responses[1];
 
     // Use default texture.
     image.src = createDefaultTexture().toDataURL();
