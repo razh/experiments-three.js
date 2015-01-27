@@ -4,10 +4,15 @@
 
   var container;
   var scene, camera, controls, renderer;
-  var mesh, texture,  material;
+  var mesh, texture, material;
+  var toroidMesh;
   var shaders = {};
 
   var image = new Image();
+
+  var config = {
+    toroid: false
+  };
 
   function init() {
     container = document.createElement( 'div' );
@@ -43,7 +48,24 @@
       material
     );
 
+    toroidMesh = new THREE.Mesh(
+      new Toroid( 4, 1, 0.4, 64, 256 ),
+      material
+    );
+
+    toroidMesh.visible = false;
+
     scene.add( mesh );
+    scene.add( toroidMesh );
+
+    // Add GUI to toggle between torus and toroid meshes.
+    var gui = new dat.GUI();
+
+    gui.add( config, 'toroid' )
+      .onChange(function( toroidVisible ) {
+        mesh.visible = !toroidVisible;
+        toroidMesh.visible = toroidVisible;
+      });
   }
 
   function animate() {
