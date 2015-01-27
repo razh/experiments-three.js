@@ -22,13 +22,13 @@
     "utils",
     "LICENSE"
   ],
-  "_release": "r69",
+  "_release": "r70",
   "_resolution": {
     "type": "tag",
-    "tag": "r69",
-    "commit": "2d59713328c421c3edfc3feda1b116af13140b94"
+    "tag": "r70",
+    "commit": "59de65c0e6708e28936ca90053ae19f402003c31"
   },
   "_source": "git://github.com/mrdoob/three.js.git",
-  "_target": "r69",
+  "_target": "r70",
   "_originalSource": "threejs"
 }

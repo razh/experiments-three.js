@@ -15,8 +15,8 @@
     "tests"
   ],
   "dependencies": {
-    "threejs": "r69",
+    "threejs": "r70",
     "dat-gui": "~0.5.0",
-    "fetch": "~0.3.2"
+    "fetch": "~0.7.0"
   }
 }
