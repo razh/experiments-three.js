@@ -35,6 +35,7 @@
     document.body.appendChild( container );
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
     renderer.setClearColor( 0x000000 );
     container.appendChild( renderer.domElement );

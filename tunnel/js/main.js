@@ -15,6 +15,7 @@
         vh = 320;
 
     renderer = new THREE.WebGLRenderer();
+    renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( vw, vh );
     container.appendChild( renderer.domElement );
 

@@ -31,6 +31,7 @@ createFrontDeckGeometry
     document.body.appendChild( container );
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
     renderer.shadowMapEnabled = true;
     container.appendChild( renderer.domElement );
