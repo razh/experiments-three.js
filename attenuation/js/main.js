@@ -1,4 +1,4 @@
-/*global THREE, requestAnimationFrame, dat*/
+/*global THREE, dat*/
 (function() {
   'use strict';
 

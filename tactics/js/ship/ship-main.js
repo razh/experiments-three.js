@@ -1,6 +1,5 @@
 /*global
 THREE,
-requestAnimationFrame,
 createShipGeometry,
 createGunGeometry,
 createTurretGeometry,

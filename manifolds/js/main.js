@@ -1,4 +1,4 @@
-/*globals THREE, requestAnimationFrame, dat*/
+/*globals THREE, dat*/
 (function( window, document, undefined ) {
   'use strict';
 

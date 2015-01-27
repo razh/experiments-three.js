@@ -1,4 +1,4 @@
-/*global THREE, requestAnimationFrame, createArrow*/
+/*global THREE, createArrow*/
 (function( window, document, undefined ) {
   'use strict';
 

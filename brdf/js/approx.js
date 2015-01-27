@@ -1,4 +1,4 @@
-/*global THREE, requestAnimationFrame, Promise, fetch*/
+/*global THREE, fetch*/
 (function() {
   'use strict';
 
