@@ -149,7 +149,6 @@ var greeble = (function () {
     var count = options.count;
     var fn = options.fn;
 
-
     if ( !count || !fn ) {
       return;
     }

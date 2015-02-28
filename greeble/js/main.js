@@ -23,11 +23,19 @@
       geometry.merge( greebles );
     }
 
-    return new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( {
+    geometry.computeFaceNormals();
+    geometry.computeVertexNormals();
+
+    var mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( {
       color: '#dde',
       specular: '#fff',
       shading: THREE.FlatShading
     }));
+
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+
+    return mesh;
   }
 
   function init() {
@@ -38,6 +46,7 @@
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
     renderer.setClearColor( 0x000000 );
+    renderer.shadowMapEnabled = true;
     container.appendChild( renderer.domElement );
 
     scene = new THREE.Scene();
@@ -50,19 +59,21 @@
 
     // Icosahedron greebled.
     var geometry = new THREE.IcosahedronGeometry( 2, 1 );
-    scene.add( greeblerHelper( geometry ) );
+    var icosahedronMesh = greeblerHelper( geometry );
+    scene.add( icosahedronMesh );
 
     // Plane greebled.
     geometry = new THREE.PlaneGeometry( 16, 16 );
-    var mesh = greeblerHelper( geometry );
-    mesh.position.y = -3;
-    mesh.rotation.x = -Math.PI / 2;
-    scene.add( mesh );
+    var planeMesh = greeblerHelper( geometry );
+    planeMesh.position.y = -3;
+    planeMesh.rotation.x = -Math.PI / 2;
+    scene.add( planeMesh );
 
     scene.fog = new THREE.FogExp2( '#000', 0.1 );
 
-    var light = new THREE.DirectionalLight( '#e85', 0.5 );
-    light.position.set( 1, 1, 0 );
+    var light = new THREE.SpotLight( '#e85', 0.5 );
+    light.position.set( 32, 128, 0 );
+    light.castShadow = true;
     scene.add( light );
 
     scene.add( new THREE.AmbientLight( '#325' ) );
