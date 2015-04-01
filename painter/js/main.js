@@ -17,6 +17,7 @@
 
   var geometry, material, mesh;
   var intersectionMesh;
+  var texture;
 
   var mouseDown = false;
 
@@ -69,6 +70,8 @@
     canvas.style.left = 0;
     canvas.style.top = 0;
 
+    texture = new THREE.Texture( canvas );
+    material.bumpMap = texture;
     document.body.appendChild( canvas );
 
     // Brush gradient.
@@ -119,6 +122,8 @@
           size * (  point.x + 0.5 ) - brushRadius,
           size * ( -point.y + 0.5 ) - brushRadius
         );
+
+        texture.needsUpdate = true;
       }
     }
 
