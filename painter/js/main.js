@@ -1,15 +1,13 @@
-/*global THREE*/
+/*global THREE, dat*/
 (function() {
   'use strict';
 
   var container;
 
   var canvas, ctx;
+  var size = 512;
 
   var brushCanvas, brushCtx;
-  var brushGradient;
-  var brushRadius = 16;
-  var brushDiameter = 2 * brushRadius;
 
   var scene, camera, renderer;
   var raycaster;
@@ -21,7 +19,27 @@
 
   var mouseDown = false;
 
-  var size = 256;
+  var options = {
+    brushRadius: 16
+  };
+
+  function updateBrushRadius( ) {
+    var radius = options.brushRadius;
+
+    var brushDiameter = 2 * radius;
+    brushCanvas.width  = brushDiameter;
+    brushCanvas.height = brushDiameter;
+
+    var brushGradient = ctx.createRadialGradient(
+      radius, radius, 0,
+      radius, radius, radius
+    );
+    brushGradient.addColorStop( 0, '#111' );
+    brushGradient.addColorStop( 1, 'transparent' );
+
+    brushCtx.fillStyle = brushGradient;
+    brushCtx.fillRect( 0, 0, brushDiameter, brushDiameter );
+  }
 
   function init() {
     container = document.createElement( 'div' );
@@ -77,19 +95,14 @@
     // Brush gradient.
     brushCanvas = document.createElement( 'canvas' );
     brushCtx    = brushCanvas.getContext( '2d' );
+    updateBrushRadius();
 
-    brushCanvas.width  = brushDiameter;
-    brushCanvas.height = brushDiameter;
+    // GUI.
+    var gui = new dat.GUI();
 
-    brushGradient = ctx.createRadialGradient(
-      brushRadius, brushRadius, 0,
-      brushRadius, brushRadius, brushRadius
-    );
-    brushGradient.addColorStop( 0, '#222' );
-    brushGradient.addColorStop( 1, 'transparent' );
-
-    brushCtx.fillStyle = brushGradient;
-    brushCtx.fillRect( 0, 0, brushDiameter, brushDiameter );
+    gui.add( options, 'brushRadius', 1, 128 )
+      .listen()
+      .onChange( updateBrushRadius );
   }
 
   function render() {
@@ -119,8 +132,8 @@
         ctx.globalCompositeOperation = 'lighter';
         ctx.drawImage(
           brushCanvas,
-          size * (  point.x + 0.5 ) - brushRadius,
-          size * ( -point.y + 0.5 ) - brushRadius
+          size * (  point.x + 0.5 ) - options.brushRadius,
+          size * ( -point.y + 0.5 ) - options.brushRadius
         );
 
         texture.needsUpdate = true;
