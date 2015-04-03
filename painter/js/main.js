@@ -129,7 +129,11 @@
       intersectionMesh.visible = true;
 
       if ( mouseDown ) {
-        ctx.globalCompositeOperation = 'lighter';
+        // Paint on left mouse button. Erase on right.
+        ctx.globalCompositeOperation = event.button !== 2 ?
+          'lighter' :
+          'destination-out';
+
         ctx.drawImage(
           brushCanvas,
           size * (  point.x + 0.5 ) - options.brushRadius,
@@ -154,5 +158,7 @@
     mouseDown = false;
     onMouse( event );
   });
+
+  document.addEventListener( 'contextmenu', onMouse );
 
 }) ();
