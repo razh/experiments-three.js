@@ -5,7 +5,7 @@
   var container;
 
   var canvas, ctx;
-  var size = 512;
+  var size = 256;
 
   var brushCanvas, brushCtx;
 
@@ -48,9 +48,11 @@
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setClearColor( '#222' );
     container.appendChild( renderer.domElement );
 
     scene = new THREE.Scene();
+    scene.add( new THREE.AmbientLight( '#fff' ) );
 
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight );
     camera.position.set( 0, -0.75, 0.75 );
@@ -60,22 +62,12 @@
     raycaster = new THREE.Raycaster();
     mouse = new THREE.Vector2();
 
-    geometry = new THREE.PlaneBufferGeometry( 1, 1 );
-    material = new THREE.MeshPhongMaterial();
-
-    mesh = new THREE.Mesh( geometry, material );
-    scene.add( mesh );
-
     intersectionMesh = new THREE.Mesh(
       new THREE.SphereGeometry( 0.05 ),
       new THREE.MeshBasicMaterial({ wireframe: true })
     );
     intersectionMesh.visible = false;
     scene.add( intersectionMesh );
-
-    var light = new THREE.PointLight( '#fff', 0.5 );
-    light.position.set( 1, 2, 1 );
-    scene.add( light );
 
     // Height map.
     canvas = document.createElement( 'canvas' );
@@ -89,8 +81,33 @@
     canvas.style.top = 0;
 
     texture = new THREE.Texture( canvas );
-    material.bumpMap = texture;
     document.body.appendChild( canvas );
+
+    // Create canvas mesh.
+    geometry = new THREE.PlaneBufferGeometry( 1, 1, 256, 256 );
+    geometry.computeTangents();
+
+    // Custom normal displacement shader.
+    var shader = THREE.NormalDisplacementShader;
+    var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+
+    uniforms.enableAO.value = true;
+    uniforms.enableDisplacement.value = true;
+
+    uniforms.tAO.value = texture;
+    uniforms.tDisplacement.value = texture;
+    uniforms.uDisplacementScale.value = 0.25;
+
+    material = new THREE.ShaderMaterial({
+      uniforms: uniforms,
+      vertexShader: shader.vertexShader,
+      fragmentShader: shader.fragmentShader,
+      lights: true,
+      fog: false
+    });
+
+    mesh = new THREE.Mesh( geometry, material );
+    scene.add( mesh );
 
     // Brush gradient.
     brushCanvas = document.createElement( 'canvas' );
