@@ -173,7 +173,9 @@
     mesh.skeleton.bones.forEach(function( bone, index ) {
       scale.setFromMatrixScale( bone.parent.matrixWorld );
       bone.scale.setLength( ( length + 0.25 ) / scale.length() );
+      bone.updateMatrixWorld();
 
+      // Set angle if not root.
       if ( index ) {
         bone.rotation.z = angle;
       }
