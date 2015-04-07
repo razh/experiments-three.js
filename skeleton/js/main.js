@@ -35,15 +35,40 @@
     boxGeometry.applyMatrix( matrix.makeTranslation( 0, 0.5, 0 ) );
     geometry.merge( boxGeometry );
 
+    var angle = Math.PI / 6;
+
     var tempGeometry = boxGeometry.clone();
-    tempGeometry.applyMatrix( matrix.makeRotationZ( Math.PI / 6 ) );
-    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 0.5, 0 ) );
-    geometry.merge( tempGeometry, matrix );
+    tempGeometry.applyMatrix( matrix.makeRotationZ( angle ) );
+    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 1, 0 ) );
+    geometry.merge( tempGeometry );
 
     tempGeometry = boxGeometry.clone();
-    tempGeometry.applyMatrix( matrix.makeRotationZ( -Math.PI / 6 ) );
-    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 0.5, 0 ) );
-    geometry.merge( tempGeometry, matrix );
+    tempGeometry.applyMatrix( matrix.makeRotationZ( -angle ) );
+    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 1, 0 ) );
+    geometry.merge( tempGeometry );
+
+    tempGeometry = boxGeometry.clone();
+    tempGeometry.applyMatrix( matrix.makeRotationZ( angle ) );
+    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 1, 0 ) );
+    tempGeometry.applyMatrix( matrix.makeRotationZ( angle ) );
+    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 1, 0 ) );
+    geometry.merge( tempGeometry );
+
+    tempGeometry = boxGeometry.clone();
+    tempGeometry.applyMatrix( matrix.makeRotationZ( -angle ) );
+    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 1, 0 ) );
+    tempGeometry.applyMatrix( matrix.makeRotationZ( angle ) );
+    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 1, 0 ) );
+    geometry.merge( tempGeometry );
+
+    tempGeometry = boxGeometry.clone();
+    tempGeometry.applyMatrix( matrix.makeRotationZ( angle ) );
+    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 1, 0 ) );
+    tempGeometry.applyMatrix( matrix.makeRotationZ( angle ) );
+    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 1, 0 ) );
+    tempGeometry.applyMatrix( matrix.makeRotationZ( angle ) );
+    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 1, 0 ) );
+    geometry.merge( tempGeometry );
 
     geometry.bones = [
       {
@@ -62,7 +87,7 @@
         parent: 1,
         name: 'bone.0.0',
         pos: vector.set( 0, 1, 0 )
-          .applyMatrix4( matrix.makeRotationZ( Math.PI / 6 ) )
+          .applyMatrix4( matrix.makeRotationZ( angle ) )
           .toArray(),
         rotq: [ 0, 0, 0, 1 ]
       },
@@ -70,7 +95,29 @@
         parent: 1,
         name: 'bone.0.1',
         pos: vector.set( 0, 1, 0 )
-          .applyMatrix4( matrix.makeRotationZ( -Math.PI / 6 ) )
+          .applyMatrix4( matrix.makeRotationZ( -angle ) )
+          .toArray(),
+        rotq: [ 0, 0, 0, 1 ]
+      },
+      {
+        parent: 2,
+        name: 'bone.0.0.0',
+        pos: vector.set( 0, 1, 0 )
+          .applyMatrix4( matrix.makeRotationZ( 2 * angle ) )
+          .toArray(),
+        rotq: [ 0, 0, 0, 1 ]
+      },
+      {
+        parent: 2,
+        name: 'bone.0.0.1',
+        pos: [ 0, 1, 0 ],
+        rotq: [ 0, 0, 0, 1 ]
+      },
+      {
+        parent: 4,
+        name: 'bone.0.0.0.0',
+        pos: vector.set( 0, 1, 0 )
+          .applyMatrix4( matrix.makeRotationZ( 3 * angle ) )
           .toArray(),
         rotq: [ 0, 0, 0, 1 ]
       }
@@ -91,8 +138,14 @@
     boxGeometry.vertices.forEach( skinIndices( 0, 1, 0, 0 ) );
     boxGeometry.vertices.forEach( skinIndices( 1, 2, 0, 0 ) );
     boxGeometry.vertices.forEach( skinIndices( 1, 3, 0, 0 ) );
+    boxGeometry.vertices.forEach( skinIndices( 2, 4, 0, 0 ) );
+    boxGeometry.vertices.forEach( skinIndices( 2, 5, 0, 0 ) );
+    boxGeometry.vertices.forEach( skinIndices( 4, 6, 0, 0 ) );
 
     // Skin weights.
+    boxGeometry.vertices.forEach( skinWeights( 1, 0, 0, 0 ) );
+    boxGeometry.vertices.forEach( skinWeights( 1, 0, 0, 0 ) );
+    boxGeometry.vertices.forEach( skinWeights( 1, 0, 0, 0 ) );
     boxGeometry.vertices.forEach( skinWeights( 1, 0, 0, 0 ) );
     boxGeometry.vertices.forEach( skinWeights( 1, 0, 0, 0 ) );
     boxGeometry.vertices.forEach( skinWeights( 1, 0, 0, 0 ) );
@@ -110,12 +163,16 @@
     mesh.add( skeletonHelper );
   }
 
+  var scale = new THREE.Vector3();
+
   function animate() {
     var time = Date.now() * 1e-3;
-    var angle = Math.cos( time ) / 2;
+    var angle = Math.cos( time );
+    var length = 0.5 * ( Math.cos( time ) + 1 );
 
     mesh.skeleton.bones.forEach(function( bone, index ) {
-      bone.scale.setLength( ( angle + 0.5 ) / bone.parent.scale.length() );
+      scale.setFromMatrixScale( bone.parent.matrixWorld );
+      bone.scale.setLength( ( length + 0.25 ) / scale.length() );
 
       if ( index ) {
         bone.rotation.z = angle;
