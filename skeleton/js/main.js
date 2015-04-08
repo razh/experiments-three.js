@@ -37,37 +37,45 @@
 
     var angle = Math.PI / 6;
 
+    function rotateZ( geometry, angle ) {
+      geometry.applyMatrix( matrix.makeRotationZ( angle ) );
+    }
+
+    function translate( geometry, x, y, z ) {
+      geometry.applyMatrix( matrix.makeTranslation( x, y, z ) );
+    }
+
     var tempGeometry = boxGeometry.clone();
-    tempGeometry.applyMatrix( matrix.makeRotationZ( angle ) );
-    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 1, 0 ) );
+    rotateZ( tempGeometry, angle );
+    translate( tempGeometry, 0, 1, 0 );
     geometry.merge( tempGeometry );
 
     tempGeometry = boxGeometry.clone();
-    tempGeometry.applyMatrix( matrix.makeRotationZ( -angle ) );
-    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 1, 0 ) );
+    rotateZ( tempGeometry, -angle );
+    translate( tempGeometry, 0, 1, 0 );
     geometry.merge( tempGeometry );
 
     tempGeometry = boxGeometry.clone();
-    tempGeometry.applyMatrix( matrix.makeRotationZ( angle ) );
-    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 1, 0 ) );
-    tempGeometry.applyMatrix( matrix.makeRotationZ( angle ) );
-    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 1, 0 ) );
+    rotateZ( tempGeometry, angle );
+    translate( tempGeometry, 0, 1, 0 );
+    rotateZ( tempGeometry, angle );
+    translate( tempGeometry, 0, 1, 0 );
     geometry.merge( tempGeometry );
 
     tempGeometry = boxGeometry.clone();
-    tempGeometry.applyMatrix( matrix.makeRotationZ( -angle ) );
-    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 1, 0 ) );
-    tempGeometry.applyMatrix( matrix.makeRotationZ( angle ) );
-    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 1, 0 ) );
+    rotateZ( tempGeometry, -angle );
+    translate( tempGeometry, 0, 1, 0 );
+    rotateZ( tempGeometry, angle );
+    translate( tempGeometry, 0, 1, 0 );
     geometry.merge( tempGeometry );
 
     tempGeometry = boxGeometry.clone();
-    tempGeometry.applyMatrix( matrix.makeRotationZ( angle ) );
-    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 1, 0 ) );
-    tempGeometry.applyMatrix( matrix.makeRotationZ( angle ) );
-    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 1, 0 ) );
-    tempGeometry.applyMatrix( matrix.makeRotationZ( angle ) );
-    tempGeometry.applyMatrix( matrix.makeTranslation( 0, 1, 0 ) );
+    rotateZ( tempGeometry, angle );
+    translate( tempGeometry, 0, 1, 0 );
+    rotateZ( tempGeometry, angle );
+    translate( tempGeometry, 0, 1, 0 );
+    rotateZ( tempGeometry, angle );
+    translate( tempGeometry, 0, 1, 0 );
     geometry.merge( tempGeometry );
 
     geometry.bones = [
@@ -126,7 +134,7 @@
     function mapVertices( key ) {
       return function( x, y, z, w ) {
         return function() {
-          geometry[ key ].push( new THREE.Vector4( x, y, z, w ) );
+          geometry[ key ].push( new THREE.Vector4( x, y, z, w || 0 ) );
         };
       };
     }
@@ -135,20 +143,20 @@
     var skinWeights = mapVertices( 'skinWeights' );
 
     // Skin indices.
-    boxGeometry.vertices.forEach( skinIndices( 0, 1, 0, 0 ) );
-    boxGeometry.vertices.forEach( skinIndices( 1, 2, 0, 0 ) );
-    boxGeometry.vertices.forEach( skinIndices( 1, 3, 0, 0 ) );
-    boxGeometry.vertices.forEach( skinIndices( 2, 4, 0, 0 ) );
-    boxGeometry.vertices.forEach( skinIndices( 2, 5, 0, 0 ) );
-    boxGeometry.vertices.forEach( skinIndices( 4, 6, 0, 0 ) );
+    boxGeometry.vertices.forEach( skinIndices( 0, 1 ) );
+    boxGeometry.vertices.forEach( skinIndices( 1, 2 ) );
+    boxGeometry.vertices.forEach( skinIndices( 1, 3 ) );
+    boxGeometry.vertices.forEach( skinIndices( 2, 4 ) );
+    boxGeometry.vertices.forEach( skinIndices( 2, 5 ) );
+    boxGeometry.vertices.forEach( skinIndices( 4, 6 ) );
 
     // Skin weights.
-    boxGeometry.vertices.forEach( skinWeights( 1, 0, 0, 0 ) );
-    boxGeometry.vertices.forEach( skinWeights( 1, 0, 0, 0 ) );
-    boxGeometry.vertices.forEach( skinWeights( 1, 0, 0, 0 ) );
-    boxGeometry.vertices.forEach( skinWeights( 1, 0, 0, 0 ) );
-    boxGeometry.vertices.forEach( skinWeights( 1, 0, 0, 0 ) );
-    boxGeometry.vertices.forEach( skinWeights( 1, 0, 0, 0 ) );
+    boxGeometry.vertices.forEach( skinWeights( 1 ) );
+    boxGeometry.vertices.forEach( skinWeights( 1 ) );
+    boxGeometry.vertices.forEach( skinWeights( 1 ) );
+    boxGeometry.vertices.forEach( skinWeights( 1 ) );
+    boxGeometry.vertices.forEach( skinWeights( 1 ) );
+    boxGeometry.vertices.forEach( skinWeights( 1 ) );
 
     material = new THREE.MeshBasicMaterial({
       skinning: true,
