@@ -20,7 +20,8 @@
   var mouseDown = false;
 
   var options = {
-    brushRadius: 16
+    brushRadius: 16,
+    scale: 0.25
   };
 
   function updateBrushRadius( ) {
@@ -96,7 +97,7 @@
 
     uniforms.tAO.value = texture;
     uniforms.tDisplacement.value = texture;
-    uniforms.uDisplacementScale.value = 0.25;
+    uniforms.uDisplacementScale.value = options.scale;
 
     material = new THREE.ShaderMaterial({
       uniforms: uniforms,
@@ -120,6 +121,12 @@
     gui.add( options, 'brushRadius', 1, 128 )
       .listen()
       .onChange( updateBrushRadius );
+
+    gui.add( options, 'scale', 0.01, 2, 0.01 )
+      .listen()
+      .onChange(function( scale ) {
+        uniforms.uDisplacementScale.value = scale;
+      });
   }
 
   function render() {
