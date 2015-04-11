@@ -45,6 +45,59 @@
       geometry.applyMatrix( matrix.makeTranslation( x, y, z ) );
     }
 
+    function Box() {
+      THREE.Object3D.call( this );
+
+      this.left  = undefined;
+      this.right = undefined;
+    }
+
+    Box.prototype = Object.create( THREE.Object3D );
+    Box.prototype.constructor = Box;
+
+    Box.prototype.add = function( object, direction ) {
+      THREE.Object3D.prototype.add.call( this, object );
+
+      if ( direction === 'left'  ) { this.left = object;  }
+      if ( direction === 'right' ) { this.right = object; }
+    };
+
+    Box.prototype.createGeometry = function() {
+      var geometry = boxGeometry.clone();
+      var parent = this.parent;
+      if ( !parent ) {
+        return geometry;
+      }
+
+      if ( this === parent.left  ) { parent.transformLeft();  }
+      if ( this === parent.right ) { parent.transformRight(); }
+
+      geometry.applyMatrix( this.matrixWorld );
+      return geometry;
+    };
+
+    Box.prototype.createBone = function( vector ) {
+      var parent = this.parent;
+      if ( !parent ) {
+        return vector;
+      }
+
+      if ( this === parent.left  ) { parent.transformLeft();  }
+      if ( this === parent.right ) { parent.transformRight(); }
+
+      return vector.applyMatrix4( matrix.extractRotation( parent.matrixWorld ) );
+    };
+
+    Box.prototype.transformLeft = function() {
+      this.rotation.z = angle;
+      this.updateMatrixWorld();
+    };
+
+    Box.prototype.transformRight = function() {
+      this.rotation.z = -angle;
+      this.updateMatrixWorld();
+    };
+
     var tempGeometry = boxGeometry.clone();
     rotateZ( tempGeometry, angle );
     translate( tempGeometry, 0, 1, 0 );
