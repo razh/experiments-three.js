@@ -29,30 +29,22 @@
     var matrix = new THREE.Matrix4();
     var vector = new THREE.Vector3();
 
-    geometry = new THREE.Geometry();
-
     var boxGeometry = new THREE.BoxGeometry( 0.25, 1, 0.25 );
     boxGeometry.applyMatrix( matrix.makeTranslation( 0, 0.5, 0 ) );
-    geometry.merge( boxGeometry );
 
     var angle = Math.PI / 6;
-
-    function rotateZ( geometry, angle ) {
-      geometry.applyMatrix( matrix.makeRotationZ( angle ) );
-    }
-
-    function translate( geometry, x, y, z ) {
-      geometry.applyMatrix( matrix.makeTranslation( x, y, z ) );
-    }
 
     function Box() {
       THREE.Object3D.call( this );
 
+      this.position.set( 0, 1, 0 );
+
+      this.index = 0;
       this.left  = undefined;
       this.right = undefined;
     }
 
-    Box.prototype = Object.create( THREE.Object3D );
+    Box.prototype = Object.create( THREE.Object3D.prototype );
     Box.prototype.constructor = Box;
 
     Box.prototype.add = function( object, direction ) {
@@ -72,20 +64,33 @@
       if ( this === parent.left  ) { parent.transformLeft();  }
       if ( this === parent.right ) { parent.transformRight(); }
 
-      geometry.applyMatrix( this.matrixWorld );
+      geometry.applyMatrix( parent.matrixWorld );
       return geometry;
     };
 
-    Box.prototype.createBone = function( vector ) {
+    Box.prototype.createBone = function( geometry ) {
+      vector.set( 0, 1, 0 );
+
       var parent = this.parent;
-      if ( !parent ) {
-        return vector;
+      if ( parent ) {
+        if ( this === parent.left  ) { parent.transformLeft();  }
+        if ( this === parent.right ) { parent.transformRight(); }
+
+        vector.applyMatrix4( matrix.extractRotation( parent.matrixWorld ) );
       }
 
-      if ( this === parent.left  ) { parent.transformLeft();  }
-      if ( this === parent.right ) { parent.transformRight(); }
+      var index = geometry.bones.push({
+        parent: parent && parent.index || 0,
+        pos: vector.toArray(),
+        rotq: [ 0, 0, 0, 1 ]
+      }) - 1;
 
-      return vector.applyMatrix4( matrix.extractRotation( parent.matrixWorld ) );
+      this.index = index;
+
+      for ( var i = 0, il = boxGeometry.vertices.length; i < il; i++ ) {
+        geometry.skinIndices.push( new THREE.Vector4( index, 0, 0, 0 ) );
+        geometry.skinWeights.push( new THREE.Vector4( 1, 0, 0, 0 ) );
+      }
     };
 
     Box.prototype.transformLeft = function() {
@@ -98,118 +103,28 @@
       this.updateMatrixWorld();
     };
 
-    var tempGeometry = boxGeometry.clone();
-    rotateZ( tempGeometry, angle );
-    translate( tempGeometry, 0, 1, 0 );
-    geometry.merge( tempGeometry );
+    var tree = new Box();
+    tree.add( new Box(), 'left' );
+    tree.add( new Box(), 'right' );
+    tree.left.add( new Box(), 'left' );
+    tree.left.add( new Box(), 'right' );
+    tree.left.left.add( new Box(), 'right' );
 
-    tempGeometry = boxGeometry.clone();
-    rotateZ( tempGeometry, -angle );
-    translate( tempGeometry, 0, 1, 0 );
-    geometry.merge( tempGeometry );
-
-    tempGeometry = boxGeometry.clone();
-    rotateZ( tempGeometry, angle );
-    translate( tempGeometry, 0, 1, 0 );
-    rotateZ( tempGeometry, angle );
-    translate( tempGeometry, 0, 1, 0 );
-    geometry.merge( tempGeometry );
-
-    tempGeometry = boxGeometry.clone();
-    rotateZ( tempGeometry, -angle );
-    translate( tempGeometry, 0, 1, 0 );
-    rotateZ( tempGeometry, angle );
-    translate( tempGeometry, 0, 1, 0 );
-    geometry.merge( tempGeometry );
-
-    tempGeometry = boxGeometry.clone();
-    rotateZ( tempGeometry, angle );
-    translate( tempGeometry, 0, 1, 0 );
-    rotateZ( tempGeometry, angle );
-    translate( tempGeometry, 0, 1, 0 );
-    rotateZ( tempGeometry, angle );
-    translate( tempGeometry, 0, 1, 0 );
-    geometry.merge( tempGeometry );
-
+    geometry = new THREE.Geometry();
     geometry.bones = [
       {
         parent: -1,
         name: 'root',
         pos: [ 0, 0, 0 ],
         rotq: [ 0, 0, 0, 1 ]
-      },
-      {
-        parent: 0,
-        name: 'bone.0',
-        pos: [ 0, 1, 0 ],
-        rotq: [ 0, 0, 0, 1 ]
-      },
-      {
-        parent: 1,
-        name: 'bone.0.0',
-        pos: vector.set( 0, 1, 0 )
-          .applyMatrix4( matrix.makeRotationZ( angle ) )
-          .toArray(),
-        rotq: [ 0, 0, 0, 1 ]
-      },
-      {
-        parent: 1,
-        name: 'bone.0.1',
-        pos: vector.set( 0, 1, 0 )
-          .applyMatrix4( matrix.makeRotationZ( -angle ) )
-          .toArray(),
-        rotq: [ 0, 0, 0, 1 ]
-      },
-      {
-        parent: 2,
-        name: 'bone.0.0.0',
-        pos: vector.set( 0, 1, 0 )
-          .applyMatrix4( matrix.makeRotationZ( 2 * angle ) )
-          .toArray(),
-        rotq: [ 0, 0, 0, 1 ]
-      },
-      {
-        parent: 2,
-        name: 'bone.0.0.1',
-        pos: [ 0, 1, 0 ],
-        rotq: [ 0, 0, 0, 1 ]
-      },
-      {
-        parent: 4,
-        name: 'bone.0.0.0.0',
-        pos: vector.set( 0, 1, 0 )
-          .applyMatrix4( matrix.makeRotationZ( 3 * angle ) )
-          .toArray(),
-        rotq: [ 0, 0, 0, 1 ]
       }
     ];
 
-    function mapVertices( key ) {
-      return function( x, y, z, w ) {
-        return function() {
-          geometry[ key ].push( new THREE.Vector4( x, y, z, w || 0 ) );
-        };
-      };
-    }
-
-    var skinIndices = mapVertices( 'skinIndices' );
-    var skinWeights = mapVertices( 'skinWeights' );
-
-    // Skin indices.
-    boxGeometry.vertices.forEach( skinIndices( 0, 1 ) );
-    boxGeometry.vertices.forEach( skinIndices( 1, 2 ) );
-    boxGeometry.vertices.forEach( skinIndices( 1, 3 ) );
-    boxGeometry.vertices.forEach( skinIndices( 2, 4 ) );
-    boxGeometry.vertices.forEach( skinIndices( 2, 5 ) );
-    boxGeometry.vertices.forEach( skinIndices( 4, 6 ) );
-
-    // Skin weights.
-    boxGeometry.vertices.forEach( skinWeights( 1 ) );
-    boxGeometry.vertices.forEach( skinWeights( 1 ) );
-    boxGeometry.vertices.forEach( skinWeights( 1 ) );
-    boxGeometry.vertices.forEach( skinWeights( 1 ) );
-    boxGeometry.vertices.forEach( skinWeights( 1 ) );
-    boxGeometry.vertices.forEach( skinWeights( 1 ) );
+    tree.traverse(function( object ) {
+      var tempGeometry = object.createGeometry();
+      object.createBone( geometry );
+      geometry.merge( tempGeometry );
+    });
 
     material = new THREE.MeshBasicMaterial({
       skinning: true,
@@ -237,7 +152,7 @@
       bone.updateMatrixWorld();
 
       // Set angle if not root.
-      if ( index ) {
+      if ( index > 1 ) {
         bone.rotation.z = angle;
       }
     });
