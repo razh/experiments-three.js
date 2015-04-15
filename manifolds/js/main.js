@@ -109,7 +109,7 @@
     var radius = Math.pow( polar.radius, n );
     var angle = ( polar.angle + TAU * k ) * n;
 
-    return  {
+    return {
       real: radius * Math.cos( angle ),
       imag: radius * Math.sin( angle )
     };
@@ -211,13 +211,13 @@
 
   function calabiGeometry( n, angle, vertexCount ) {
     console.time( 'calabi' );
-    var data = calabi( n, angle, vertexCount, -1, 1 );
+    var vertices = calabi( n, angle, vertexCount, -1, 1 );
     console.timeEnd( 'calabi' );
 
     var geometry = new THREE.Geometry();
-    for ( var i = 0, il = data.length; i < il; i += 3 ) {
+    for ( var i = 0, il = vertices.length; i < il; i += 3 ) {
       geometry.vertices.push(
-        new THREE.Vector3( data[i], data[ i + 1 ], data[ i + 2 ] )
+        new THREE.Vector3( vertices[i], vertices[ i + 1 ], vertices[ i + 2 ] )
       );
     }
 
@@ -272,17 +272,22 @@
   };
 
   function updateCalabiVertices() {
-    var data = calabi( config.n, config.angle, config.vertexCount, -1, 1 );
+    var vertices = calabi( config.n, config.angle, config.vertexCount, -1, 1 );
 
-    for ( var i = 0, il = data.length / 3; i < il; i++ ) {
+    for ( var i = 0, il = vertices.length / 3; i < il; i++ ) {
       geometry.vertices[i].set(
-        data[ 3 * i ],
-        data[ 3 * i + 1 ],
-        data[ 3 * i + 2 ]
+        vertices[ 3 * i ],
+        vertices[ 3 * i + 1 ],
+        vertices[ 3 * i + 2 ]
       );
     }
 
     geometry.verticesNeedUpdate = true;
+  }
+
+  function createCalabiGeometry() {
+    var geometry = calabiGeometry( config.n, config.angle, config.vertexCount );
+    return calabiFaces( geometry, config.n, config.vertexCount );
   }
 
   function init() {
@@ -299,9 +304,7 @@
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 1000 );
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
-    geometry = calabiGeometry( config.n, config.angle, config.vertexCount );
-    calabiFaces( geometry, config.n, config.vertexCount );
-
+    geometry = createCalabiGeometry();
     geometry.computeBoundingSphere();
     camera.position.set( 0, 0, -2 * geometry.boundingSphere.radius );
     camera.lookAt( geometry.boundingSphere.center );

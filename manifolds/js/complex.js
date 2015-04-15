@@ -48,7 +48,7 @@ var Complex = (function() {
     // Equivalent to Math.pow( Math.sqrt( length ), n ).
     var radius = Math.pow( out[0] * out[0] + out[1] * out[1], 0.5 * n );
     var angle = Math.atan2( a[1], a[0] );
-    angle = ( angle  + TAU * k ) * n;
+    angle = ( angle + TAU * k ) * n;
 
     out[0] = radius * Math.cos( angle );
     out[1] = radius * Math.sin( angle );
