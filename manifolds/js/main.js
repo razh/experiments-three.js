@@ -350,6 +350,16 @@
       .onChange( updateCalabiVertices );
 
     gui.add( config, 'animateAngle' );
+
+    gui.add( config, 'vertexCount', 2, 25 )
+      .step( 1 )
+      .listen()
+      .onChange(function() {
+        scene.remove( mesh );
+        geometry = createCalabiGeometry();
+        mesh = new THREE.Mesh( geometry, meshMaterial );
+        scene.add( mesh );
+      });
   }
 
   var prevTime = Date.now(),
