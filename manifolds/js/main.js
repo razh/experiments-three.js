@@ -342,6 +342,13 @@
     axisHelper = new THREE.AxisHelper( 2 );
     scene.add( axisHelper );
 
+    function createMesh() {
+      scene.remove( mesh );
+      geometry = createCalabiGeometry();
+      mesh = new THREE.Mesh( geometry, meshMaterial );
+      scene.add( mesh );
+    }
+
     var gui = new dat.GUI();
 
     gui.add( config, 'angle', 0, TAU )
@@ -351,15 +358,15 @@
 
     gui.add( config, 'animateAngle' );
 
+    gui.add( config, 'n', 1, 8 )
+      .step( 1 )
+      .listen()
+      .onChange( createMesh );
+
     gui.add( config, 'vertexCount', 2, 25 )
       .step( 1 )
       .listen()
-      .onChange(function() {
-        scene.remove( mesh );
-        geometry = createCalabiGeometry();
-        mesh = new THREE.Mesh( geometry, meshMaterial );
-        scene.add( mesh );
-      });
+      .onChange( createMesh );
   }
 
   var prevTime = Date.now(),
