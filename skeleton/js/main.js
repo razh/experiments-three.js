@@ -50,7 +50,7 @@
     Box.prototype.add = function( object, direction ) {
       THREE.Object3D.prototype.add.call( this, object );
 
-      if ( direction === 'left'  ) { this.left = object;  }
+      if ( direction === 'left'  ) { this.left  = object; }
       if ( direction === 'right' ) { this.right = object; }
     };
 
@@ -76,7 +76,9 @@
         if ( this === parent.left  ) { parent.transformLeft();  }
         if ( this === parent.right ) { parent.transformRight(); }
 
-        vector.applyMatrix4( matrix.extractRotation( parent.matrixWorld ) );
+        vector.applyMatrix4(
+          matrix.identity().extractRotation( parent.matrixWorld )
+        );
       }
 
       var index = geometry.bones.push({
@@ -149,12 +151,13 @@
     mesh.skeleton.bones.forEach(function( bone, index ) {
       scale.setFromMatrixScale( bone.parent.matrixWorld );
       bone.scale.setLength( ( length + 0.25 ) / scale.length() );
-      bone.updateMatrixWorld();
 
       // Set angle if not root.
       if ( index > 1 ) {
         bone.rotation.z = angle;
       }
+
+      bone.updateMatrixWorld();
     });
 
     skeletonHelper.update();
