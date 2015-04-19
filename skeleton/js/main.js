@@ -31,6 +31,8 @@
 
     var boxGeometry = new THREE.BoxGeometry( 0.25, 1, 0.25 );
     boxGeometry.applyMatrix( matrix.makeTranslation( 0, 0.5, 0 ) );
+    // Reset matrix for rotation extractions.
+    matrix.identity();
 
     var angle = Math.PI / 6;
 
@@ -76,13 +78,13 @@
         if ( this === parent.left  ) { parent.transformLeft();  }
         if ( this === parent.right ) { parent.transformRight(); }
 
-        vector.applyMatrix4(
-          matrix.identity().extractRotation( parent.matrixWorld )
-        );
+        vector.applyMatrix4( matrix.extractRotation( parent.matrixWorld ) );
       }
 
+      var parentIndex = parent && parent.index || 0;
+
       var index = geometry.bones.push({
-        parent: parent && parent.index || 0,
+        parent: parentIndex,
         pos: vector.toArray(),
         rotq: [ 0, 0, 0, 1 ]
       }) - 1;
@@ -90,7 +92,7 @@
       this.index = index;
 
       for ( var i = 0, il = boxGeometry.vertices.length; i < il; i++ ) {
-        geometry.skinIndices.push( new THREE.Vector4( index, 0, 0, 0 ) );
+        geometry.skinIndices.push( new THREE.Vector4( parentIndex, 0, 0, 0 ) );
         geometry.skinWeights.push( new THREE.Vector4( 1, 0, 0, 0 ) );
       }
     };
@@ -145,8 +147,9 @@
 
   function animate() {
     var time = Date.now() * 1e-3;
-    var angle = Math.cos( time );
-    var length = 0.5 * ( Math.cos( time ) + 1 );
+    var cos = Math.cos( time );
+    var angle = cos;
+    var length = 0.5 * ( cos + 1 );
 
     mesh.skeleton.bones.forEach(function( bone, index ) {
       scale.setFromMatrixScale( bone.parent.matrixWorld );
