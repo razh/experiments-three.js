@@ -16,19 +16,21 @@
     "*.md",
     "docs",
     "editor",
-    "examples",
+    "examples/*",
+    "!examples/js",
     "src",
     "test",
     "utils",
     "LICENSE"
   ],
-  "_release": "r70",
+  "_release": "r71",
   "_resolution": {
     "type": "tag",
-    "tag": "r70",
-    "commit": "59de65c0e6708e28936ca90053ae19f402003c31"
+    "tag": "r71",
+    "commit": "c81a4aced91dc2639caaf7d19b620ad62fd96d3a"
   },
   "_source": "git://github.com/mrdoob/three.js.git",
-  "_target": "r70",
-  "_originalSource": "threejs"
+  "_target": "r71",
+  "_originalSource": "threejs",
+  "_direct": true
 }
