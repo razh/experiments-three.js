@@ -5,7 +5,6 @@
   var container;
 
   var scene, camera, renderer;
-  var projector;
 
   var planeGeometry, planeMaterial, plane;
   var sphereGeometry, sphereMaterial, sphere;
@@ -128,9 +127,6 @@
 
     scene.add( camera );
 
-    // Projector.
-    projector = new THREE.Projector();
-
     // Fog.
     scene.fog = new THREE.Fog( 0x000000 );
 
@@ -178,7 +174,7 @@
       0
     );
 
-    projector.unprojectVector( vector, camera );
+    vector.unproject( camera );
 
     var raycaster = new THREE.Raycaster(
       camera.position,
