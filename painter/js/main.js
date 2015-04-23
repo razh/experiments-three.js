@@ -144,11 +144,13 @@
 
     raycaster.setFromCamera( mouse, camera );
 
-    var intersections = raycaster.intersectObjects( [ mesh ] );
+    var intersections = raycaster.intersectObject( mesh );
+    var intersection;
+    var point;
     intersectionMesh.visible = false;
     if ( intersections.length ) {
-      var intersection = intersections[0];
-      var point = intersection.point;
+      intersection = intersections[0];
+      point = intersection.point;
       intersectionMesh.position.copy( point );
       intersectionMesh.visible = true;
 

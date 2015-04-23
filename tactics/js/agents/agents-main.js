@@ -5,8 +5,11 @@
   var container;
 
   var scene, camera, controls, renderer;
+  var raycaster;
+  var mouse;
 
   var planeGeometry, planeMaterial, planeMesh;
+  var lineGeometry, lineMaterial, lineMesh;
 
   function init() {
     container = document.createElement( 'div' );
@@ -25,7 +28,11 @@
 
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
-    planeGeometry = new THREE.PlaneBufferGeometry( 64, 64, 16, 16 );
+    raycaster = new THREE.Raycaster();
+    mouse = new THREE.Vector2();
+
+    // Create plane.
+    planeGeometry = new THREE.PlaneBufferGeometry( 64, 64 );
     planeGeometry.applyMatrix(
       new THREE.Matrix4().makeRotationX( -Math.PI / 2 )
     );
@@ -33,6 +40,16 @@
     planeMaterial = new THREE.MeshBasicMaterial({ color: '#333' });
     planeMesh = new THREE.Mesh( planeGeometry, planeMaterial );
     scene.add( planeMesh );
+
+    // Create line.
+    lineGeometry = new THREE.Geometry();
+    lineGeometry.vertices.push( new THREE.Vector3() );
+    lineGeometry.vertices.push( new THREE.Vector3() );
+
+    lineMaterial = new THREE.LineBasicMaterial();
+    lineMesh = new THREE.Line( lineGeometry, lineMaterial );
+    lineMesh.visible = false;
+    scene.add( lineMesh );
   }
 
   function animate() {
@@ -42,5 +59,47 @@
 
   init();
   animate();
+
+  function onMouse( event ) {
+    event.preventDefault();
+
+    mouse.x =  ( event.clientX / window.innerWidth  ) * 2 - 1;
+    mouse.y = -( event.clientY / window.innerHeight ) * 2 + 1;
+
+    raycaster.setFromCamera( mouse, camera );
+
+    var intersections = raycaster.intersectObject( planeMesh );
+    if ( !intersections.length ) {
+      return;
+    }
+
+    return intersections[0].point;
+  }
+
+  document.addEventListener( 'mousedown', function( event ) {
+    var start = onMouse( event );
+    if ( start ) {
+      lineGeometry.vertices[0].copy( start );
+      lineGeometry.vertices[1].copy( start );
+      lineGeometry.verticesNeedUpdate = true;
+      lineMesh.visible = true;
+    }
+  });
+
+  document.addEventListener( 'mousemove', function( event ) {
+    if ( !lineMesh.visible ) {
+      return;
+    }
+
+    var end = onMouse( event );
+    if ( end ) {
+      lineGeometry.vertices[1].copy( end );
+      lineGeometry.verticesNeedUpdate = true;
+    }
+  });
+
+  document.addEventListener( 'mouseup', function() {
+    lineMesh.visible = false;
+  });
 
 })();
