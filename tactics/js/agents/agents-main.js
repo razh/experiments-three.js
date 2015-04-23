@@ -27,6 +27,7 @@
     scene.add( camera );
 
     controls = new THREE.OrbitControls( camera, renderer.domElement );
+    controls.enabled = false;
 
     raycaster = new THREE.Raycaster();
     mouse = new THREE.Vector2();
@@ -46,7 +47,10 @@
     lineGeometry.vertices.push( new THREE.Vector3() );
     lineGeometry.vertices.push( new THREE.Vector3() );
 
-    lineMaterial = new THREE.LineBasicMaterial();
+    lineMaterial = new THREE.LineBasicMaterial({
+      depthTest: false,
+      depthWrite: false
+    });
     lineMesh = new THREE.Line( lineGeometry, lineMaterial );
     lineMesh.visible = false;
     scene.add( lineMesh );
@@ -77,6 +81,10 @@
   }
 
   document.addEventListener( 'mousedown', function( event ) {
+    if ( controls.enabled ) {
+      return;
+    }
+
     var start = onMouse( event );
     if ( start ) {
       lineGeometry.vertices[0].copy( start );
@@ -87,6 +95,10 @@
   });
 
   document.addEventListener( 'mousemove', function( event ) {
+    if ( controls.enabled ) {
+      return;
+    }
+
     if ( !lineMesh.visible ) {
       return;
     }
@@ -100,6 +112,19 @@
 
   document.addEventListener( 'mouseup', function() {
     lineMesh.visible = false;
+  });
+
+  // Shift toggle OrbitControls.
+  document.addEventListener( 'keydown', function( event ) {
+    if ( event.keyCode === 16 ) {
+      controls.enabled = true;
+    }
+  });
+
+  document.addEventListener( 'keyup', function( event ) {
+    if ( event.keyCode === 16 ) {
+      controls.enabled = false;
+    }
   });
 
 })();
