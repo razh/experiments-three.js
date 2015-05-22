@@ -264,11 +264,14 @@
     return geometry;
   }
 
+  var types = [ 'line', 'point', 'mesh' ];
+
   var config = {
     n: 5,
     vertexCount: 11,
     angle: Math.PI / 4,
-    animateAngle: false
+    animateAngle: false,
+    type: 'mesh'
   };
 
   function updateCalabiVertices() {
@@ -312,31 +315,33 @@
 
     scene.add( camera );
 
-    var lineMaterial = new THREE.LineBasicMaterial({
-      transparent: true,
-      opacity: 0.1
-    });
+    var constructors = {
+      line: THREE.Line,
+      point: THREE.PointCloud,
+      mesh: THREE.Mesh
+    };
 
-    // mesh = new THREE.Line( geometry, lineMaterial );
-    // scene.add( mesh );
+    var materials = {
+      line: new THREE.LineBasicMaterial({
+        transparent: true,
+        opacity: 0.1
+      }),
 
-    var pointMaterial = new THREE.PointCloudMaterial({
-      fog: true,
-      size: 0.02,
-      transparent: true,
-      opacity: 0.2
-    });
+      point: new THREE.PointCloudMaterial({
+        fog: true,
+        size: 0.02,
+        transparent: true,
+        opacity: 0.2
+      }),
 
-    // mesh = new THREE.PointCloud( geometry, pointMaterial );
-    // scene.add( mesh );
+      mesh: new THREE.MeshBasicMaterial({
+        wireframe: true,
+        transparent: true,
+        opacity: 0.2
+      })
+    };
 
-    var meshMaterial = new THREE.MeshBasicMaterial({
-      wireframe: true,
-      transparent: true,
-      opacity: 0.2
-    });
-
-    mesh = new THREE.Mesh( geometry, meshMaterial );
+    mesh = new constructors[ config.type ]( geometry, materials[ config.type ] );
     scene.add( mesh );
 
     axisHelper = new THREE.AxisHelper( 2 );
@@ -345,7 +350,7 @@
     function createMesh() {
       scene.remove( mesh );
       geometry = createCalabiGeometry();
-      mesh = new THREE.Mesh( geometry, meshMaterial );
+      mesh = new constructors[ config.type ]( geometry, materials[ config.type ] );
       scene.add( mesh );
     }
 
@@ -365,6 +370,10 @@
 
     gui.add( config, 'vertexCount', 2, 25 )
       .step( 1 )
+      .listen()
+      .onChange( createMesh );
+
+    gui.add( config, 'type', types )
       .listen()
       .onChange( createMesh );
   }
