@@ -1,3 +1,4 @@
+/*jshint bitwise:false*/
 /*global THREE*/
 /*exported Hydra*/
 var Hydra = (function() {
@@ -22,6 +23,18 @@ var Hydra = (function() {
     goalTension: 0.5,
     goalDelta: 400,
     momentum: 0.5
+  };
+
+  var Conditions = {
+    HYDRA_SNAGGED:     1 << 0,
+    HYDRA_STUCK:       1 << 1,
+    HYDRA_OVERSHOOT:   1 << 2,
+    // Longer than max distance.
+    HYDRA_OVERSTRETCH: 1 << 3,
+    // Head hit something.
+    HYDRA_STRIKE:      1 << 4,
+    // No segments are stuck.
+    HYDRA_NOSTUCK:     1 << 5
   };
 
   function HydraBone() {
@@ -67,6 +80,8 @@ var Hydra = (function() {
     this.taskStartTime = 0;
     this.taskEndTime = 0;
     this.lengthTime = 0;
+
+    this.conditions = 0;
   }
 
   Hydra.prototype = Object.create( THREE.Mesh.prototype );
@@ -92,6 +107,18 @@ var Hydra = (function() {
   };
 
   Hydra.prototype.think = function() {};
+
+  Hydra.prototype.setCondition = function( condition ) {
+    this.conditions = this.conditions | condition;
+  };
+
+  Hydra.prototype.hasCondition = function( condition ) {
+    return this.conditions & condition;
+  };
+
+  Hydra.prototype.clearCondition = function( condition ) {
+    this.conditions = this.conditions ^ condition;
+  };
 
   /**
    * Calculate the bone forces based on goal positions, bending rules,
