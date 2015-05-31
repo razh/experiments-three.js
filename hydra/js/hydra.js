@@ -289,23 +289,111 @@ var Hydra = (function() {
   /**
    * Remove nodes, starting at the end, regardless of length.
    */
-  Hydra.prototype.contractFromHead = function() {};
+  Hydra.prototype.contractFromHead = function() {
+    if ( this.body.length <= 2 ) {
+      return false;
+    }
+
+    var i = this.body.length - 1;
+
+    if ( this.body[i].stuck &&
+         this.body[ i - 1 ].actualLength > this.idealSegmentLength * 2 ) {
+      this.addNodeBefore( i );
+      i = this.body.length - 1;
+    }
+
+    if ( this.body.length <= 3 ) {
+      return false;
+    }
+
+    // Always legal since no new link is being formed.
+    this.body.splice( i, 1 );
+
+    this.calculateRelaxedLength();
+
+    return true;
+  };
 
   /**
    * Starting at the first stuck node back from the head, find a node to remove
    * between it and the actual root who is part of a chain that isn't too long.
    */
-  Hydra.prototype.contractBetweenStuckSegments = function() {};
+  Hydra.prototype.contractBetweenStuckSegments = function() {
+    if ( this.body.length <= 3 ) {
+      return false;
+    }
+
+    // First stuck segment closest to head.
+    var stuckHeadIndex = this.virtualRoot();
+    if ( stuckHeadIndex < 3 ) {
+      return false;
+    }
+
+    // Find a non-stuck node with the shortest distance between its neighbors.
+    var shortest = -1;
+    var distance = this.idealSegmentLength * 2;
+    var length;
+    for ( var i = stuckHeadIndex - 1; i > 2; i-- ) {
+      if ( !this.body[i].stuck ) {
+        length = this.body[ i - 1 ].distanceTo( this.body[ i + 1 ].position );
+        // Check segment length.
+        if ( length < distance ) {
+          if ( this.isValidConnection( i - 1, i + 1 ) ) {
+            distance = length;
+            shortest = i;
+          }
+        }
+      }
+    }
+
+    if ( shortest === -1 ) {
+      return false;
+    }
+
+    // FIXME: Check for tunneling.
+    this.body.splice( shortest, 1 );
+
+    this.calculateRelaxedLength();
+
+    return true;
+  };
 
   /**
    * Try to remove segment closest to root.
    */
-  Hydra.prototype.contractFromRoot = function() {};
+  Hydra.prototype.contractFromRoot = function() {
+    if ( this.body.length <= 3 ) {
+      return false;
+    }
 
-  Hydra.prototype.calculateRelaxedLength = function() {
-    this.relaxedLength = this.idealSegmentLength *
-      ( this.body.length - 2 ) +
-      HYDRA_OUTWARD_BIAS;
+    // Don't contract overly long segments.
+    if ( this.body[2].actualLength > this.idealSegmentLength * 2 ) {
+      return false;
+    }
+
+    if ( !this.isValidConnection( 1, 3 ) ) {
+      return false;
+    }
+
+    this.body.splice( 2, 1 );
+
+    this.calculateRelaxedLength();
+
+    return true;
+  };
+
+  /**
+   * Find the first stuck node that's closest to the head.
+   */
+  Hydra.prototype.virtualRoot = function() {
+    // First stuck segment closest to head.
+    for ( var i = this.body.length - 2; i > 1; i-- ) {
+      if ( this.body[i].stuck ) {
+        return i;
+      }
+    }
+
+    return 1;
   };
 
   /**
@@ -345,7 +433,34 @@ var Hydra = (function() {
     return this.addNodeAfter( 1 );
   };
 
-  Hydra.prototype.growFromMostStretched = function() {};
+  Hydra.prototype.growFromMostStretched = function() {
+    var i = this.virtualRoot();
+
+    var longest = i;
+    var distance = this.idealSegmentLength * 0.5;
+
+    for ( ; i < this.body.length - 1; i++ ) {
+      if ( this.body[i].actualLength > distance ) {
+        longest = i;
+        distance = this.body[i].actualLength;
+      }
+    }
+
+    if ( this.body[ longest ].actualLength <= distance ) {
+      return this.addNodeAfter( longest );
+    }
+
+    return false;
+  };
+
+  Hydra.prototype.calculateRelaxedLength = function() {
+    this.relaxedLength = this.idealSegmentLength *
+      ( this.body.length - 2 ) +
+      HYDRA_OUTWARD_BIAS;
+  };
+
+  // Original code uses a hull trace to detect collisions.
+  Hydra.prototype.isValidConnection = function() { return true; };
 
   return Hydra;
 
