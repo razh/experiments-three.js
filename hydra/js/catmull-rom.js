@@ -4,42 +4,43 @@
 var interpolateCatmullRom = (function() {
   'use strict';
 
-  function interpolate( p0, p1, p2, p3, t, t2, t3 ) {
-    var v0 = ( p2 - p0 ) * 0.5;
-    var v1 = ( p3 - p1 ) * 0.5;
+  var a = new THREE.Vector3();
+  var b = new THREE.Vector3();
+  var c = new THREE.Vector3();
+  var d = new THREE.Vector3();
 
-    return (
-      ( 2 * ( p1 - p2 ) + v0 + v1 ) * t3 +
-      ( -3 * ( p1 - p2 ) - 2 * v0 - v1 ) * t2 +
-      v0 * t +
-      p1
-    );
-  }
+  return function interpolateCatmullRom( p0, p1, p2, p3, t, output ) {
+    var t2 = t * t * 0.5;
+    var t3 = t * t2;
+    t *= 0.5;
 
-  return function interpolateCatmullRom( points, scale, out ) {
-    var point, intPoint;
-    var weight, w2, w3;
-    var pa, pb, pc, pd;
+    output = output.set( 0, 0, 0 ) || new THREE.Vector3();
 
-    point = ( points.length - 1 ) * scale;
-    intPoint = Math.floor( point );
-    weight = point - intPoint;
+    // Matrix row 1.
+    // 0.5 * t^3 * [ ( -1 * p0 ) + ( 3 * p1 ) + ( -3 * p2 ) + p3 ].
+    output
+      .add( a.copy( p0 ).multiplyScalar( -t3 ) )
+      .add( b.copy( p1 ).multiplyScalar( 3 * t3 ) )
+      .add( c.copy( p2 ).multiplyScalar( -3 * t3 ) )
+      .add( d.copy( p3 ).multiplyScalar( t3 ) );
 
-    pa = points[ intPoint === 0 ? intPoint : intPoint - 1 ];
-    pb = points[ intPoint ];
-    pc = points[ intPoint > points.length - 2 ? intPoint : intPoint + 1 ];
-    pd = points[ intPoint > points.length - 3 ? intPoint : intPoint + 2 ];
+    // Matrix row 2.
+    // 0.5 * t^2 * [ ( 2 * p0 ) + ( -5 * p1 ) + ( 4 * p2 ) - p3 ].
+    output
+      .add( a.copy( p0 ).multiplyScalar( 2 * t2 ) )
+      .add( b.copy( p1 ).multiplyScalar( -5 * t2 ) )
+      .add( c.copy( p2 ).multiplyScalar( 4 * t2 ) )
+      .add( d.copy( p3 ).multiplyScalar( -t2 ) );
 
-    w2 = weight * weight;
-    w3 = weight * w2;
+    // Matrix row 3.
+    // 0.5 * t * [ ( -1 * p0 ) + p2 ].
+    output
+      .add( a.copy( p0 ).multiplyScalar( -t ) )
+      .add( b.copy( p2 ).multiplyScalar( t ) );
 
-    out = out || new THREE.Vector3();
-
-    return out.set(
-      interpolate( pa.x, pb.x, pc.x, pd.x, weight, w2, w3 ),
-      interpolate( pa.y, pb.y, pc.y, pd.y, weight, w2, w3 ),
-      interpolate( pa.z, pb.z, pc.z, pd.z, weight, w2, w3 )
-    );
+    // Matrix row 4.
+    // p1.
+    return output.add( p1 );
   };
 
 })();

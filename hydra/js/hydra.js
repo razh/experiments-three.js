@@ -532,13 +532,11 @@ var Hydra = (function() {
         }
 
         interpolateCatmullRom(
-          [
-            chain[ i < CHAIN_LINKS - 1 ? i + 1 : CHAIN_LINKS - 1 ],
-            chain[i],
-            chain[ i > 0 ? i - 1 : 0 ],
-            chain[ i > 1 ? i - 2 : 0 ]
-          ],
-          scale,
+          chain[ i < CHAIN_LINKS - 1 ? i + 1 : CHAIN_LINKS - 1 ],
+          chain[i],
+          chain[ i > 0 ? i - 1 : 0 ],
+          chain[ i > 1 ? i - 2 : 0 ],
+          s,
           positions[j]
         );
 
