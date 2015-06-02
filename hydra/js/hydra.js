@@ -1,5 +1,5 @@
 /*jshint bitwise:false*/
-/*global THREE*/
+/*global THREE, interpolateCatmullRom*/
 /*exported Hydra*/
 var Hydra = (function() {
   'use strict';
@@ -488,6 +488,74 @@ var Hydra = (function() {
 
   // Original code uses a hull trace to detect collisions.
   Hydra.prototype.isValidConnection = function() { return true; };
+
+  // Client-side hydra methods.
+
+  /**
+   * Fits skeleton of hydra to the variable segment length "chain" array.
+   * Adjusts overall hydra so that "relaxedLength" of texture fits over
+   * the actual length of the chain.
+   */
+  Hydra.prototype.calculateBoneChain = function( positions, chain ) {
+    // Find the last chain link that's not zero length.
+    var i = CHAIN_LINKS - 1;
+    while ( i > 0 ) {
+      if ( chain[i].distanceToSquared( chain[ i - 1 ] ) ) {
+        break;
+      }
+
+      i--;
+    }
+
+    // Initialize the last bone to the last bone.
+    var j = this.hydraBoneCount - 1;
+
+    // Clamp length.
+    var totalLength = 0;
+    for ( var k = i; k > 0; k-- ) {
+      totalLength += chain[k].distanceTo( chain[ k - 1 ] );
+    }
+    totalLength = THREE.Math.clamp( totalLength, 1, this.maxPossibleLength );
+    var scale = this.relaxedLength / totalLength;
+
+    // Starting from the head, fit the hydra skeleton on to the chain spline.
+    var distance = -16;
+    var dt, dx, s;
+    while ( j >= 0 && i > 0 ) {
+      dt = chain[i].distanceTo( chain[ i - 1 ] ) * scale;
+      dx = dt;
+      while ( j >= 0 && distance + dt >= this.boneLength[j] ) {
+        s = ( dx - ( dt - ( this.boneLength[i] - distance ) ) ) / dx;
+
+        if ( 0 > s || s > 1 ) {
+          s = 0;
+        }
+
+        interpolateCatmullRom(
+          [
+            chain[ i < CHAIN_LINKS - 1 ? i + 1 : CHAIN_LINKS - 1 ],
+            chain[i],
+            chain[ i > 0 ? i - 1 : 0 ],
+            chain[ i > 1 ? i - 2 : 0 ]
+          ],
+          scale,
+          positions[j]
+        );
+
+        dt = dt - ( this.boneLength[j] - distance );
+        j--;
+        distance = 0;
+      }
+
+      distance += dt;
+      i--;
+    }
+
+    while ( j >= 0 ) {
+      positions[i] = chain[0];
+      j--;
+    }
+  };
 
   return Hydra;
 
