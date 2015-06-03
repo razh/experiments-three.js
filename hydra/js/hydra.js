@@ -555,6 +555,39 @@ var Hydra = (function() {
     }
   };
 
+  var vectorVectors = (function() {
+    var temp = new THREE.Vector3();
+
+    return function( forward, right, up ) {
+      if ( !forward.x && !forward.y ) {
+        // Pitch 90 degrees up/down from identity.
+        right.set( 0, -1, 0 );
+        up.set( -forward.x, 0, 0 );
+      } else {
+        temp.set( 0, 0, 1 );
+        right.crossVectors( forward, temp ).normalize();
+        up.crossVectors( right, forward ).normalize();
+      }
+    };
+  })();
+
+  // Similar to THREE.Matrix4.prototype.lookAt().
+  var vectorMatrix = (function() {
+    var right = new THREE.Vector3();
+    var up = new THREE.Vector3();
+
+    return function( forward, matrix ) {
+      vectorVectors( forward, right, up );
+      right.negate();
+
+      forward.toArray( matrix.elements, 0 );
+      right.toArray( matrix.elements, 4 );
+      up.toArray( matrix.elements, 8 );
+
+      return matrix;
+    };
+  })();
+
   return Hydra;
 
 })();
