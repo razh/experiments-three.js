@@ -588,6 +588,50 @@ var Hydra = (function() {
     };
   })();
 
+  /**
+   * Minimize the amount of twist between bone segments.
+   */
+  Hydra.prototype.calculateBoneAngles = (function() {
+    var boneMatrix = new THREE.Matrix4();
+
+    var forward = new THREE.Vector3();
+    var left2 = new THREE.Vector3();
+
+    var up = new THREE.Vector3();
+    var left = new THREE.Vector3();
+
+    return function( positions, quaternions ) {
+      var length;
+      var i;
+      for ( i = this.hydraBoneCount - 1; i >= 0; i-- ) {
+        if ( i !== this.hydraBoneCount - 1 ) {
+          boneMatrix.makeFromQuaternion( quaternions[ i + 1 ] );
+          left2.setFromMatrixColumn( 1, boneMatrix );
+
+          forward.subVectors( positions[ i + 1 ], positions[i] );
+          length = forward.length();
+          if ( !length ) {
+            quaternions[i].copy( quaternions[ i + 1 ] );
+            continue;
+          }
+        } else {
+          forward.copy( this.headDirection ).normalize();
+
+          vectorMatrix( forward, boneMatrix );
+          left2.setFromMatrixColumn( 1, boneMatrix );
+        }
+
+        left.crossVectors( forward, left2 );
+
+        forward.toArray( boneMatrix.elements, 0 );
+        left.toArray( boneMatrix.elements, 4 );
+        up.toArray( boneMatrix.elements, 8 );
+
+        quaternions[i].setFromRotationMatrix( boneMatrix );
+      }
+    };
+  })();
+
   return Hydra;
 
 })();
