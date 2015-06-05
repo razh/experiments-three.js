@@ -29,7 +29,8 @@
     }),
 
     mesh: new THREE.MeshPhongMaterial({
-      shading: THREE.FlatShading
+      shading: THREE.FlatShading,
+      side: THREE.DoubleSide
     })
   };
 
