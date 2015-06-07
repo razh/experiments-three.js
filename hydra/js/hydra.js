@@ -25,7 +25,7 @@ var Hydra = (function() {
     momentum: 0.5
   };
 
-  var Conditions = {
+  var Condition = {
     HYDRA_SNAGGED:     1 << 0,
     HYDRA_STUCK:       1 << 1,
     HYDRA_OVERSHOOT:   1 << 2,
@@ -35,6 +35,18 @@ var Hydra = (function() {
     HYDRA_STRIKE:      1 << 4,
     // No segments are stuck.
     HYDRA_NOSTUCK:     1 << 5
+  };
+
+  var Task = {
+    HYDRA_RETRACT:           1 << 0,
+    HYDRA_DEPLOY:            1 << 1,
+    HYDRA_GET_OBJECT:        1 << 2,
+    HYDRA_THROW_OBJECT:      1 << 3,
+    HYDRA_PREP_STAB:         1 << 4,
+    HYDRA_STAB:              1 << 5,
+    HYDRA_PULLBACK:          1 << 6,
+    HYDRA_SET_MAX_TENSION:   1 << 7,
+    HYDRA_SET_BLEND_TENSION: 1 << 8
   };
 
   function HydraBone() {
@@ -488,6 +500,37 @@ var Hydra = (function() {
 
   // Original code uses a hull trace to detect collisions.
   Hydra.prototype.isValidConnection = function() { return true; };
+
+  // Tasks.
+  Hydra.prototype.startTask = function( task ) {
+    switch ( task.task ) {
+      case Task.HYDRA_DEPLOY:
+        this.headGoalInfluence = 1;
+        this.idealLength = 100;
+        this.headDirection.copy( this.outward );
+        return;
+
+      case Task.HYDRA_PREP_STAB:
+        this.taskEndTime = currentTime + task.taskData;
+
+        // Go outward.
+        this.updateMatrixWorld();
+        this.headGoal.copy( this.outward ).multiplyScalar( 100 )
+          .add( vector.setFromMatrixPosition( this.matrixWorld ) );
+        return;
+
+      case Task.HYDRA_STAB:
+        this.taskEndTime = currentTime + 0.5;
+        return;
+
+      case Task.HYDRA_PULLBACK:
+        this.updateMatrixWorld();
+        this.headGoal.copy( this.outward ).multiplyScalar( task.taskData )
+          .add( vector.setFromMatrixPosition( this.matrixWorld ) );
+        this.idealLength = task.taskData * 1.1;
+        return;
+    }
+  };
 
   // Client-side hydra methods.
 
