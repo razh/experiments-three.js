@@ -5,9 +5,15 @@ var Hydra = (function() {
   'use strict';
 
   var vector = new THREE.Vector3();
+  var vector2 = new THREE.Vector3();
 
   var v0 = new THREE.Vector3();
   var v3 = new THREE.Vector3();
+
+  var right = new THREE.Vector3()
+  var up = new THREE.Vector3();
+
+  var HYDRA_MAX_LENGTH = 500;
 
   var CHAIN_LINKS = 32;
 
@@ -517,6 +523,8 @@ var Hydra = (function() {
         this.updateMatrixWorld();
         this.headGoal.copy( this.outward ).multiplyScalar( 100 )
           .add( vector.setFromMatrixPosition( this.matrixWorld ) );
+
+        // TODO: Missing setTarget().
         return;
 
       case Task.HYDRA_STAB:
@@ -530,6 +538,183 @@ var Hydra = (function() {
         this.idealLength = task.taskData * 1.1;
         return;
     }
+  };
+
+  Hydra.prototype.runTask = function( task ) {
+    switch( task.task ) {
+      case Task.HYDRA_DEPLOY:
+        this.headGoalInfluence = 1;
+        var distance = this.eyePosition().distanceTo( this.headGoal );
+
+        if ( distance < this.idealSegmentLength ) {
+          this.completeTask();
+        }
+
+        this.aimHeadInTravelDirection( 0.2 );
+        return;
+
+      case Task.HYDRA_PREP_STAB:
+        if ( this.body.length < 2 ) {
+          this.failTask( 'Hydra is too short to begin stab.' );
+          return;
+        }
+
+        this.updateMatrixWorld();
+        var distanceToTarget = this.target.distanceTo( this.headGoal );
+        var distanceToBase = this.headGoal.distanceTo(
+          vector.setFromMatrixPosition( this.matrixWorld )
+        );
+        this.idealSegmentLength = distanceToTarget + distanceToBase * 0.5;
+
+        if ( this.idealLength > HYDRA_MAX_LENGTH ) {
+          this.idealLength = HYDRA_MAX_LENGTH;
+        }
+
+        if ( distanceToTarget < 100 ) {
+          this.targetDirection.subVectors( this.target, this.headGoal )
+            .normalize();
+
+          vector.copy( this.targetDirection )
+            .multiplyScalar( ( 100 - distanceToTarget ) * 0.5 );
+
+          this.headGoal.sub( vector );
+
+        } else if ( distanceToTarget > 200 ) {
+          this.targetDirection.subVectors( this.target, this.headGoal )
+            .normalize();
+
+          vector.copy( this.targetDirection )
+            .multiplyScalar( ( 200 - distanceToTarget ) * 0.5 );
+
+          this.headGoal.sub( vector );
+        }
+
+        // Face enemy.
+        this.targetDirection.subVectors(
+          this.target,
+          this.body[ this.body.length - 1 ].position
+        ).normalize();
+
+        this.headDirection.lerp( this.taskDirection, 0.4 ).normalize();
+
+        // Build tension towards strike time.
+        var influence = 1 - ( this.taskEndTime - currentTime ) / task.taskData;
+        if ( influence > 1 ) {
+          influence = 1;
+        }
+
+        influence = influence * influence * influence;
+        this.headGoalInfluence = influence;
+
+        // Keep head segment straight.
+        var i = this.body.length - 1;
+        this.body[i].goalPosition.subVectors(
+          this.headGoal,
+          vector.copy( this.headDirection )
+            .multiplyScalar( this.body[i].actualLength )
+        );
+        this.body[i].goalInfluence = influence;
+
+        // Curve neck into spiral.
+        var distanceBackFromHead = this.body[i].actualLength;
+        vectorVectors( this.headDirection, right, up );
+
+        var r;
+        var p0;
+        for ( i = i - 1; i > 1 && distanceBackFromHead < distanceToTarget; i-- ) {
+          distanceBackFromHead += this.body[i].actualLength;
+
+          r = ( distanceBackFromHead / 200 ) * 2 * Math.PI;
+
+          // Spiral.
+          p0 = vector.copy( this.headGoal )
+            .sub(
+              vector2.copy( this.headDirection )
+                .multiplyScalar( distanceBackFromHead * 0.5 )
+            )
+            .add(
+              vector2.copy( right )
+                .multiplyScalar( Math.cos( r) * this.body[i].actualLength )
+            )
+            .add(
+              vector2.copy( up )
+                .multiplyScalar( Math.sin( r) * this.body[i].actualLength )
+            );
+
+          // Base.
+          r = ( distanceBackFromHead / this.idealLength ) * Math.PI * 0.2;
+          r = Math.sin( r );
+
+          p0.lerp( vector.setFromMatrixPosition( this.matrixWorld ), r );
+
+          this.body[i].goalPosition.copy( p0 );
+          this.body[i].goalInfluence = influence *
+            ( 1 - ( distanceBackFromHead / distanceToTarget ) );
+        }
+
+        // Look to see if any of the goal positions are stuck.
+        var delta;
+        for ( ; i < this.body.length - 1; i++ ) {
+          if ( this.body[i].stuck ) {
+            delta = vector.copy( this.headDirection )
+              .multiplyScalar(
+                vector2.subVectors(
+                  this.body[i].goalPosition,
+                  this.body[i].position
+                )
+                .dot( this.headDirection )
+              );
+
+            this.headGoal.sub(
+              delta.multiplyScalar( this.body[i].goalInfluence )
+            );
+          }
+        }
+
+        if ( currentTime >= this.taskEndTime ) {
+          if ( distanceToTarget < 500 ) {
+            this.completeTask();
+            return;
+          } else {
+            this.failTask( 'Target is too far away.' );
+            return;
+          }
+        }
+
+        return;
+
+      case Task.HYDRA_STAB:
+        return;
+
+      case Task.HYDRA_PULLBACK:
+        return;
+    }
+  };
+
+  Hydra.prototype.completeTask = function() {};
+  Hydra.prototype.failTask = function() {};
+
+  Hydra.prototype.eyePosition = function() {
+    var i = this.body.length - 1;
+    if ( i >= 0 ) {
+      return this.body[i].position;
+    }
+
+    return this.position;
+  };
+
+  Hydra.prototype.aimHeadInTravelDirection = function( influence ) {
+    // Aim in the direction of movement enemy.
+    var delta = vector.copy( this.body[ this.body.length - 1 ].delta )
+      .normalize();
+
+    if ( delta.dot( this.headDirection ) < 0 ) {
+      delta.negate();
+    }
+
+    this.headDirection
+      .lerp( delta, influence )
+      .normalize();
   };
 
   // Client-side hydra methods.
