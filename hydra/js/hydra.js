@@ -762,6 +762,17 @@ var Hydra = (function() {
        return;
 
       case Task.HYDRA_PULLBACK:
+        if ( this.body.length < 2 ) {
+          this.failTask( 'Hydra is too short to begin stab.' );
+        }
+
+        // TODO: Missing getEnemy().
+        this.aimHeadInTravelDirection( 0.2 );
+
+        if ( this.currentLength < this.idealLength + this.idealSegmentLength ) {
+          this.completeTask();
+        }
+
         return;
     }
   };
