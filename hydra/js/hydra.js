@@ -684,7 +684,82 @@ var Hydra = (function() {
         return;
 
       case Task.HYDRA_STAB:
-        return;
+        if ( this.body.length < 2 ) {
+          this.failTask( 'Hydra is too short to begin stab.' );
+          return;
+        }
+
+        if ( this.taskEndTime <= currentTime ) {
+          this.completeTask();
+          return;
+        }
+
+        this.headGoalInfluence = 1;
+
+        // Keep head segment straight.
+        var i = this.body.length - 2;
+        this.body[i].goalPosition.copy( this.headDirection )
+          .multiplyScalar( this.body[i].actualLength )
+          .add( this.headGoal );
+        this.body[i].goalInfluence = 1;
+
+        var vectorToTarget = vector.subVectors(
+          this.target,
+          this.eyePosition()
+        );
+
+        // Check to see if we went past target.
+        if ( vectorToTarget.dot( this.headDirection ) < 0 ) {
+          this.completeTask();
+          return;
+        }
+
+        this.updateMatrixWorld();
+
+        var distanceToTarget = vectorToTarget.length();
+        var distanceToBase = this.eyePosition().distanceTo(
+          vector.setFromMatrixPosition( this.matrixWorld )
+        );
+        this.idealLength = distanceToTarget + distanceToBase;
+
+        // Hit enemy.
+        this.headGoal.copy( this.headDirection ).multiplyScalar( 300 )
+          .add( this.target );
+
+        if ( this.idealLength > HYDRA_MAX_LENGTH ) {
+          this.idealLength = HYDRA_MAX_LENGTH;
+        }
+
+        // Curve neck into spiral.
+        var distanceBackFromHead = this.body[i].actualLength;
+        vectorVectors( this.headDirection, right, up );
+
+        var p0;
+        for ( i = i - 1; i > 1 && distanceBackFromHead < distanceToTarget; i-- ) {
+          p0 = vector.copy( this.headGoal )
+            .sub(
+              vector2.copy( this.headDirection )
+                .multiplyScalar( distanceBackFromHead )
+            );
+
+          this.body[i].goalPosition.copy( p0 );
+
+          if ( this.target.distanceTo( this.body[i].position ) <=
+               ( distanceToTarget + distanceBackFromHead ) ) {
+            this.body[i].goalPosition.subVectors(
+              this.eyePosition(),
+              vector.copy( this.headDirection )
+                .multiplyScalar( distanceBackFromHead )
+            );
+          }
+
+          this.body[i].goalInfluence = 1 -
+            ( distanceBackFromHead / distanceToTarget );
+
+          distanceBackFromHead += this.body[i].actualLength;
+        }
+
+       return;
 
       case Task.HYDRA_PULLBACK:
         return;
