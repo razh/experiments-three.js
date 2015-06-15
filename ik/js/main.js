@@ -46,7 +46,6 @@
 
     var vertices = geometry.vertices;
     var count = vertices.length;
-    var temp = new THREE.Vector3();
     var iterations = 0;
     var vi, vj, vf;
     var di, dj, df;
@@ -61,8 +60,7 @@
         di = vi.distanceTo( point );
         t = lengths[i] / di;
 
-        temp.copy( vi ).lerp( point, t );
-        vj.copy( temp );
+        vj.lerpVectors( vi, point, t );
       }
     }
     // Reachable.
@@ -84,8 +82,7 @@
           dj = vi.distanceTo( vj );
           t = lengths[i] / dj;
 
-          temp.copy( vj ).lerp( vi, t );
-          vi.copy( temp );
+          vi.lerpVectors( vj, vi, t );
         }
 
         // Move first vertex back to origin.
@@ -99,8 +96,7 @@
           dj = vi.distanceTo( vj );
           t = lengths[i] / dj;
 
-          temp.copy( vi ).lerp( vj, t );
-          vj.copy( temp );
+          vj.lerpVectors( vi, vj, t );
         }
 
         df = vf.distanceTo( point );
