@@ -26,7 +26,7 @@ var Toroid = (function() {
       tube: tube,
       radialSegments: radialSegments,
       tubularSegments: tubularSegments,
-      arc: arc,
+      arc: arc
     };
 
     outerRadius = outerRadius || 160;

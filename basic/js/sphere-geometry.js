@@ -43,7 +43,7 @@ function createAnimatedSphereGeometry(
         var v = y / heightSegments;
 
         var vertex = new THREE.Vector3();
-        vertex.x = - radius * Math.cos( phiStart + u * phiLength ) * Math.sin( thetaStart + v * thetaLength );
+        vertex.x = -radius * Math.cos( phiStart + u * phiLength ) * Math.sin( thetaStart + v * thetaLength );
         vertex.y = radius * Math.cos( thetaStart + v * thetaLength );
         vertex.z = radius * Math.sin( phiStart + u * phiLength ) * Math.sin( thetaStart + v * thetaLength );
 

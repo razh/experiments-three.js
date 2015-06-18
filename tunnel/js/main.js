@@ -7,39 +7,6 @@
   var scene, camera, renderer;
   var controls;
 
-  function init() {
-    container = document.createElement( 'div' );
-    document.body.appendChild( container );
-
-    var vw = 568,
-        vh = 320;
-
-    renderer = new THREE.WebGLRenderer();
-    renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize( vw, vh );
-    container.appendChild( renderer.domElement );
-
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera( 90, vw / vh, 0.1, 1000 );
-    controls = new THREE.OrbitControls( camera, renderer.domElement );
-
-    var meshes = createTrackMeshes({
-      count: 5
-    });
-
-    meshes.forEach(function( mesh ) {
-      scene.add( mesh );
-    });
-
-    camera.position.set( 0, 2, -4 );
-    var position = new THREE.Vector3().copy( camera.position );
-    position.z = 10;
-    controls.target = position;
-    camera.lookAt( position );
-
-    scene.fog = new THREE.FogExp2( 0x000000, 0.1 );
-  }
-
   function createTrackGeometry( radius, length, meshSpacing ) {
     var geometry = new THREE.Geometry();
 
@@ -62,8 +29,7 @@
       new THREE.Vector3( -( radius + meshSpacing ), height, 0 ),
       new THREE.Vector3( -( radius / 2 + meshSpacing ), 0, 0 ),
       new THREE.Vector3( -( radius / 2 + meshSpacing ), 0, -length ),
-      new THREE.Vector3( -( radius + meshSpacing ), height, -length ),
-
+      new THREE.Vector3( -( radius + meshSpacing ), height, -length )
     ];
 
     geometry.faces = [
@@ -92,7 +58,7 @@
     var geometry = createTrackGeometry( radius, length, meshSpacing );
 
     var material = new THREE.MeshBasicMaterial({
-      color: new THREE.Color( 1, 1, 1 )
+      color: '#fff'
     });
 
     var meshes = [];
@@ -105,6 +71,39 @@
     }
 
     return meshes;
+  }
+
+  function init() {
+    container = document.createElement( 'div' );
+    document.body.appendChild( container );
+
+    var vw = 568;
+    var vh = 320;
+
+    renderer = new THREE.WebGLRenderer();
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setSize( vw, vh );
+    container.appendChild( renderer.domElement );
+
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera( 90, vw / vh, 0.1, 1000 );
+    controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+    var meshes = createTrackMeshes({
+      count: 5
+    });
+
+    meshes.forEach(function( mesh ) {
+      scene.add( mesh );
+    });
+
+    camera.position.set( 0, 2, -4 );
+    var position = new THREE.Vector3().copy( camera.position );
+    position.z = 10;
+    controls.target = position;
+    camera.lookAt( position );
+
+    scene.fog = new THREE.FogExp2( 0x000000, 0.1 );
   }
 
   function animate() {

@@ -10,7 +10,7 @@ var Hydra = (function() {
   var v0 = new THREE.Vector3();
   var v3 = new THREE.Vector3();
 
-  var right = new THREE.Vector3()
+  var right = new THREE.Vector3();
   var up = new THREE.Vector3();
 
   var HYDRA_MAX_LENGTH = 500;
@@ -170,7 +170,7 @@ var Hydra = (function() {
     // Goal forces.
     var influence;
     var length;
-    for ( i = firstIndex; i<= lastIndex; i++ ) {
+    for ( i = firstIndex; i <= lastIndex; i++ ) {
       influence = body[i].goalInfluence;
       if ( influence > 0 ) {
         body[i].goalInfluence = 0;
@@ -634,11 +634,11 @@ var Hydra = (function() {
             )
             .add(
               vector2.copy( right )
-                .multiplyScalar( Math.cos( r) * this.body[i].actualLength )
+                .multiplyScalar( Math.cos( r ) * this.body[i].actualLength )
             )
             .add(
               vector2.copy( up )
-                .multiplyScalar( Math.sin( r) * this.body[i].actualLength )
+                .multiplyScalar( Math.sin( r ) * this.body[i].actualLength )
             );
 
           // Base.
