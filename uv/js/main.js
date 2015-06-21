@@ -10,6 +10,7 @@
   var scene, camera, controls, renderer;
 
   var geometry, material, mesh;
+  var texture;
 
   function drawUvs( ctx, mesh ) {
     var canvas = ctx.canvas;
@@ -58,12 +59,13 @@
     canvas.style.left = 0;
     canvas.style.top  = 0;
 
+    texture = new THREE.Texture( canvas );
     document.body.appendChild( canvas );
 
     // Mesh.
     geometry = new THREE.IcosahedronGeometry( 1, 3 );
     material = new THREE.MeshPhongMaterial({
-      shininess: 50
+      map: texture
     });
     mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
@@ -71,6 +73,7 @@
     ctx.fillStyle = '#fff';
     ctx.fillRect( 0, 0, size, size );
     drawUvs( ctx, mesh );
+    texture.needsUpdate = true;
   }
 
   function animate() {
