@@ -13,7 +13,9 @@
   var texture;
 
   var options = {
-    powerOfTwo: 8
+    powerOfTwo: 8,
+    strokeStyle: '#000',
+    lineWidth: 0.5
   };
 
   function drawUVs( ctx, mesh ) {
@@ -28,8 +30,8 @@
       ctx.lineTo( width * uvs[2].x, height * uvs[2].y );
     });
 
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 0.5;
+    ctx.strokeStyle = options.strokeStyle;
+    ctx.lineWidth = options.lineWidth;
     ctx.stroke();
   }
 
@@ -74,16 +76,19 @@
     mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
 
-    function drawUVTexture( exponent ) {
-      var size = Math.pow( 2, exponent );
-      canvas.width = size;
-      canvas.height = size;
-
+    function drawUVTexture() {
       ctx.fillStyle = '#fff';
-      ctx.fillRect( 0, 0, size, size );
+      ctx.fillRect( 0, 0, ctx.canvas.width, ctx.canvas.height );
       drawUVs( ctx, mesh );
 
       texture.needsUpdate = true;
+    }
+
+    function resizeUVTexture( exponent ) {
+      var size = Math.pow( 2, exponent );
+      canvas.width = size;
+      canvas.height = size;
+      drawUVTexture();
     }
 
     drawUVTexture( options.powerOfTwo );
@@ -93,6 +98,14 @@
 
     gui.add( options, 'powerOfTwo', 0, 12 )
       .step( 1 )
+      .listen()
+      .onChange( resizeUVTexture );
+
+    gui.add( options, 'lineWidth', 0.01, 4 )
+      .listen()
+      .onChange( drawUVTexture );
+
+    gui.addColor( options, 'strokeStyle' )
       .listen()
       .onChange( drawUVTexture );
   }
