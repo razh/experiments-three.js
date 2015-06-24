@@ -5,17 +5,29 @@
   var container;
 
   var canvas, ctx;
-  var size = 256;
 
   var scene, camera, controls, renderer;
 
   var geometry, material, mesh;
   var texture;
 
+  var geometries = {
+    icosahedron: new THREE.IcosahedronGeometry( 1, 3 ),
+    sphere: new THREE.SphereGeometry( 1, 16, 16 ),
+    octahedron: new THREE.OctahedronGeometry( 1, 2 ),
+    tetrahedron: new THREE.TetrahedronGeometry( 1 ),
+    box: new THREE.BoxGeometry( 1, 1, 1, 4, 4, 4 ),
+    cylinder: new THREE.CylinderGeometry( 0.5, 0.5, 2, 32, 4 ),
+    torus: new THREE.TorusGeometry( 1, 0.25, 16, 16 )
+  };
+
+  var types = Object.keys( geometries );
+
   var options = {
     powerOfTwo: 8,
     strokeStyle: '#000',
-    lineWidth: 0.5
+    lineWidth: 0.5,
+    type: 'icosahedron'
   };
 
   function drawUVs( ctx, mesh ) {
@@ -52,11 +64,17 @@
 
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
-    scene.add( new THREE.HemisphereLight( '#fff', '#000' ) );
+    scene.add( new THREE.HemisphereLight( '#fff', '#111' ) );
 
     // UV map.
     canvas = document.createElement( 'canvas' );
     ctx = canvas.getContext( '2d' );
+
+    function resizeCanvas( exponent ) {
+      var size = Math.pow( 2, exponent );
+      canvas.width = size;
+      canvas.height = size;
+    }
 
     canvas.style.position = 'fixed';
     canvas.style.left = 0;
@@ -64,17 +82,23 @@
     canvas.style.width = '256px';
     canvas.style.height = '256px';
 
+    resizeCanvas( options.powerOfTwo );
     texture = new THREE.Texture( canvas );
     document.body.appendChild( canvas );
 
-    // Mesh.
-    geometry = new THREE.IcosahedronGeometry( 1, 3 );
     material = new THREE.MeshPhongMaterial({
       map: texture,
       shading: THREE.FlatShading
     });
-    mesh = new THREE.Mesh( geometry, material );
-    scene.add( mesh );
+
+    function createMesh() {
+      scene.remove( mesh );
+      geometry = geometries[ options.type ];
+      mesh = new THREE.Mesh( geometry, material );
+      scene.add( mesh );
+    }
+
+    createMesh();
 
     function drawUVTexture() {
       ctx.fillStyle = '#fff';
@@ -85,9 +109,7 @@
     }
 
     function resizeUVTexture( exponent ) {
-      var size = Math.pow( 2, exponent );
-      canvas.width = size;
-      canvas.height = size;
+      resizeCanvas( exponent );
       drawUVTexture();
     }
 
@@ -108,6 +130,13 @@
     gui.addColor( options, 'strokeStyle' )
       .listen()
       .onChange( drawUVTexture );
+
+    gui.add( options, 'type', types )
+      .listen()
+      .onChange(function() {
+        createMesh();
+        drawUVTexture();
+      });
   }
 
   function animate() {
