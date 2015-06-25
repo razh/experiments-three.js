@@ -11,6 +11,9 @@
   var geometry, material, mesh;
   var texture;
 
+  var depthScene, depthRenderer;
+  var depthMaterial, depthMesh;
+
   var geometries = {
     icosahedron: new THREE.IcosahedronGeometry( 1, 3 ),
     sphere: new THREE.SphereGeometry( 1, 16, 16 ),
@@ -56,7 +59,17 @@
     renderer.setSize( window.innerWidth, window.innerHeight );
     container.appendChild( renderer.domElement );
 
+    depthRenderer = new THREE.WebGLRenderer();
+    depthRenderer.setSize( 256, 256 );
+
+    var depthElement = depthRenderer.domElement;
+    depthElement.style.position = 'fixed';
+    depthElement.style.left = 0;
+    depthElement.style.bottom = 0;
+    container.appendChild( depthElement );
+
     scene = new THREE.Scene();
+    depthScene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight );
     camera.position.set( 0, 0, 2 );
@@ -91,11 +104,17 @@
       shading: THREE.FlatShading
     });
 
+    depthMaterial = new THREE.MeshDepthMaterial();
+
     function createMesh() {
       scene.remove( mesh );
       geometry = geometries[ options.type ];
       mesh = new THREE.Mesh( geometry, material );
       scene.add( mesh );
+
+      depthScene.remove( depthMesh );
+      depthMesh = new THREE.Mesh( geometry.clone(), depthMaterial );
+      depthScene.add( depthMesh );
     }
 
     createMesh();
@@ -141,6 +160,7 @@
 
   function animate() {
     renderer.render( scene, camera );
+    depthRenderer.render( depthScene, camera );
     requestAnimationFrame( animate );
   }
 
