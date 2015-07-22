@@ -71,9 +71,7 @@ var createGunGeometry = (function() {
     gunLeft.applyMatrix( matrix );
 
     matrix.makeTranslation( gunOffsetX, gunOffsetY, 0 );
-    gunRight.applyMatrix( matrix );
-
-    gunLeft.merge( gunRight );
+    gunLeft.merge( gunRight, matrix );
 
     return gunLeft;
   }

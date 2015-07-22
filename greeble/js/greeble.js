@@ -167,9 +167,7 @@ var greeble = (function () {
         .lookAt( origin, normal, up )
         .setPosition( point );
 
-      var tempGeometry = fn();
-      tempGeometry.applyMatrix( matrix );
-      greebles.merge( tempGeometry );
+      greebles.merge( fn(), matrix );
     });
 
     return greebles;
