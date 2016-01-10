@@ -9,6 +9,7 @@
   var geometry, material, mesh;
 
   var textarea = document.getElementById( 'points' );
+  var segments = document.getElementById( 'segments' );
 
   function init() {
     container = document.createElement( 'div' );
@@ -21,30 +22,48 @@
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight );
+    camera.position.set( 0, 0, 8 );
+
+    controls = new THREE.OrbitControls( camera, renderer.domElement );
+    controls.addEventListener( 'change', render );
 
     var ambientLight = new THREE.AmbientLight( 0x333333 );
     scene.add( ambientLight );
 
     var light = new THREE.DirectionalLight();
-    light.position.set( 0, 32, 0 );
     scene.add( light );
 
     material = new THREE.MeshPhongMaterial({
-      shading: THREE.FlatShading
+      shading: THREE.FlatShading,
+      side: THREE.DoubleSide
     });
 
     mesh = new THREE.Mesh( new THREE.Geometry(), material );
     scene.add( mesh );
 
-    textarea.addEventListener( 'input', function( event ) {
-      var value = event.target.value;
-      var points = [];
+    textarea.value = [
+      0,
+      1,
+      '0 2'
+    ].join( '\n' );
 
-      var lines = value.split( '\n' );
+    segments.value = 4;
+
+    function onInput( event ) {
+      var lines = textarea.value.split( '\n' );
+      var line;
+
+      var points = [];
       var point;
       var x, y, z;
       for ( var i = 0; i < lines.length; i++ ) {
-        point = lines[i].split( ' ' ).map( parseFloat );
+        line = lines[i].trim();
+
+        if ( !line.length ) {
+          continue;
+        }
+
+        point = line.split( ' ' ).map( parseFloat );
 
         if ( !point.length || point.some( isNaN ) ) {
           return;
@@ -66,20 +85,22 @@
         points.push( new THREE.Vector3( x, y, z ) );
       }
 
-      geometry = new THREE.LatheGeometry( points, 4 );
+      geometry = new THREE.LatheGeometry( points, segments.value );
       mesh.geometry = geometry;
       mesh.needsUpdate = true;
 
       geometry.computeBoundingSphere();
 
-      camera.position
+      light.position
         .copy( geometry.boundingSphere.center )
         .addScalar( geometry.boundingSphere.radius );
 
-      camera.lookAt( geometry.boundingSphere.center );
-
       render();
-    });
+    }
+
+    onInput();
+    textarea.addEventListener( 'input', onInput );
+    segments.addEventListener( 'input', onInput );
   }
 
   function render() {
@@ -88,5 +109,12 @@
 
   init();
   render();
+
+  window.addEventListener( 'resize', function() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize( window.innerWidth, window.innerHeight );
+  });
 
 })();

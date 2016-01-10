@@ -11,10 +11,27 @@
       margin: 0;
       background-color: #000;
     }
+
+    #points {
+      position: absolute;
+      right: 1em;
+      bottom: 1em;
+      height: 16em;
+      background-color: #000;
+      color: #fff;
+      resize: none;
+    }
+
+    #segments {
+      position: absolute;
+      right: 1em;
+      bottom: 18em;
+    }
   </style>
 </head>
 <body>
   <textarea id="points"></textarea>
+  <input type="range" id="segments" min="1" max="32">
 
   <script src="../node_modules/three.js/build/three.js"></script>
   <script src="../app/vendor/controls/OrbitControls.js"></script>
