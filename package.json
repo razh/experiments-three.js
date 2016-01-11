@@ -4,6 +4,7 @@
   "description": "experiments-three.js ====================",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/razh/experiments-three.js/issues"
   },
-  "homepage": "https://github.com/razh/experiments-three.js#readme"
+  "homepage": "https://github.com/razh/experiments-three.js#readme",
+  "dependencies": {
+    "eslint": "^1.10.3"
+  }
 }
