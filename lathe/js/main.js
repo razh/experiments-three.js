@@ -7,6 +7,7 @@
   var scene, camera, controls, renderer;
 
   var geometry, material, mesh;
+  var wireframe;
 
   var textarea = document.getElementById( 'points' );
   var segments = document.getElementById( 'segments' );
@@ -49,7 +50,16 @@
 
     segments.value = 4;
 
-    function onInput( event ) {
+    function createWireframe( mesh ) {
+      if ( wireframe && wireframe.parent ) {
+        wireframe.parent.remove( wireframe );
+      }
+
+      wireframe = new THREE.WireframeHelper( mesh, 0 );
+      scene.add( wireframe );
+    }
+
+    function onInput() {
       var lines = textarea.value.split( '\n' );
       var line;
 
@@ -95,12 +105,18 @@
         .copy( geometry.boundingSphere.center )
         .addScalar( geometry.boundingSphere.radius );
 
+      createWireframe( mesh );
+
       render();
     }
 
     onInput();
     textarea.addEventListener( 'input', onInput );
     segments.addEventListener( 'input', onInput );
+
+    textarea.addEventListener( 'keydown', function( event ) {
+      event.stopPropagation();
+    });
   }
 
   function render() {
