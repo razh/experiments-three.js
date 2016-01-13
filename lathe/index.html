@@ -27,9 +27,20 @@
       right: 1em;
       bottom: 18em;
     }
+
+    #shading {
+      position: absolute;
+      right: 1em;
+      bottom: 20em;
+    }
   </style>
 </head>
 <body>
+  <select id="shading">
+    <option value="FlatShading">FlatShading</option>
+    <option value="SmoothShading">SmoothShading</option>
+  </select>
+
   <textarea id="points"></textarea>
   <input type="range" id="segments" min="1" max="32">
 

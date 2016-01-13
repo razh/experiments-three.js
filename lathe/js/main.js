@@ -11,6 +11,7 @@
 
   var textarea = document.getElementById( 'points' );
   var segments = document.getElementById( 'segments' );
+  var shading = document.getElementById( 'shading' );
 
   function init() {
     container = document.createElement( 'div' );
@@ -33,6 +34,9 @@
 
     var light = new THREE.DirectionalLight();
     scene.add( light );
+
+    var backLight = new THREE.DirectionalLight( '#eef' );
+    scene.add( backLight );
 
     material = new THREE.MeshPhongMaterial({
       shading: THREE.FlatShading,
@@ -105,6 +109,8 @@
         .copy( geometry.boundingSphere.center )
         .addScalar( geometry.boundingSphere.radius );
 
+      backLight.position.copy( light.position ).negate();
+
       createWireframe( mesh );
 
       render();
@@ -116,6 +122,12 @@
 
     textarea.addEventListener( 'keydown', function( event ) {
       event.stopPropagation();
+    });
+
+    shading.addEventListener( 'change', function( event ) {
+      material.shading = THREE[event.target.value];
+      material.needsUpdate = true;
+      render();
     });
   }
 
@@ -131,6 +143,7 @@
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
+    render();
   });
 
 })();
