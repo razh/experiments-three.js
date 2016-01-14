@@ -10,39 +10,46 @@
     body {
       margin: 0;
       background-color: #000;
+      color: #fff;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
 
-    #points {
+    .controls {
       position: absolute;
       right: 1em;
       bottom: 1em;
+    }
+
+    #points {
       height: 16em;
       background-color: #000;
       color: #fff;
       resize: none;
     }
 
-    #segments {
-      position: absolute;
-      right: 1em;
-      bottom: 18em;
-    }
-
-    #shading {
-      position: absolute;
-      right: 1em;
-      bottom: 20em;
+    #segments,
+    #shading,
+    #points {
+      display: block;
+      width: 100%;
     }
   </style>
 </head>
 <body>
-  <select id="shading">
-    <option value="FlatShading">FlatShading</option>
-    <option value="SmoothShading">SmoothShading</option>
-  </select>
+  <div class="controls">
+    <label>
+      <input type="checkbox" id="wireframe" checked> Wireframe
+    </label>
 
-  <textarea id="points"></textarea>
-  <input type="range" id="segments" min="1" max="32">
+    <select id="shading">
+      <option value="FlatShading">FlatShading</option>
+      <option value="SmoothShading">SmoothShading</option>
+    </select>
+
+    <input type="range" id="segments" min="2" max="32">
+
+    <textarea id="points"></textarea>
+  </div>
 
   <script src="../node_modules/three.js/build/three.js"></script>
   <script src="../app/vendor/controls/OrbitControls.js"></script>

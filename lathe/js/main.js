@@ -10,8 +10,9 @@
   var wireframe;
 
   var textarea = document.getElementById( 'points' );
-  var segments = document.getElementById( 'segments' );
-  var shading = document.getElementById( 'shading' );
+  var segmentsInput = document.getElementById( 'segments' );
+  var shadingInput = document.getElementById( 'shading' );
+  var wireframeInput = document.getElementById( 'wireframe' );
 
   function init() {
     container = document.createElement( 'div' );
@@ -52,7 +53,7 @@
       '0 2'
     ].join( '\n' );
 
-    segments.value = 4;
+    segmentsInput.value = 4;
 
     function createWireframe( mesh ) {
       if ( wireframe && wireframe.parent ) {
@@ -99,7 +100,7 @@
         points.push( new THREE.Vector3( x, y, z ) );
       }
 
-      geometry = new THREE.LatheGeometry( points, segments.value );
+      geometry = new THREE.LatheGeometry( points, segmentsInput.value );
       mesh.geometry = geometry;
       mesh.needsUpdate = true;
 
@@ -109,7 +110,9 @@
         .copy( geometry.boundingSphere.center )
         .addScalar( geometry.boundingSphere.radius );
 
-      backLight.position.copy( light.position ).negate();
+      backLight.position
+        .copy( geometry.boundingSphere.center )
+        .subScalar( geometry.boundingSphere.radius );
 
       createWireframe( mesh );
 
@@ -118,15 +121,20 @@
 
     onInput();
     textarea.addEventListener( 'input', onInput );
-    segments.addEventListener( 'input', onInput );
+    segmentsInput.addEventListener( 'input', onInput );
 
     textarea.addEventListener( 'keydown', function( event ) {
       event.stopPropagation();
     });
 
-    shading.addEventListener( 'change', function( event ) {
+    shadingInput.addEventListener( 'change', function( event ) {
       material.shading = THREE[event.target.value];
       material.needsUpdate = true;
+      render();
+    });
+
+    wireframeInput.addEventListener( 'change', function( event ) {
+      wireframe.visible = event.target.checked;
       render();
     });
   }
