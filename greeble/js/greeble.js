@@ -3,57 +3,30 @@
 var greeble = (function () {
   'use strict';
 
+  var triangle = new THREE.Triangle()
+
   /**
    * Copies of various utility functions from THREE.GeometryUtils.
    *
    * NOTE: THREE.GeometryUtils resides in the three.js extras folder and is not
    * included with the bower distribution.
    */
-  var triangleArea = (function() {
-    var ab = new THREE.Vector3();
-    var ac = new THREE.Vector3();
+  function randomPointInTriangle( vA, vB, vC ) {
+    var a = THREE.Math.random16();
+    var b = THREE.Math.random16();
 
-    return function ( vA, vB, vC ) {
-      ab.subVectors( vB, vA );
-      ac.subVectors( vC, vA );
-      ab.cross( ac );
+    if ( ( a + b ) > 1 ) {
+      a = 1 - a;
+      b = 1 - b;
+    }
 
-      return 0.5 * ab.length();
-    };
-  }) ();
+    var c = 1 - a - b;
 
-  var randomPointInTriangle = (function() {
-    var vector = new THREE.Vector3();
-
-    return function( vA, vB, vC ) {
-      var point = new THREE.Vector3();
-
-      var a = THREE.Math.random16();
-      var b = THREE.Math.random16();
-
-      if ( ( a + b ) > 1 ) {
-        a = 1 - a;
-        b = 1 - b;
-      }
-
-      var c = 1 - a - b;
-
-      point.copy( vA )
-        .multiplyScalar( a );
-
-      vector.copy( vB )
-        .multiplyScalar( b );
-
-      point.add( vector );
-
-      vector.copy( vC )
-        .multiplyScalar( c );
-
-      point.add( vector );
-
-      return point;
-    };
-  }) ();
+    return new THREE.Vector3()
+      .addScaledVector( vA, a )
+      .addScaledVector( vB, b )
+      .addScaledVector( vC, c );
+  }
 
   function randomPointInFace( face, geometry ) {
     var vA, vB, vC;
@@ -82,20 +55,15 @@ var greeble = (function () {
     var totalArea = 0;
     var cumulativeAreas = [];
 
-    var vA, vB, vC;
-
     var face;
     var i, il;
     for ( i = 0, il = faces.length; i < il; i++ ) {
       face = faces[i];
 
-      vA = vertices[ face.a ];
-      vB = vertices[ face.b ];
-      vC = vertices[ face.c ];
+      totalArea += triangle
+        .setFromPointsAndIndices( vertices, face.a, face.b, face.c )
+        .area();
 
-      face._area = triangleArea( vA, vB, vC );
-
-      totalArea += face._area;
       cumulativeAreas[i] = totalArea;
     }
 

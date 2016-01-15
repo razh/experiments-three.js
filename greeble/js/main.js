@@ -1,5 +1,5 @@
 /*global THREE, greeble*/
-(function( window, document, undefined ) {
+(function() {
   'use strict';
 
   var container;
@@ -46,7 +46,7 @@
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
     renderer.setClearColor( 0x000000 );
-    renderer.shadowMapEnabled = true;
+    renderer.shadowMap.enabled = true;
     container.appendChild( renderer.domElement );
 
     scene = new THREE.Scene();
@@ -87,4 +87,4 @@
   init();
   animate();
 
-}) ( window, document );
+})();
