@@ -317,7 +317,7 @@
 
     var constructors = {
       line: THREE.Line,
-      point: THREE.PointCloud,
+      point: THREE.Points,
       mesh: THREE.Mesh
     };
 
@@ -327,7 +327,7 @@
         opacity: 0.1
       }),
 
-      point: new THREE.PointCloudMaterial({
+      point: new THREE.PointsMaterial({
         fog: true,
         size: 0.02,
         transparent: true,

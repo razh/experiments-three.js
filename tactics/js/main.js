@@ -1,5 +1,5 @@
 /*global THREE, createArrow*/
-(function( window, document, undefined ) {
+(function() {
   'use strict';
 
   var clock = new THREE.Clock();
@@ -24,8 +24,8 @@
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
     renderer.setClearColor( 0xffffff );
-    renderer.shadowMapEnabled = true;
-    renderer.shadowMapType = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild( renderer.domElement );
 
     scene = new THREE.Scene();
@@ -106,4 +106,4 @@
   init();
   animate();
 
-}) ( window, document );
+})();

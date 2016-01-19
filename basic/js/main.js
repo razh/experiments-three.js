@@ -14,13 +14,13 @@
   var types = [ 'point', 'wireframe', 'mesh' ];
 
   var constructors = {
-    point: THREE.PointCloud,
+    point: THREE.Points,
     wireframe: THREE.Mesh,
     mesh: THREE.Mesh
   };
 
   var materials = {
-    point: new THREE.PointCloudMaterial({
+    point: new THREE.PointsMaterial({
       size: 0.01
     }),
 

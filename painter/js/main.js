@@ -86,7 +86,6 @@
 
     // Create canvas mesh.
     geometry = new THREE.PlaneBufferGeometry( 1, 1, 256, 256 );
-    geometry.computeTangents();
 
     // Custom normal displacement shader.
     var shader = THREE.NormalDisplacementShader;
