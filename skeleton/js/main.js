@@ -29,10 +29,8 @@
     var matrix = new THREE.Matrix4();
     var vector = new THREE.Vector3();
 
-    var boxGeometry = new THREE.BoxGeometry( 0.25, 1, 0.25 );
-    boxGeometry.applyMatrix( matrix.makeTranslation( 0, 0.5, 0 ) );
-    // Reset matrix for rotation extractions.
-    matrix.identity();
+    var boxGeometry = new THREE.Geometry().copy( new THREE.BoxGeometry( 0.25, 1, 0.25 ) );
+    boxGeometry.translate( 0, 0.5, 0 );
 
     var angle = Math.PI / 6;
 
