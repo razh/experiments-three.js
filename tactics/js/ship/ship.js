@@ -55,8 +55,6 @@ var createShipGeometry = (function() {
 var createGunGeometry = (function() {
   'use strict';
 
-  var matrix = new THREE.Matrix4();
-
   function createGunGeometry() {
     // 14 meter barrel length.
     var gunLength = 1.4;
@@ -64,16 +62,15 @@ var createGunGeometry = (function() {
     var gunOffsetY = 0.2;
     var gunRadius = 0.03;
 
+    var geometry = new THREE.Geometry();
+
     var gunLeft = new THREE.CylinderGeometry( gunRadius, gunRadius, gunLength, 16 );
-    var gunRight = new THREE.CylinderGeometry( gunRadius, gunRadius, gunLength, 16 );
+    var gunRight = gunLeft.clone();
 
-    matrix.makeTranslation( -gunOffsetX, gunOffsetY, 0 );
-    gunLeft.applyMatrix( matrix );
+    geometry.merge( gunLeft.translate( -gunOffsetX, gunOffsetY, 0 ) );
+    geometry.merge( gunRight.translate( gunOffsetX, gunOffsetY, 0 ) );
 
-    matrix.makeTranslation( gunOffsetX, gunOffsetY, 0 );
-    gunLeft.merge( gunRight, matrix );
-
-    return gunLeft;
+    return geometry;
   }
 
   return createGunGeometry;
@@ -83,8 +80,6 @@ var createGunGeometry = (function() {
 /*exported createTurretGeometry*/
 var createTurretGeometry = (function() {
   'use strict';
-
-  var matrix = new THREE.Matrix4();
 
   function createTurretGeometry() {
     var turretRadius = 0.5;
@@ -121,8 +116,7 @@ var createTurretGeometry = (function() {
     });
 
     // Center turret vertically.
-    matrix.makeTranslation( 0, 0, -turretHeight / 2 );
-    geometry.applyMatrix( matrix );
+    geometry.translate( 0, 0, -turretHeight / 2 );
 
     return geometry;
   }

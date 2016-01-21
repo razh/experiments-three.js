@@ -3,9 +3,6 @@
 var createArrow = (function() {
   'use strict';
 
-  var lineMatrix = new THREE.Matrix4();
-  var matrix = new THREE.Matrix4();
-
   function lerpPathFn( path, divisions ) {
     var geometry = path.createSpacedPointsGeometry( divisions );
 
@@ -49,7 +46,6 @@ var createArrow = (function() {
     // Create path.
     var lerper = lerpPathFn( path, divisions );
     var lineGeometry = lerper.geometry;
-    lineMatrix.makeRotationX( -Math.PI / 2 );
 
     // Cache endpoint vertex.
     var endpoint = lineGeometry.vertices[ lineGeometry.vertices.length - 1 ];
@@ -85,8 +81,7 @@ var createArrow = (function() {
 
     var markerGeometry = new THREE.ShapeGeometry( markerShape );
     // Rotate to XZ plane.
-    matrix.makeRotationX( -Math.PI / 2 );
-    markerGeometry.applyMatrix( matrix );
+    markerGeometry.rotateX( -Math.PI / 2 );
 
     var markerMaterial = new THREE.MeshBasicMaterial({
       color: color,
@@ -112,7 +107,7 @@ var createArrow = (function() {
       t = t || 0;
       // Resample line geometry.
       lerper.lerp( t );
-      lineGeometry.applyMatrix( lineMatrix );
+      lineGeometry.rotateX( -Math.PI / 2 );
       // Translate and rotate marker.
       setMarkerTransform( t );
     };

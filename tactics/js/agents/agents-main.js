@@ -34,9 +34,7 @@
 
     // Create plane.
     planeGeometry = new THREE.PlaneBufferGeometry( 64, 64 );
-    planeGeometry.applyMatrix(
-      new THREE.Matrix4().makeRotationX( -Math.PI / 2 )
-    );
+    planeGeometry.rotateX( -Math.PI / 2 );
 
     planeMaterial = new THREE.MeshBasicMaterial({ color: '#333' });
     planeMesh = new THREE.Mesh( planeGeometry, planeMaterial );

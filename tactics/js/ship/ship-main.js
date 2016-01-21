@@ -32,7 +32,7 @@ createFrontDeckGeometry
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
-    renderer.shadowMapEnabled = true;
+    renderer.shadowMap.enabled = true;
     container.appendChild( renderer.domElement );
 
     scene = new THREE.Scene();
@@ -119,8 +119,10 @@ createFrontDeckGeometry
     light.castShadow = true;
     light.shadowCameraNear = 6;
     light.shadowCameraFar = 128;
-    light.shadowCameraVisible = true;
     scene.add( light );
+
+    var shadowCameraHelper = new THREE.CameraHelper( light.shadow.camera );
+    scene.add( shadowCameraHelper );
 
     ambient = new THREE.AmbientLight( 0x333333 );
     scene.add( ambient );
