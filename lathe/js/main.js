@@ -117,6 +117,7 @@
       createWireframe( mesh );
 
       render();
+      drawCanvas( points );
     }
 
     onInput();
@@ -142,6 +143,45 @@
   function render() {
     renderer.render( scene, camera );
   }
+
+  var drawCanvas = (function() {
+    var canvas = document.getElementById( 'canvas' );
+    var ctx = canvas.getContext( '2d' );
+
+    var scale = 32;
+
+    var box = new THREE.Box3();
+
+    return function( points ) {
+      if ( !points.length ) {
+        return;
+      }
+
+      box.setFromPoints( points );
+
+      var width = box.max.x - box.min.x;
+      var depth = box.max.z - box.min.z;
+
+      canvas.width = scale * depth;
+      canvas.height = scale * width;
+
+      ctx.clearRect( 0, 0, canvas.width, canvas.height );
+
+      ctx.save();
+      ctx.scale( scale, scale );
+
+      ctx.beginPath();
+      ctx.moveTo( points[0].z, points[0].x );
+      for ( var i = 1; i < points.length; i++ ) {
+        ctx.lineTo( points[i].z, points[i].x );
+      }
+
+      ctx.restore();
+
+      ctx.strokeStyle = '#fff';
+      ctx.stroke();
+    };
+  })();
 
   init();
   render();
