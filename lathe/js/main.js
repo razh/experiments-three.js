@@ -152,6 +152,13 @@
 
     var box = new THREE.Box3();
 
+    function drawLine( ctx, points ) {
+      ctx.moveTo( points[0].z, points[0].x );
+      for ( var i = 1; i < points.length; i++ ) {
+        ctx.lineTo( points[i].z, points[i].x );
+      }
+    }
+
     return function( points ) {
       if ( !points.length ) {
         return;
@@ -163,19 +170,24 @@
       var depth = box.max.z - box.min.z;
 
       canvas.width = scale * depth;
-      canvas.height = scale * width;
+      canvas.height = 2 * scale * width;
 
       ctx.clearRect( 0, 0, canvas.width, canvas.height );
 
-      ctx.save();
-      ctx.scale( scale, scale );
-
       ctx.beginPath();
-      ctx.moveTo( points[0].z, points[0].x );
-      for ( var i = 1; i < points.length; i++ ) {
-        ctx.lineTo( points[i].z, points[i].x );
-      }
 
+      // Bottom half.
+      ctx.save();
+      ctx.translate( 0, canvas.height / 2 );
+      ctx.scale( scale, scale );
+      drawLine( ctx, points );
+      ctx.restore();
+
+      // Top half.
+      ctx.save();
+      ctx.translate( 0, canvas.height / 2 );
+      ctx.scale( scale, -scale );
+      drawLine( ctx, points );
       ctx.restore();
 
       ctx.strokeStyle = '#fff';
