@@ -14,6 +14,93 @@
   var shadingInput = document.getElementById( 'shading' );
   var wireframeInput = document.getElementById( 'wireframe' );
 
+  function createPoints( string ) {
+    var lines = string.split( '\n' );
+    var line;
+
+    var points = [];
+    var point;
+    var x, y, z;
+    for ( var i = 0; i < lines.length; i++ ) {
+      line = lines[i].trim();
+
+      if ( !line.length ) {
+        continue;
+      }
+
+      point = line.split( ' ' ).map( parseFloat );
+
+      if ( !point.length || point.some( isNaN ) ) {
+        return;
+      }
+
+      x = point[0];
+
+      if ( point.length === 1 ) {
+        y = 0;
+        z = x;
+      } else if ( point.length === 2 ) {
+        y = 0;
+        z = point[1];
+      } else {
+        y = point[1];
+        z = point[2];
+      }
+
+      points.push( new THREE.Vector3( x, y, z ) );
+    }
+
+    return points;
+  }
+
+  // SVG path operations.
+  var ops = {
+    M: 'moveTo',
+    L: 'lineTo',
+    Q: 'quadraticCurveTo',
+    B: 'bezierCurveTo'
+  };
+
+  function createPathPoints( string ) {
+    var lines = string.split( '\n' );
+    var line;
+
+    var path = new THREE.Path();
+    var point;
+    var op, opcode;
+    for ( var i = 0; i < lines.length; i++ ) {
+      line = lines[i].trim();
+
+      if ( !line.length ) {
+        continue;
+      }
+
+      if ( /^[A-Za-z]/.test( line ) ) {
+        opcode = line.slice( 0, 1 );
+        line = line.slice( 1 ).trim();
+      }
+
+      point = line.split( ' ' ).map( parseFloat );
+
+      if ( !point.length || point.some( isNaN ) ) {
+        return;
+      }
+
+      if ( !i ) {
+        path.moveTo.apply( path, point );
+      } else {
+        op = path[ops[opcode]];
+        if (op) {
+          op.apply( path, point );
+        }
+      }
+    }
+
+    return path
+      .getPoints()
+      .map( function( v ) { return new THREE.Vector3( v.x, 0, v.y ) } );
+  }
+
   function init() {
     container = document.createElement( 'div' );
     document.body.appendChild( container );
@@ -56,49 +143,24 @@
     segmentsInput.value = 4;
 
     function createWireframe( mesh ) {
-      if ( wireframe && wireframe.parent ) {
-        wireframe.parent.remove( wireframe );
+      var visible = true;
+
+      if ( wireframe ) {
+        // Store previous visible state.
+        visible = wireframe.visible;
+
+        if ( wireframe.parent ) {
+          wireframe.parent.remove( wireframe );
+        }
       }
 
       wireframe = new THREE.WireframeHelper( mesh, 0 );
+      wireframe.visible = visible;
       scene.add( wireframe );
     }
 
     function onInput() {
-      var lines = textarea.value.split( '\n' );
-      var line;
-
-      var points = [];
-      var point;
-      var x, y, z;
-      for ( var i = 0; i < lines.length; i++ ) {
-        line = lines[i].trim();
-
-        if ( !line.length ) {
-          continue;
-        }
-
-        point = line.split( ' ' ).map( parseFloat );
-
-        if ( !point.length || point.some( isNaN ) ) {
-          return;
-        }
-
-        x = point[0];
-
-        if ( point.length === 1 ) {
-          y = 0;
-          z = x;
-        } else if ( point.length === 2 ) {
-          y = 0;
-          z = point[1];
-        } else {
-          y = point[1];
-          z = point[2];
-        }
-
-        points.push( new THREE.Vector3( x, y, z ) );
-      }
+      var points = createPoints( textarea.value );
 
       geometry = new THREE.LatheGeometry( points, segmentsInput.value );
       mesh.geometry = geometry;
