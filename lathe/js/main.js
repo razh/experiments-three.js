@@ -31,7 +31,7 @@
       point = line.split( ' ' ).map( parseFloat );
 
       if ( !point.length || point.some( isNaN ) ) {
-        return;
+        continue;
       }
 
       x = point[0];
@@ -83,7 +83,7 @@
       point = line.split( ' ' ).map( parseFloat );
 
       if ( !point.length || point.some( isNaN ) ) {
-        return;
+        continue;
       }
 
       if ( !i ) {
@@ -211,14 +211,35 @@
     var ctx = canvas.getContext( '2d' );
 
     var scale = 32;
+    var radius = 4;
+    var diameter = 2 * radius;
 
     var box = new THREE.Box3();
 
+    function transformBottom() {
+      ctx.translate( radius, canvas.height / 2 );
+      ctx.scale( scale, scale );
+    }
+
+    function transformTop() {
+      ctx.translate( radius, canvas.height / 2 );
+      ctx.scale( scale, -scale );
+    }
+
     function drawLine( ctx, points ) {
+      ctx.beginPath();
       ctx.moveTo( points[0].z, points[0].x );
       for ( var i = 1; i < points.length; i++ ) {
         ctx.lineTo( points[i].z, points[i].x );
       }
+    }
+
+    function drawPoints( ctx, points ) {
+      ctx.beginPath();
+      points.forEach(function( point ) {
+        ctx.moveTo( point.z, point.x );
+        ctx.arc( point.z, point.x, radius / scale, 0, 2 * Math.PI );
+      });
     }
 
     return function( points ) {
@@ -231,29 +252,39 @@
       var width = box.max.x - box.min.x;
       var depth = box.max.z - box.min.z;
 
-      canvas.width = scale * depth;
-      canvas.height = 2 * scale * width;
+      canvas.width = scale * depth + diameter;
+      canvas.height = 2 * scale * width + diameter;
 
       ctx.clearRect( 0, 0, canvas.width, canvas.height );
-
-      ctx.beginPath();
+      ctx.fillStyle = '#fff';
+      ctx.strokeStyle = '#ddd';
+      ctx.lineWidth = 1.5;
 
       // Bottom half.
       ctx.save();
-      ctx.translate( 0, canvas.height / 2 );
-      ctx.scale( scale, scale );
+      transformBottom();
       drawLine( ctx, points );
       ctx.restore();
+      ctx.stroke();
+
+      ctx.save();
+      transformBottom();
+      drawPoints( ctx, points );
+      ctx.restore();
+      ctx.fill();
 
       // Top half.
       ctx.save();
-      ctx.translate( 0, canvas.height / 2 );
-      ctx.scale( scale, -scale );
+      transformTop();
       drawLine( ctx, points );
       ctx.restore();
-
-      ctx.strokeStyle = '#fff';
       ctx.stroke();
+
+      ctx.save();
+      transformTop();
+      drawPoints( ctx, points );
+      ctx.restore();
+      ctx.fill();
     };
   })();
 
