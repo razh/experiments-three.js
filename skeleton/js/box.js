@@ -15,6 +15,8 @@ var Box = (function() {
 
     this.geometry = new THREE.BoxGeometry( width, height, depth )
       .translate( 0, height / 2, 0 );
+
+    this.index = 0;
   }
 
   Node.prototype = Object.create( THREE.Object3D.prototype );
@@ -37,7 +39,7 @@ var Box = (function() {
 
     var parent = this.parent;
     if ( parent ) {
-      vector.applyMatrix( matrix.extractRotation( parent.matrixWorld ) );
+      vector.applyMatrix4( matrix.extractRotation( parent.matrixWorld ) );
     }
 
     var parentIndex = parent && parent.index || 0;
