@@ -134,7 +134,10 @@
     mesh = new THREE.Mesh( new THREE.Geometry(), material );
     scene.add( mesh );
 
-    textarea.value = [
+    // Set from window.location.hash.
+    var hash = decodeURIComponent( window.location.hash ).slice( 1 );
+
+    textarea.value = hash || [
       0,
       1,
       '0 2'
@@ -160,12 +163,14 @@
     }
 
     function onInput() {
+      // Build geometry.
       var points = createPoints( textarea.value );
 
       geometry = new THREE.LatheGeometry( points, segmentsInput.value );
       mesh.geometry = geometry;
       mesh.needsUpdate = true;
 
+      // Position lights.
       geometry.computeBoundingSphere();
 
       light.position
@@ -178,8 +183,18 @@
 
       createWireframe( mesh );
 
+      // Render.
       render();
       drawCanvas( points );
+
+      // Update location.
+      var hash = (
+        window.location.origin +
+        window.location.pathname +
+        '#' + encodeURIComponent( textarea.value )
+      );
+
+      window.history.replaceState( '', '', hash );
     }
 
     onInput();
