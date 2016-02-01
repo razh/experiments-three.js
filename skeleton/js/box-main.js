@@ -37,8 +37,10 @@
       1.5, 4, 1.5,
       [
         [
-          1, 3, 1,
-          [ 0.5, 0.5, 0.5 ]
+          1, 3, 1, { pos: [ 0, 5, 0 ] },
+          [
+            [ 0.5, 0.5, 0.5 ]
+          ]
         ],
         [ 1, 2, 1 ]
       ]
@@ -48,7 +50,7 @@
     scene.add( mesh );
 
     skeletonHelper = new THREE.SkeletonHelper( mesh );
-    skeletonHelper.material.lineWidth = 4;
+    skeletonHelper.material.linewidth = 4;
     mesh.add( skeletonHelper );
   }
 
@@ -58,7 +60,7 @@
 
     mesh.skeleton.bones.forEach(function( bone, index ) {
       // Set angle if not root.
-      if ( index > 1 ) {
+      if ( index > 0 ) {
         bone.rotation.z = angle;
       }
     });
