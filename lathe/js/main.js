@@ -1,4 +1,4 @@
-/* global THREE, createPoints */
+/* global THREE, createPoints, modifiers */
 (function() {
   'use strict';
 
