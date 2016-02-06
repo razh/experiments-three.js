@@ -6,6 +6,11 @@
 
   var scene, camera, controls, renderer;
 
+  var clock = new THREE.Clock();
+
+  var dt = 1 / 60;
+  var accumulatedTime = 0;
+
   var circles = (function() {
     var geometry = new THREE.BoxGeometry( 1, 1, 1 );
     var material = new THREE.MeshPhongMaterial();
@@ -24,10 +29,10 @@
 
     return {
       group: group,
-      update: function() {
-        mesh.rotation.x += 0.1;
-        mesh.rotation.y += 0.1;
-        group.rotation.y += 0.1;
+      update: function( dt ) {
+        mesh.rotation.x += 5 * dt;
+        mesh.rotation.y += 5 * dt;
+        group.rotation.y += 5 * dt;
       }
     };
   })();
@@ -51,7 +56,14 @@
   }
 
   function animate() {
-    circles.update();
+    var delta = Math.min( clock.getDelta(), 0.1 );
+    accumulatedTime += delta;
+
+    while ( accumulatedTime >= dt ) {
+      circles.update( dt );
+      accumulatedTime -= dt;
+    }
+
     renderer.render( scene, camera );
     requestAnimationFrame( animate );
   }
