@@ -16,8 +16,8 @@
 
     .controls {
       position: absolute;
-      right: 1em;
-      bottom: 1em;
+      right: 1rem;
+      bottom: 1rem;
     }
 
     #points {
@@ -27,17 +27,15 @@
       resize: none;
     }
 
-    #segments,
-    #shading,
-    #points {
+    .form-control {
       display: block;
       width: 100%;
     }
 
     #canvas {
       position: absolute;
-      right: 1em;
-      top: 1em;
+      right: 1rem;
+      top: 1rem;
     }
   </style>
 </head>
@@ -45,18 +43,20 @@
   <canvas id="canvas"></canvas>
 
   <div class="controls">
+    <button class="form-control" id="to-array">Print Array</button>
+
     <label>
       <input type="checkbox" id="wireframe" checked> Wireframe
     </label>
 
-    <select id="shading">
+    <select class="form-control" id="shading">
       <option value="FlatShading">FlatShading</option>
       <option value="SmoothShading">SmoothShading</option>
     </select>
 
-    <input type="range" id="segments" min="2" max="32">
+    <input type="range" class="form-control" id="segments" min="2" max="32">
 
-    <textarea id="points"></textarea>
+    <textarea class="form-control" id="points"></textarea>
   </div>
 
   <script src="../node_modules/three/three.js"></script>

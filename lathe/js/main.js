@@ -13,6 +13,7 @@
   var segmentsInput = document.getElementById( 'segments' );
   var shadingInput = document.getElementById( 'shading' );
   var wireframeInput = document.getElementById( 'wireframe' );
+  var toArrayButton = document.getElementById( 'to-array' );
 
   function init() {
     container = document.createElement( 'div' );
@@ -127,6 +128,15 @@
     wireframeInput.addEventListener( 'change', function( event ) {
       wireframe.visible = event.target.checked;
       render();
+    });
+
+    toArrayButton.addEventListener( 'click', function() {
+      var points = createPoints( textarea.value );
+      var json = points.map(function( point ) {
+        return point.toArray();
+      });
+
+      console.log( JSON.stringify( json ) );
     });
   }
 
