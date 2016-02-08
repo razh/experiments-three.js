@@ -53,7 +53,17 @@
 
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
+    controls.addEventListener( 'change', function() {
+      if ( !running ) {
+        render();
+      }
+    });
+
     scene.add( circles.group );
+  }
+
+  function render() {
+    renderer.render( scene, camera );
   }
 
   function animate() {
@@ -69,7 +79,7 @@
       accumulatedTime -= dt;
     }
 
-    renderer.render( scene, camera );
+    render();
     requestAnimationFrame( animate );
   }
 
@@ -85,8 +95,10 @@
 
   // Double click to restart animation.
   document.addEventListener( 'dblclick', function() {
-    if ( !running ) {
-      running = true;
+    running = !running;
+
+    if ( running ) {
+      clock.start();
       animate();
     }
   });
@@ -105,6 +117,6 @@
     running = false;
 
     circles.update( event.deltaY * dt );
-    renderer.render( scene, camera );
+    render();
   });
 })();
