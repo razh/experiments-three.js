@@ -158,9 +158,28 @@
       });
   }
 
+  function setDepthCamera( mesh, camera ) {
+    var vector = new THREE.Vector3();
+
+    // Assume mesh.matrixWorld is already pre=calculated.
+    var distances = mesh.geometry.vertices.map(function( vertex ) {
+      return vector.copy( vertex )
+        .applyMatrix4( mesh.matrixWorld )
+        .distanceTo( camera.position );
+    });
+
+    var max = Math.max.apply( null, distances );
+    camera.far = Math.min( max * 1.5, 2000 );
+    camera.updateProjectionMatrix();
+  }
+
   function animate() {
     renderer.render( scene, camera );
+
+    // Render scene depth.
+    setDepthCamera( mesh, camera );
     depthRenderer.render( depthScene, camera );
+
     requestAnimationFrame( animate );
   }
 
