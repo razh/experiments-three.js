@@ -7,6 +7,7 @@
   var scene, camera, controls, renderer;
 
   var clock = new THREE.Clock();
+  var running = true;
 
   var dt = 1 / 60;
   var accumulatedTime = 0;
@@ -56,6 +57,10 @@
   }
 
   function animate() {
+    if ( !running ) {
+      return;
+    }
+
     var delta = Math.min( clock.getDelta(), 0.1 );
     accumulatedTime += delta;
 
@@ -78,4 +83,28 @@
     renderer.setSize( window.innerWidth, window.innerHeight );
   });
 
+  // Double click to restart animation.
+  document.addEventListener( 'dblclick', function() {
+    if ( !running ) {
+      running = true;
+      animate();
+    }
+  });
+
+  // Scroll to control animation.
+  renderer.domElement.addEventListener( 'wheel', function( event ) {
+    if ( event.shiftKey ) {
+      return;
+    }
+
+    if ( !event.deltaY ) {
+      return;
+    }
+
+    event.preventDefault();
+    running = false;
+
+    circles.update( event.deltaY * dt );
+    renderer.render( scene, camera );
+  });
 })();
