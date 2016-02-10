@@ -105,10 +105,6 @@
 
   // Scroll to control animation.
   renderer.domElement.addEventListener( 'wheel', function( event ) {
-    if ( event.shiftKey ) {
-      return;
-    }
-
     if ( !event.deltaY ) {
       return;
     }

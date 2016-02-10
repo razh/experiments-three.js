@@ -11,6 +11,7 @@
   var geometry, material, mesh;
   var texture;
 
+  var depthScale = 0.25;
   var depthScene, depthRenderer;
   var depthMaterial, depthMesh;
 
@@ -59,8 +60,8 @@
     renderer.setSize( window.innerWidth, window.innerHeight );
     container.appendChild( renderer.domElement );
 
-    depthRenderer = new THREE.WebGLRenderer();
-    depthRenderer.setSize( 256, 256 );
+    depthRenderer = new THREE.WebGLRenderer({ antialias: true });
+    depthRenderer.setSize( depthScale * window.innerWidth, depthScale * window.innerHeight );
 
     var depthElement = depthRenderer.domElement;
     depthElement.style.position = 'fixed';
@@ -185,5 +186,13 @@
 
   init();
   animate();
+
+  window.addEventListener( 'resize', function() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    depthRenderer.setSize( depthScale * window.innerWidth, depthScale * window.innerHeight );
+  });
 
 })();
