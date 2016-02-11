@@ -12,31 +12,85 @@
   var dt = 1 / 60;
   var accumulatedTime = 0;
 
-  var circles = (function() {
-    var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    var material = new THREE.MeshPhongMaterial();
+  var spinners = {
+    circles: (function() {
+      var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+      var material = new THREE.MeshPhongMaterial();
 
-    var mesh = new THREE.Mesh( geometry, material );
-    mesh.position.x = 2;
+      var mesh = new THREE.Mesh( geometry, material );
+      mesh.position.x = 2;
 
-    var group = new THREE.Group();
-    group.add( mesh );
+      var group = new THREE.Group();
+      group.add( mesh );
 
-    var light = new THREE.DirectionalLight();
-    light.position.set( 0, 0, 16 );
-    group.add( light );
+      var light = new THREE.DirectionalLight();
+      light.position.set( 0, 0, 16 );
+      group.add( light );
 
-    group.add( new THREE.AmbientLight( '#222' ) );
+      group.add( new THREE.AmbientLight( '#222' ) );
 
-    return {
-      group: group,
-      update: function( dt ) {
-        mesh.rotation.x += 5 * dt;
-        mesh.rotation.y += 5 * dt;
-        group.rotation.y += 5 * dt;
-      }
-    };
-  })();
+      return {
+        group: group,
+        update: function( dt ) {
+          mesh.rotation.x += 5 * dt;
+          mesh.rotation.y += 5 * dt;
+          group.rotation.y += 5 * dt;
+        }
+      };
+    })(),
+
+    loops: (function() {
+      var geometry = new THREE.TorusGeometry( 1, 0.1, 16, 64 );
+      var material = new THREE.MeshPhongMaterial();
+
+      var group = new THREE.Group();
+      var meshes = new THREE.Group();
+
+      [
+        { rotation: [ Math.PI / 2, 0, 0 ], scale: 1.4 },
+        { rotation: [ 0, Math.PI / 2, 0 ], scale: 1.2 },
+        { rotation: [ 0, 0, Math.PI / 2 ] }
+      ].map(function( transform ) {
+        var scale = transform.scale || 1;
+        var transformedGeometry = geometry.clone()
+          .scale( scale, scale, scale );
+
+        transformedGeometry.computeFaceNormals();
+        transformedGeometry.computeVertexNormals();
+
+        var mesh = new THREE.Mesh( transformedGeometry, material );
+        mesh.rotation.fromArray( transform.rotation );
+        return mesh;
+      }).reduce(function( parent, mesh ) {
+        parent.add( mesh );
+        return mesh;
+      }, meshes );
+
+      group.add( meshes );
+
+      var light = new THREE.DirectionalLight();
+      light.position.set( 0, 0, 16 );
+      group.add( light );
+
+      group.add( new THREE.AmbientLight( '#222' ) );
+
+      return {
+        group: group,
+        update: function( dt ) {
+          meshes.traverse(function( mesh ) {
+            if (!mesh.geometry) {
+              return;
+            }
+
+            mesh.rotation.x += 2 * dt;
+            mesh.rotation.y += 2 * dt;
+          });
+        }
+      };
+    })()
+  };
+
+  var spinner = spinners.loops;
 
   function init() {
     container = document.createElement( 'div' );
@@ -59,7 +113,7 @@
       }
     });
 
-    scene.add( circles.group );
+    scene.add( spinner.group );
   }
 
   function render() {
@@ -75,7 +129,7 @@
     accumulatedTime += delta;
 
     while ( accumulatedTime >= dt ) {
-      circles.update( dt );
+      spinner.update( dt );
       accumulatedTime -= dt;
     }
 
@@ -112,7 +166,7 @@
     event.preventDefault();
     running = false;
 
-    circles.update( event.deltaY * dt );
+    spinner.update( event.deltaY * dt );
     render();
   });
 })();
