@@ -40,31 +40,27 @@
     })(),
 
     loops: (function() {
-      var geometry = new THREE.TorusGeometry( 1, 0.1, 16, 64 );
-      var material = new THREE.MeshPhongMaterial();
+      var radius = 0.1;
+      var diameter = 2 * radius;
 
       var group = new THREE.Group();
       var meshes = new THREE.Group();
 
-      [
-        { rotation: [ Math.PI / 2, 0, 0 ], scale: 1.4 },
-        { rotation: [ 0, Math.PI / 2, 0 ], scale: 1.2 },
-        { rotation: [ 0, 0, Math.PI / 2 ] }
-      ].map(function( transform ) {
-        var scale = transform.scale || 1;
-        var transformedGeometry = geometry.clone()
-          .scale( scale, scale, scale );
+      var parent = meshes;
+      var count = 8;
+      var i = count;
+      while ( i-- ) {
+        var scale = i * diameter + 2;
 
-        transformedGeometry.computeFaceNormals();
-        transformedGeometry.computeVertexNormals();
+        var geometry = new THREE.TorusGeometry( scale, radius, 16, 64 );
+        var material = new THREE.MeshPhongMaterial({
+          color: 'hsl(' + ( i * 360 / count ) + ', 100%, 50%)'
+        });
 
-        var mesh = new THREE.Mesh( transformedGeometry, material );
-        mesh.rotation.fromArray( transform.rotation );
-        return mesh;
-      }).reduce(function( parent, mesh ) {
+        var mesh = new THREE.Mesh( geometry, material );
         parent.add( mesh );
-        return mesh;
-      }, meshes );
+        parent = mesh;
+      }
 
       group.add( meshes );
 
@@ -82,8 +78,8 @@
               return;
             }
 
-            mesh.rotation.x += 2 * dt;
-            mesh.rotation.y += 2 * dt;
+            mesh.rotation.x += dt;
+            mesh.rotation.y += dt;
           });
         }
       };
