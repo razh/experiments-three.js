@@ -166,17 +166,17 @@
 
     function drawLine( ctx, points ) {
       ctx.beginPath();
-      ctx.moveTo( points[0].z, points[0].x );
+      ctx.moveTo( points[0].y, points[0].x );
       for ( var i = 1; i < points.length; i++ ) {
-        ctx.lineTo( points[i].z, points[i].x );
+        ctx.lineTo( points[i].y, points[i].x );
       }
     }
 
     function drawPoints( ctx, points ) {
       ctx.beginPath();
       points.forEach(function( point ) {
-        ctx.moveTo( point.z, point.x );
-        ctx.arc( point.z, point.x, radius / scale, 0, 2 * Math.PI );
+        ctx.moveTo( point.y, point.x );
+        ctx.arc( point.y, point.x, radius / scale, 0, 2 * Math.PI );
       });
     }
 
@@ -188,9 +188,9 @@
       box.setFromPoints( points );
 
       var width = box.max.x - box.min.x;
-      var depth = box.max.z - box.min.z;
+      var height = box.max.y - box.min.y;
 
-      canvas.width = scale * depth + diameter;
+      canvas.width = scale * height + diameter;
       canvas.height = 2 * scale * width + diameter;
 
       ctx.clearRect( 0, 0, canvas.width, canvas.height );

@@ -8,7 +8,7 @@
 
     var points = [];
     var point;
-    var x, y, z;
+    var x, y;
     for ( var i = 0; i < lines.length; i++ ) {
       line = lines[i].trim();
 
@@ -23,19 +23,13 @@
       }
 
       x = point[0];
+      y = point[1];
 
       if ( point.length === 1 ) {
-        y = 0;
-        z = x;
-      } else if ( point.length === 2 ) {
-        y = 0;
-        z = point[1];
-      } else {
-        y = point[1];
-        z = point[2];
+        y = x;
       }
 
-      points.push( new THREE.Vector3( x, y, z ) );
+      points.push( new THREE.Vector2( x, y ) );
     }
 
     return points;
@@ -86,7 +80,7 @@
 
     return path
       .getPoints()
-      .map( function( v ) { return new THREE.Vector3( v.x, 0, v.y ) } );
+      .map( function( v ) { return new THREE.Vector2( v.x, v.y ) } );
   }
 
   window.createPoints = createPoints;
