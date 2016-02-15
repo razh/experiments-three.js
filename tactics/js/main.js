@@ -24,8 +24,6 @@
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
     renderer.setClearColor( 0xffffff );
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild( renderer.domElement );
 
     scene = new THREE.Scene();
@@ -41,23 +39,19 @@
     scene.add( ambientLight );
 
     spotLight = new THREE.SpotLight( 0xffffff, 1, 0 );
-    spotLight.castShadow = true;
     spotLight.position.set( 0, 32, 0 );
-    spotLight.shadowCameraNear = 24;
     scene.add( spotLight );
 
-    planeGeometry = new THREE.PlaneGeometry( 16, 16 );
-    planeMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    planeGeometry = new THREE.PlaneBufferGeometry( 8, 8 );
+    planeMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
     planeMesh = new THREE.Mesh( planeGeometry, planeMaterial );
     planeMesh.rotation.x = -Math.PI / 2;
-    planeMesh.receiveShadow = true;
     scene.add( planeMesh );
 
     geometry = new THREE.BoxGeometry( 8, 0.2, 8 );
-    material = new THREE.MeshLambertMaterial({ color: 0xdddddd });
+    material = new THREE.MeshPhongMaterial({ color: 0xdddddd });
     mesh = new THREE.Mesh( geometry, material );
     mesh.position.y = 1;
-    mesh.castShadow = true;
     scene.add( mesh );
 
     // Arrows.

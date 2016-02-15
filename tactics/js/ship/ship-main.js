@@ -117,8 +117,8 @@ createFrontDeckGeometry
     light = new THREE.SpotLight( 0xffffff, 1.5 );
     light.position.set( 4, 6, 16 );
     light.castShadow = true;
-    light.shadowCameraNear = 6;
-    light.shadowCameraFar = 128;
+    light.shadow.camera.near = 6;
+    light.shadow.camera.far = 128;
     scene.add( light );
 
     var shadowCameraHelper = new THREE.CameraHelper( light.shadow.camera );
