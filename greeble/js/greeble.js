@@ -12,8 +12,8 @@ var greeble = (function () {
    * included with the bower distribution.
    */
   function randomPointInTriangle( vA, vB, vC ) {
-    var a = THREE.Math.random16();
-    var b = THREE.Math.random16();
+    var a = Math.random();
+    var b = Math.random();
 
     if ( ( a + b ) > 1 ) {
       a = 1 - a;
@@ -92,7 +92,7 @@ var greeble = (function () {
     var normals = [];
     var r, index;
     for ( i = 0; i < n; i++ ) {
-      r = THREE.Math.random16() * totalArea;
+      r = Math.random() * totalArea;
       index = binarySearchIndices(r);
 
       face = faces[ index ];

@@ -127,7 +127,7 @@
     scene.fog = new THREE.Fog( 0x000000 );
 
     // Plane.
-    planeGeometry = new THREE.PlaneGeometry( 500, 500, 20, 20 );
+    planeGeometry = new THREE.PlaneBufferGeometry( 500, 500, 20, 20 );
     planeMaterial = new THREE.MeshBasicMaterial({
       wireframe: true
     });
@@ -135,7 +135,7 @@
     scene.add( plane );
 
     // Sphere.
-    sphereGeometry = new THREE.SphereGeometry( 10 );
+    sphereGeometry = new THREE.SphereBufferGeometry( 10 );
     sphereMaterial = new THREE.MeshBasicMaterial({
       color: 0x00ff00,
       wireframe: true

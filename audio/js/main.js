@@ -50,14 +50,14 @@
     controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.maxPolarAngle = Math.PI / 2 + Math.PI / 16;
 
-    planeGeometry = new THREE.PlaneGeometry( 32, 32 );
+    planeGeometry = new THREE.PlaneBufferGeometry( 32, 32 );
     planeMaterial = new THREE.MeshBasicMaterial({ color: 0x333333 });
     planeMesh = new THREE.Mesh( planeGeometry, planeMaterial );
     planeMesh.rotation.x = -Math.PI / 2;
     scene.add( planeMesh );
 
     // Sound source mesh.
-    sourceGeometry = new THREE.SphereGeometry( 1 );
+    sourceGeometry = new THREE.SphereBufferGeometry( 1 );
     sourceMaterial = new THREE.MeshBasicMaterial({ wireframe: true, color: 0x555555 });
     sourceMesh = new THREE.Mesh( sourceGeometry, sourceMaterial );
     sourceMesh.position.y = 1;

@@ -3,7 +3,7 @@
 var Agent = (function() {
   'use strict';
 
-  var geometry = new THREE.SphereGeometry( 1, 1 );
+  var geometry = new THREE.SphereBufferGeometry( 1, 1 );
   var material = new THREE.MeshBasicMaterial();
 
   function Agent() {
