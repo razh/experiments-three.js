@@ -87,22 +87,10 @@
     // Create canvas mesh.
     geometry = new THREE.PlaneBufferGeometry( 1, 1, 256, 256 );
 
-    // Custom normal displacement shader.
-    var shader = THREE.NormalDisplacementShader;
-    var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
-
-    uniforms.enableAO.value = true;
-    uniforms.enableDisplacement.value = true;
-
-    uniforms.tAO.value = texture;
-    uniforms.tDisplacement.value = texture;
-    uniforms.uDisplacementScale.value = options.scale;
-
-    material = new THREE.ShaderMaterial({
-      uniforms: uniforms,
-      vertexShader: shader.vertexShader,
-      fragmentShader: shader.fragmentShader,
-      lights: true,
+    material = new THREE.MeshPhongMaterial({
+      map: texture,
+      displacementMap: texture,
+      displacementScale: options.scale,
       fog: false
     });
 
@@ -124,7 +112,8 @@
     gui.add( options, 'scale', 0.01, 2, 0.01 )
       .listen()
       .onChange(function( scale ) {
-        uniforms.uDisplacementScale.value = scale;
+        material.setValues({ displacementScale: scale });
+        material.needsUpdate = true;
       });
   }
 
