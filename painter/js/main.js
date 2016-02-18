@@ -8,6 +8,7 @@
   var size = 256;
 
   var brushCanvas, brushCtx;
+  var eraserCanvas, eraserCtx;
 
   var scene, camera, renderer;
   var raycaster;
@@ -24,22 +25,42 @@
     scale: 0.25
   };
 
-  function updateBrushRadius( ) {
+  function drawRadialGradient( context, radius, colorStops ) {
+    var diameter = 2 * radius;
+
+    var gradient = context.createRadialGradient(
+      radius, radius, 0,
+      radius, radius, radius
+    );
+
+    colorStops.map(function( colorStop ) {
+      gradient.addColorStop.apply( gradient, colorStop );
+    });
+
+    context.fillStyle = gradient;
+    context.fillRect( 0, 0, diameter, diameter );
+  }
+
+  function updateBrushRadius() {
     var radius = options.brushRadius;
 
     var brushDiameter = 2 * radius;
     brushCanvas.width  = brushDiameter;
     brushCanvas.height = brushDiameter;
+    eraserCanvas.width  = brushDiameter;
+    eraserCanvas.height = brushDiameter;
 
-    var brushGradient = ctx.createRadialGradient(
-      radius, radius, 0,
-      radius, radius, radius
-    );
-    brushGradient.addColorStop( 0, '#111' );
-    brushGradient.addColorStop( 1, 'transparent' );
+    // Draw brush.
+    drawRadialGradient( brushCtx, radius, [
+      [ 0, '#111' ],
+      [ 1, 'transparent' ]
+    ]);
 
-    brushCtx.fillStyle = brushGradient;
-    brushCtx.fillRect( 0, 0, brushDiameter, brushDiameter );
+    // Draw eraser.
+    drawRadialGradient( eraserCtx, radius, [
+      [ 0, 'rgba(0, 0, 0, 0.1)' ],
+      [ 1, 'transparent' ]
+    ]);
   }
 
   function init() {
@@ -100,6 +121,11 @@
     // Brush gradient.
     brushCanvas = document.createElement( 'canvas' );
     brushCtx    = brushCanvas.getContext( '2d' );
+
+    // Erase brush gradient.
+    eraserCanvas = document.createElement( 'canvas' );
+    eraserCtx    = eraserCanvas.getContext( '2d' );
+
     updateBrushRadius();
 
     // GUI.
@@ -146,10 +172,12 @@
         // Paint on left mouse button. Erase on right.
         ctx.globalCompositeOperation = event.button !== 2 ?
           'lighter' :
-          'destination-out';
+          'normal';
 
         ctx.drawImage(
-          brushCanvas,
+          event.button !== 2 ?
+            brushCanvas :
+            eraserCanvas,
           size * (  point.x + 0.5 ) - options.brushRadius,
           size * ( -point.y + 0.5 ) - options.brushRadius
         );
