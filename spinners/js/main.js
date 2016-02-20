@@ -83,10 +83,71 @@
           });
         }
       };
+    })(),
+
+    particles: (function() {
+      var PI2 = 2 * Math.PI;
+
+      function randomPointOnSphere( vector, radius ) {
+        radius = radius || 1;
+
+        var theta = PI2 * Math.random();
+        var u = 2 * Math.random() - 1;
+        var v = Math.sqrt( 1 - u * u );
+
+        return vector.set(
+          radius * v * Math.cos( theta ),
+          radius * v * Math.sin( theta ),
+          radius * u
+        );
+      }
+
+      var size = 0.1;
+
+      var geometry = new THREE.BufferGeometry()
+        .fromGeometry( new THREE.BoxGeometry( size, size, size ) );
+
+      var material = new THREE.MeshPhongMaterial();
+
+      var group = new THREE.Group();
+      var particles = [];
+
+      var count = 512;
+      var i = count;
+      while ( i-- ) {
+        var mesh = new THREE.Mesh( geometry, material );
+        group.add( mesh );
+
+        randomPointOnSphere( mesh.position, 3 * Math.random() );
+        mesh.rotation.set(
+          PI2 * Math.random(),
+          PI2 * Math.random(),
+          PI2 * Math.random()
+        );
+        mesh.scale.setLength( THREE.Math.randFloat( 0.5, 1.5 ) );
+
+        particles.push({
+          mesh: mesh
+        });
+      }
+
+      var light = new THREE.DirectionalLight();
+      light.position.set( 0, 0, 16 );
+      group.add( light );
+
+      group.add( new THREE.AmbientLight( '#222' ) );
+
+      return {
+        group: group,
+        update: function( dt ) {
+          group.rotation.x += dt;
+          group.rotation.y += dt;
+        }
+      }
     })()
   };
 
-  var spinner = spinners.loops;
+  var spinner = spinners.particles;
 
   function init() {
     container = document.createElement( 'div' );
