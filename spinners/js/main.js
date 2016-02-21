@@ -109,16 +109,22 @@
 
       var material = new THREE.MeshPhongMaterial();
 
+      var scene = new THREE.Group();
       var group = new THREE.Group();
+      scene.add( group );
+
       var particles = [];
 
       var count = 512;
       var i = count;
       while ( i-- ) {
-        var mesh = new THREE.Mesh( geometry, material );
-        group.add( mesh );
+        var particle = new THREE.Object3D();
+        group.add( particle );
 
-        randomPointOnSphere( mesh.position, 3 * Math.random() );
+        var mesh = new THREE.Mesh( geometry, material );
+        particle.add( mesh );
+
+        randomPointOnSphere( mesh.position, 4 * Math.random() );
         mesh.rotation.set(
           PI2 * Math.random(),
           PI2 * Math.random(),
@@ -127,21 +133,35 @@
         mesh.scale.setLength( THREE.Math.randFloat( 0.5, 1.5 ) );
 
         particles.push({
-          mesh: mesh
+          object: particle,
+          angularVelocity: new THREE.Vector3(
+            THREE.Math.randFloatSpread( 1 ),
+            THREE.Math.randFloatSpread( 1 ),
+            THREE.Math.randFloatSpread( 1 )
+          )
         });
       }
 
       var light = new THREE.DirectionalLight();
       light.position.set( 0, 0, 16 );
-      group.add( light );
+      scene.add( light );
 
-      group.add( new THREE.AmbientLight( '#222' ) );
+      scene.add( new THREE.AmbientLight( '#222' ) );
+
+      var vector = new THREE.Vector3();
 
       return {
-        group: group,
+        group: scene,
         update: function( dt ) {
-          group.rotation.x += dt;
+          group.rotation.x += 0.5 * dt;
           group.rotation.y += dt;
+
+          particles.forEach(function( particle ) {
+            vector.copy( particle.object.rotation )
+              .addScaledVector( particle.angularVelocity, dt );
+
+            particle.object.rotation.setFromVector3( vector );
+          });
         }
       }
     })()
