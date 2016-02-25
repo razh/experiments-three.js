@@ -30,5 +30,11 @@ var modifiers = {
     }
 
     return geometry;
+  },
+
+  mirror: function( geometry ) {
+    var mirroredGeometry = new THREE.Geometry().copy( geometry );
+    mirroredGeometry.merge( mirroredGeometry.clone().scale( 1, 1, -1 ) );
+    return mirroredGeometry;
   }
 };
