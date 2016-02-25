@@ -152,31 +152,31 @@
     var radius = 4;
     var diameter = 2 * radius;
 
-    var box = new THREE.Box3();
+    var box = new THREE.Box2();
 
-    function transformBottom() {
-      ctx.translate( radius, canvas.height / 2 );
-      ctx.scale( scale, scale );
+    function transformLeft() {
+      ctx.translate( canvas.width / 2, canvas.height - radius );
+      ctx.scale( scale, -scale );
     }
 
-    function transformTop() {
-      ctx.translate( radius, canvas.height / 2 );
-      ctx.scale( scale, -scale );
+    function transformRight() {
+      ctx.translate( canvas.width / 2, canvas.height - radius );
+      ctx.scale( -scale, -scale );
     }
 
     function drawLine( ctx, points ) {
       ctx.beginPath();
-      ctx.moveTo( points[0].y, points[0].x );
+      ctx.moveTo( points[0].x, points[0].y );
       for ( var i = 1; i < points.length; i++ ) {
-        ctx.lineTo( points[i].y, points[i].x );
+        ctx.lineTo( points[i].x, points[i].y );
       }
     }
 
     function drawPoints( ctx, points ) {
       ctx.beginPath();
       points.forEach(function( point ) {
-        ctx.moveTo( point.y, point.x );
-        ctx.arc( point.y, point.x, radius / scale, 0, 2 * Math.PI );
+        ctx.moveTo( point.x, point.y );
+        ctx.arc( point.x, point.y, radius / scale, 0, 2 * Math.PI );
       });
     }
 
@@ -190,36 +190,36 @@
       var width = box.max.x - box.min.x;
       var height = box.max.y - box.min.y;
 
-      canvas.width = scale * height + diameter;
-      canvas.height = 2 * scale * width + diameter;
+      canvas.width = 4 * scale * width + diameter;
+      canvas.height = scale * height + diameter;
 
       ctx.clearRect( 0, 0, canvas.width, canvas.height );
       ctx.fillStyle = '#fff';
       ctx.strokeStyle = '#ddd';
       ctx.lineWidth = 1.5;
 
-      // Bottom half.
+      // Left half.
       ctx.save();
-      transformBottom();
+      transformLeft();
       drawLine( ctx, points );
       ctx.restore();
       ctx.stroke();
 
       ctx.save();
-      transformBottom();
+      transformLeft();
       drawPoints( ctx, points );
       ctx.restore();
       ctx.fill();
 
       // Top half.
       ctx.save();
-      transformTop();
+      transformRight();
       drawLine( ctx, points );
       ctx.restore();
       ctx.stroke();
 
       ctx.save();
-      transformTop();
+      transformRight();
       drawPoints( ctx, points );
       ctx.restore();
       ctx.fill();
