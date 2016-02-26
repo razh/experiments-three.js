@@ -83,7 +83,7 @@
         var offset = colorStop[0];
         var color = colorStop[1];
 
-        gradient.addColorStop( offset, color );
+        gradient.addColorStop( 1 - offset, color );
       });
 
       function fillGradient( ctx ) {
@@ -156,12 +156,12 @@
     var mesh = new THREE.Mesh( new THREE.BoxGeometry( 100, 100, 100 ), material );
     skyboxScene.add( mesh );
 
-    var envMaterial = new THREE.MeshPhongMaterial({
+    var envMaterial = new THREE.MeshStandardMaterial({
       color: '#ddd',
       envMap: textureCube
     });
 
-    mesh = new THREE.Mesh( new THREE.SphereGeometry( 2, 32, 32 ), envMaterial );
+    mesh = new THREE.Mesh( new THREE.SphereBufferGeometry( 2, 64, 64 ), envMaterial );
     scene.add( mesh );
 
     var light = new THREE.DirectionalLight( 0xffffff );
