@@ -168,6 +168,11 @@
       intersectionMesh.position.copy( point );
       intersectionMesh.visible = true;
 
+      var x = Math.round( size * (  point.x + 0.5 ) );
+      var y = Math.round( size * ( -point.y + 0.5 ) );
+      var z = options.scale * ( ctx.getImageData( x, y, 1, 1 ).data[ 0 ] / 255 );
+      intersectionMesh.position.z = z || 0;
+
       if ( mouseDown ) {
         // Paint on left mouse button. Erase on right.
         ctx.globalCompositeOperation = event.button !== 2 ?
@@ -178,8 +183,8 @@
           event.button !== 2 ?
             brushCanvas :
             eraserCanvas,
-          size * (  point.x + 0.5 ) - options.brushRadius,
-          size * ( -point.y + 0.5 ) - options.brushRadius
+          x - options.brushRadius,
+          y - options.brushRadius
         );
 
         texture.needsUpdate = true;
