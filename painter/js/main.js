@@ -85,8 +85,12 @@
     mouse = new THREE.Vector2();
 
     intersectionMesh = new THREE.Mesh(
-      new THREE.SphereGeometry( 0.05 ),
-      new THREE.MeshBasicMaterial({ wireframe: true })
+      new THREE.SphereGeometry( 1 ),
+      new THREE.MeshBasicMaterial({
+        wireframe: true,
+        opacity: 0.5,
+        transparent: true
+      })
     );
     intersectionMesh.visible = false;
     scene.add( intersectionMesh );
@@ -172,6 +176,9 @@
       var y = Math.round( size * ( -point.y + 0.5 ) );
       var z = options.scale * ( ctx.getImageData( x, y, 1, 1 ).data[ 0 ] / 255 );
       intersectionMesh.position.z = z || 0;
+
+      var radius = options.brushRadius / 256;
+      intersectionMesh.scale.set( radius, radius, radius );
 
       if ( mouseDown ) {
         // Paint on left mouse button. Erase on right.
