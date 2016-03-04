@@ -34,15 +34,15 @@ var drawGear = (function() {
     This can be represented as:
 
       [
-        [ 0.0, r  ],
+        [ 0.0, r  ], // implicit start point
         [ 0.2, r  ],
         [ 0.4, r' ],
         [ 0.6, r' ],
         [ 0.8, r  ],
-        [ 1.0, r  ]
+        [ 1.0, r  ] // implicit end point
       ]
 
-    Note that the start and end points can be omitted if they are at the
+    Note that the start and end points are implicitly defined at the
     baseline radius.
    */
 
@@ -66,8 +66,6 @@ var drawGear = (function() {
       startAngle = i * segmentAngle;
       endAngle = ( i + 1 ) * segmentAngle;
 
-      lineTo( ctx, radius, startAngle );
-
       tooth.forEach( function( point ) {
         var angle = THREE.Math.mapLinear( point[0], 0, 1, startAngle, endAngle );
         lineTo( ctx, point[1], angle );
@@ -75,6 +73,8 @@ var drawGear = (function() {
 
       lineTo( ctx, radius, endAngle );
     }
+
+    return ctx;
   }
 
   return drawGear;

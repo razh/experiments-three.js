@@ -1,4 +1,4 @@
-/* global THREE */
+/* global THREE, drawGear */
 (function() {
   'use strict';
 
@@ -12,6 +12,16 @@
   var dt = 1 / 60;
   var accumulatedTime = 0;
 
+  var lights = {
+    basic: function( scene ) {
+      var light = new THREE.DirectionalLight();
+      light.position.set( 0, 8, 16 );
+      scene.add( light );
+
+      scene.add( new THREE.AmbientLight( '#222' ) );
+    }
+  };
+
   var spinners = {
     circles: (function() {
       var geometry = new THREE.BoxGeometry( 1, 1, 1 );
@@ -23,11 +33,7 @@
       var group = new THREE.Group();
       group.add( mesh );
 
-      var light = new THREE.DirectionalLight();
-      light.position.set( 0, 0, 16 );
-      group.add( light );
-
-      group.add( new THREE.AmbientLight( '#222' ) );
+      lights.basic( group );
 
       return {
         group: group,
@@ -64,11 +70,7 @@
 
       group.add( meshes );
 
-      var light = new THREE.DirectionalLight();
-      light.position.set( 0, 0, 16 );
-      group.add( light );
-
-      group.add( new THREE.AmbientLight( '#222' ) );
+      lights.basic( group );
 
       return {
         group: group,
@@ -142,11 +144,7 @@
         });
       }
 
-      var light = new THREE.DirectionalLight();
-      light.position.set( 0, 0, 16 );
-      scene.add( light );
-
-      scene.add( new THREE.AmbientLight( '#222' ) );
+      lights.basic( scene );
 
       var vector = new THREE.Vector3();
 
@@ -164,10 +162,47 @@
           });
         }
       }
+    })(),
+
+    gears: (function() {
+      var radius = 1.5;
+
+      var gearShape = drawGear( new THREE.Shape(), radius, 8, [
+        [ 0.2, radius ],
+        [ 0.4, 1.2 * radius ],
+        [ 0.6, 1.2 * radius ],
+        [ 0.8, radius ]
+      ]);
+
+      var hole = new THREE.Shape();
+      hole.absarc( 0, 0, 0.5, 0, 2 * Math.PI );
+      gearShape.holes.push( hole );
+
+      var gearGeometry = new THREE.ExtrudeGeometry( gearShape, {
+        amount: 0.5,
+        bevelEnabled: true,
+        steps: 1,
+        bevelSize: 0.1,
+        bevelThickness: 0.1,
+        bevelSegments: 1
+      });
+
+      var gear = new THREE.Mesh( gearGeometry, new THREE.MeshStandardMaterial() );
+
+      var group = new THREE.Group();
+      group.add( gear );
+      lights.basic( group );
+
+      return {
+        group: group,
+        update: function( dt ) {
+          gear.rotation.z -= dt;
+        }
+      }
     })()
   };
 
-  var spinner = spinners.particles;
+  var spinner = spinners.gears;
 
   function init() {
     container = document.createElement( 'div' );
