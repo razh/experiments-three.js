@@ -148,6 +148,8 @@
   }
 
   function render() {
+    var radius = options.brushRadius / 256;
+    intersectionMesh.scale.set( radius, radius, radius );
     renderer.render( scene, camera );
   }
 
@@ -176,9 +178,6 @@
       var y = Math.round( size * ( -point.y + 0.5 ) );
       var z = options.scale * ( ctx.getImageData( x, y, 1, 1 ).data[ 0 ] / 255 );
       intersectionMesh.position.z = z || 0;
-
-      var radius = options.brushRadius / 256;
-      intersectionMesh.scale.set( radius, radius, radius );
 
       if ( mouseDown ) {
         // Paint on left mouse button. Erase on right.
@@ -214,6 +213,16 @@
   });
 
   document.addEventListener( 'contextmenu', onMouse );
+
+  document.addEventListener( 'wheel', function( event ) {
+    if ( !event.deltaY ) {
+      return;
+    }
+
+    options.brushRadius = THREE.Math.clamp( options.brushRadius - event.deltaY, 1, 128 );
+    updateBrushRadius();
+    render();
+  });
 
   window.addEventListener( 'resize', function() {
     camera.aspect = window.innerWidth / window.innerHeight;
