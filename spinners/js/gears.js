@@ -71,8 +71,14 @@ var drawGear = (function() {
         lineTo( ctx, point[1], angle );
       });
 
-      lineTo( ctx, radius, endAngle );
+      // When closing a path, lineTo() will cause THREE.Shape.prototype.extractPoints()
+      // to generate a duplicate of the initial point. Prefer closePath() instead.
+      if ( i < segments - 1 ) {
+        lineTo( ctx, radius, endAngle );
+      }
     }
+
+    ctx.closePath();
 
     return ctx;
   }
