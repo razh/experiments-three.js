@@ -165,38 +165,100 @@
     })(),
 
     gears: (function() {
-      var radius = 1.5;
+      var sunRadius = 2;
+      var planetRadius = 1.5;
+      var toothHeight = 0.2 * planetRadius;
 
-      var gearShape = drawGear( new THREE.Shape(), radius, 8, [
-        [ 0.2, radius ],
-        [ 0.4, 1.2 * radius ],
-        [ 0.6, 1.2 * radius ],
-        [ 0.8, radius ]
+      var sunTeethCount = 12;
+      var planetTeethCount = 8;
+      var annulusTeethCount = sunTeethCount + 2 * planetTeethCount;
+
+      var bevelSize = 0.1;
+      var planetPosition = planetRadius + sunRadius + toothHeight + 2 * bevelSize;
+      var annulusRadius = planetPosition + planetRadius + toothHeight + 2 * bevelSize;
+
+      var annulusGearShape = new THREE.Shape();
+      annulusGearShape.absarc( 0, 0, annulusRadius + toothHeight, 0, 2 * Math.PI );
+
+      var annulusHole = drawGear( new THREE.Shape(), annulusRadius, annulusTeethCount, [
+        [ 0.2, annulusRadius ],
+        [ 0.4, annulusRadius - toothHeight ],
+        [ 0.6, annulusRadius - toothHeight ],
+        [ 0.8, annulusRadius ]
       ]);
 
-      var hole = new THREE.Shape();
-      hole.absarc( 0, 0, 0.5, 0, 2 * Math.PI );
-      gearShape.holes.push( hole );
+      annulusGearShape.holes.push( annulusHole );
 
-      var gearGeometry = new THREE.ExtrudeGeometry( gearShape, {
+      var hole = new THREE.Shape();
+      hole.absarc( 0, 0, 0.4 * planetRadius, 0, 2 * Math.PI );
+
+      var sunGearShape = drawGear( new THREE.Shape(), sunRadius, sunTeethCount, [
+        [ 0.2, sunRadius ],
+        [ 0.4, sunRadius + toothHeight ],
+        [ 0.6, sunRadius + toothHeight ],
+        [ 0.8, sunRadius ]
+      ]);
+
+      sunGearShape.holes.push( hole );
+
+      var planetGearShape = drawGear( new THREE.Shape(), planetRadius, planetTeethCount, [
+        [ 0.2, planetRadius ],
+        [ 0.4, planetRadius + toothHeight ],
+        [ 0.6, planetRadius + toothHeight ],
+        [ 0.8, planetRadius ]
+      ]);
+
+      planetGearShape.holes.push( hole );
+
+      var extrudeOptions = {
         amount: 0.5,
         bevelEnabled: true,
         steps: 1,
-        bevelSize: 0.1,
+        bevelSize: bevelSize,
         bevelThickness: 0.1,
         bevelSegments: 1
-      });
+      };
 
-      var gear = new THREE.Mesh( gearGeometry, new THREE.MeshStandardMaterial() );
+      var annulusGearGeometry = new THREE.ExtrudeGeometry( annulusGearShape, Object.assign( {}, extrudeOptions, { curveSegments: 56 } ) );
+      var sunGearGeometry = new THREE.ExtrudeGeometry( sunGearShape, extrudeOptions );
+      var planetGearGeometry = new THREE.ExtrudeGeometry( planetGearShape, extrudeOptions );
+
+      var material = new THREE.MeshStandardMaterial();
+
+      var annulusGear = new THREE.Mesh( annulusGearGeometry, material );
+      var sunGear = new THREE.Mesh( sunGearGeometry, material );
+      var topPlanetGear = new THREE.Mesh( planetGearGeometry, material );
+      var leftPlanetGear = new THREE.Mesh( planetGearGeometry, material );
+      var rightPlanetGear = new THREE.Mesh( planetGearGeometry, material );
+      var bottomPlanetGear = new THREE.Mesh( planetGearGeometry, material );
+
+      topPlanetGear.position.y = planetPosition;
+      leftPlanetGear.position.x = planetPosition;
+      rightPlanetGear.position.x = -planetPosition;
+      bottomPlanetGear.position.y = -planetPosition;
+
+      // Shift by half a tooth width.
+      annulusGear.rotation.z += Math.PI / annulusTeethCount;
+      sunGear.rotation.z += Math.PI / sunTeethCount;
 
       var group = new THREE.Group();
-      group.add( gear );
+      group.add( annulusGear );
+      group.add( sunGear );
+      group.add( topPlanetGear );
+      group.add( leftPlanetGear );
+      group.add( rightPlanetGear );
+      group.add( bottomPlanetGear );
       lights.basic( group );
 
       return {
         group: group,
         update: function( dt ) {
-          gear.rotation.z -= dt;
+          annulusGear.rotation.z -= planetTeethCount / annulusTeethCount * dt;
+          sunGear.rotation.z += planetTeethCount / sunTeethCount * dt;
+          topPlanetGear.rotation.z -= dt;
+          leftPlanetGear.rotation.z -= dt;
+          rightPlanetGear.rotation.z -= dt;
+          bottomPlanetGear.rotation.z -= dt;
         }
       }
     })()
