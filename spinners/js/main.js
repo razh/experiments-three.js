@@ -212,6 +212,7 @@
 
       var extrudeOptions = {
         amount: 0.5,
+        curveSegments: 2 * annulusTeethCount,
         bevelEnabled: true,
         steps: 1,
         bevelSize: bevelSize,
@@ -219,7 +220,7 @@
         bevelSegments: 1
       };
 
-      var annulusGearGeometry = new THREE.ExtrudeGeometry( annulusGearShape, Object.assign( {}, extrudeOptions, { curveSegments: 56 } ) );
+      var annulusGearGeometry = new THREE.ExtrudeGeometry( annulusGearShape, extrudeOptions );
       var sunGearGeometry = new THREE.ExtrudeGeometry( sunGearShape, extrudeOptions );
       var planetGearGeometry = new THREE.ExtrudeGeometry( planetGearShape, extrudeOptions );
 
@@ -321,18 +322,17 @@
     renderer.setSize( window.innerWidth, window.innerHeight );
   });
 
-  // Double click to restart animation.
-  document.addEventListener( 'dblclick', function() {
+  function toggle() {
     running = !running;
 
     if ( running ) {
       clock.start();
       animate();
     }
-  });
+  }
 
   // Scroll to control animation.
-  renderer.domElement.addEventListener( 'wheel', function( event ) {
+  function onWheel( event ) {
     if ( !event.deltaY ) {
       return;
     }
@@ -342,5 +342,40 @@
 
     spinner.update( event.deltaY * dt );
     render();
+  }
+
+  function toggleZoom() {
+    controls.enableZoom = !controls.enableZoom;
+
+    // Need to remove/add wheel event-listener for events to propagate to
+    // OrbitControls.
+    if ( controls.enableZoom ) {
+      renderer.domElement.removeEventListener( 'wheel', onWheel );
+    } else {
+      renderer.domElement.addEventListener( 'wheel', onWheel );
+    }
+  }
+
+  document.addEventListener( 'keydown', function( event ) {
+    // Space.
+    if ( event.keyCode === 32 ) {
+      toggle();
+    }
+
+    if ( event.keyCode === 16 ) {
+      toggleZoom();
+    }
   });
+
+  document.addEventListener( 'keyup', function( event ) {
+    if ( event.keyCode === 16 ) {
+      toggleZoom();
+    }
+  })
+
+  // Double click to restart animation.
+  document.addEventListener( 'dblclick', toggle );
+
+  controls.enableZoom = false;
+  renderer.domElement.addEventListener( 'wheel', onWheel );
 })();
