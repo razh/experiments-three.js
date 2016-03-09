@@ -265,7 +265,8 @@
     })()
   };
 
-  var spinner = spinners.gears;
+  var query = window.location.search.substring(1);
+  var spinner = spinners[ query ] || spinners.gears;
 
   function init() {
     container = document.createElement( 'div' );
