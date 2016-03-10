@@ -164,6 +164,23 @@
       ctx.scale( -scale, -scale );
     }
 
+    function inverseTransform( x, y ) {
+      x -= canvas.width / 2;
+      y -= canvas.height - radius;
+
+      if ( x > 0 ) {
+        x *= -1;
+      }
+
+      x /= -scale;
+      y /= -scale;
+
+      return {
+        x: x,
+        y: y
+      };
+    }
+
     function drawLine( ctx, points ) {
       ctx.beginPath();
       ctx.moveTo( points[0].x, points[0].y );
@@ -211,7 +228,7 @@
       ctx.restore();
       ctx.fill();
 
-      // Top half.
+      // Right half.
       ctx.save();
       transformRight();
       drawLine( ctx, points );
