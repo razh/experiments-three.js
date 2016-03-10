@@ -32,15 +32,21 @@
       width: 100%;
     }
 
-    #canvas {
+    #canvas,
+    #pointer-canvas {
       position: absolute;
       right: 1rem;
       top: 1rem;
+    }
+
+    #pointer-canvas {
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
   <canvas id="canvas"></canvas>
+  <canvas id="pointer-canvas"></canvas>
 
   <div class="controls">
     <button class="form-control" id="to-array">Print Array</button>

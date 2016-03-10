@@ -154,12 +154,12 @@
 
     var box = new THREE.Box2();
 
-    function transformLeft() {
+    function transformLeft( ctx ) {
       ctx.translate( canvas.width / 2, canvas.height - radius );
       ctx.scale( scale, -scale );
     }
 
-    function transformRight() {
+    function transformRight( ctx ) {
       ctx.translate( canvas.width / 2, canvas.height - radius );
       ctx.scale( -scale, -scale );
     }
@@ -197,6 +197,37 @@
       });
     }
 
+    canvas.addEventListener( 'mousemove', (function() {
+      var pointerCanvas = document.getElementById( 'pointer-canvas' );
+      var pointerCtx = pointerCanvas.getContext( '2d' );
+
+      return function( event ) {
+        var rect = canvas.getBoundingClientRect();
+        var x = event.clientX - rect.left;
+        var y = event.clientY - rect.top;
+        var points = [ inverseTransform( x, y ) ];
+
+        pointerCanvas.width = canvas.width;
+        pointerCanvas.height = canvas.height;
+
+        pointerCtx.fillStyle = '#fff';
+
+        // Left half.
+        pointerCtx.save();
+        transformLeft( pointerCtx );
+        drawPoints( pointerCtx, points );
+        pointerCtx.restore();
+        pointerCtx.fill();
+
+        // Right half.
+        pointerCtx.save();
+        transformRight( pointerCtx );
+        drawPoints( pointerCtx, points );
+        pointerCtx.restore();
+        pointerCtx.fill();
+      };
+    })());
+
     return function( points ) {
       if ( !points.length ) {
         return;
@@ -207,7 +238,7 @@
       var width = box.max.x - box.min.x;
       var height = box.max.y - box.min.y;
 
-      canvas.width = 4 * scale * width + diameter;
+      canvas.width = 2 * scale * width + diameter;
       canvas.height = scale * height + diameter;
 
       ctx.clearRect( 0, 0, canvas.width, canvas.height );
@@ -217,26 +248,26 @@
 
       // Left half.
       ctx.save();
-      transformLeft();
+      transformLeft( ctx );
       drawLine( ctx, points );
       ctx.restore();
       ctx.stroke();
 
       ctx.save();
-      transformLeft();
+      transformLeft( ctx );
       drawPoints( ctx, points );
       ctx.restore();
       ctx.fill();
 
       // Right half.
       ctx.save();
-      transformRight();
+      transformRight( ctx );
       drawLine( ctx, points );
       ctx.restore();
       ctx.stroke();
 
       ctx.save();
-      transformRight();
+      transformRight( ctx );
       drawPoints( ctx, points );
       ctx.restore();
       ctx.fill();
