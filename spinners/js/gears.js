@@ -55,6 +55,7 @@ var drawGear = (function() {
   function drawGear( ctx, radius, segments, tooth ) {
     radius = radius || 50;
     segments = segments !== undefined ? Math.max( 3, segments ) : 8;
+    tooth = tooth || [];
 
     var segmentAngle = 2 * Math.PI / segments;
 
