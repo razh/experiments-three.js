@@ -42,8 +42,10 @@ var modifiers = {
     return mirroredGeometry;
   },
 
-  operator: function( geometry, callback ) {
-    var box = geometry.computeBoundingBox();
+  parametric: function( geometry, callback ) {
+    geometry.computeBoundingBox();
+
+    var box = geometry.boundingBox;
     var max = box.max;
     var min = box.min;
 

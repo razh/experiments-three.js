@@ -13,9 +13,21 @@
       color: #fff;
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
+
+    #textarea {
+      position: absolute;
+      right: 1rem;
+      bottom: 1rem;
+      height: 16em;
+      background-color: #000;
+      color: #fff;
+      resize: none;
+    }
   </style>
 </head>
 <body>
+  <textarea id="textarea" rows="10"></textarea>
+
   <script src="../node_modules/three/three.js"></script>
   <script src="../node_modules/three/examples/js/controls/OrbitControls.js"></script>
   <script src="./js/path.js"></script>
