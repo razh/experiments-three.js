@@ -1,5 +1,9 @@
 /* global THREE */
 /* exported modifiers */
+function inverseLerp( a, b, x ) {
+  return ( x - a ) / ( b - a );
+}
+
 var modifiers = {
   repeat: function( geometry, count, radius ) {
     var group = new THREE.Geometry();
@@ -36,5 +40,20 @@ var modifiers = {
     var mirroredGeometry = new THREE.Geometry().copy( geometry );
     mirroredGeometry.merge( mirroredGeometry.clone().scale( 1, 1, -1 ) );
     return mirroredGeometry;
+  },
+
+  operator: function( geometry, callback ) {
+    var box = geometry.computeBoundingBox();
+    var max = box.max;
+    var min = box.min;
+
+    return function( vector ) {
+      return callback(
+        vector,
+        2 * inverseLerp( min.x, max.x, vector.x ) - 1,
+        2 * inverseLerp( min.y, max.y, vector.y ) - 1,
+        2 * inverseLerp( min.z, max.z, vector.z ) - 1
+      );
+    };
   }
 };
