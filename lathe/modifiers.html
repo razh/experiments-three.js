@@ -23,10 +23,17 @@
       color: #fff;
       resize: none;
     }
+
+    #viewports {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+    }
   </style>
 </head>
 <body>
   <textarea id="textarea" rows="10"></textarea>
+  <div id="viewports"></div>
 
   <script src="../node_modules/three/three.js"></script>
   <script src="../node_modules/three/examples/js/controls/OrbitControls.js"></script>

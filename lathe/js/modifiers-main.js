@@ -5,12 +5,14 @@
   var container;
 
   var scene, camera, renderer;
+  var views;
 
   var baseGeometry;
   var geometry, material, mesh;
   var wireframe;
 
   var textarea = document.getElementById( 'textarea' );
+  var viewports = document.getElementById( 'viewports' );
 
   function createWireframe() {
     if ( wireframe && wireframe.parent ) {
@@ -67,6 +69,25 @@
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight );
     camera.position.set( 0, 4, 8 );
 
+    views = [ 'x', 'y', 'z' ].reduce(function( views, axis ) {
+      var _renderer = new THREE.WebGLRenderer({ antialias: true });
+      _renderer.setPixelRatio( window.devicePixelRatio );
+      _renderer.setSize( 128, 128 );
+      viewports.appendChild( _renderer.domElement );
+
+      var size = 4;
+      var _camera = new THREE.OrthographicCamera( -size, size, size, -size );
+      _camera.position[ axis ] = 8;
+      _camera.lookAt( new THREE.Vector3() );
+
+      views[ axis ] = {
+        renderer: _renderer,
+        camera: _camera
+      };
+
+      return views;
+    }, {} );
+
     var controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.addEventListener( 'change', render );
 
@@ -89,6 +110,11 @@
 
   function render() {
     renderer.render( scene, camera );
+
+    Object.keys( views ).forEach(function( key ) {
+      var view = views[ key ];
+      view.renderer.render( scene, view.camera );
+    });
   }
 
   init();
