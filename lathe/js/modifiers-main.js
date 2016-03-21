@@ -1,4 +1,4 @@
-/* global THREE, modifiers */
+/* global THREE, dat, modifiers */
 (function() {
   'use strict';
 
@@ -14,6 +14,14 @@
   var textarea = document.getElementById( 'textarea' );
   var viewports = document.getElementById( 'viewports' );
 
+  var config = {
+    widthSegments: 8,
+    heightSegments: 8,
+    depthSegments: 8
+  };
+
+  var transformVertex = function() {};
+
   function createWireframe() {
     if ( wireframe && wireframe.parent ) {
       wireframe.parent.remove( wireframe );
@@ -21,6 +29,20 @@
 
     wireframe = new THREE.WireframeHelper( mesh );
     scene.add( wireframe );
+  }
+
+  function transformGeometry() {
+    geometry = new THREE.Geometry().copy( baseGeometry );
+    geometry.vertices.forEach( transformVertex );
+    geometry.computeFaceNormals();
+    geometry.computeVertexNormals();
+
+    mesh.geometry = geometry;
+    mesh.needsUpdate = true;
+
+    createWireframe( mesh );
+
+    render();
   }
 
   function onInput() {
@@ -36,21 +58,11 @@
         'return [' + x + ', ' + y + ', ' + z + '];'
       );
 
-      var op = modifiers.parametric( baseGeometry, function( vector, xt, yt, zt ) {
+      transformVertex = modifiers.parametric( baseGeometry, function( vector, xt, yt, zt ) {
         vector.fromArray( fn( vector.x, vector.y, vector.z, xt, yt, zt ) );
       });
 
-      geometry = new THREE.Geometry().copy( baseGeometry );
-      geometry.vertices.forEach( op );
-      geometry.computeFaceNormals();
-      geometry.computeVertexNormals();
-
-      mesh.geometry = geometry;
-      mesh.needsUpdate = true;
-
-      createWireframe( mesh );
-
-      render();
+      transformGeometry();
     } catch ( error ) {
       console.error( error );
     }
@@ -67,7 +79,7 @@
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight );
-    camera.position.set( 0, 4, 8 );
+    camera.position.set( 0, 1, 2 );
 
     views = [ 'x', 'y', 'z' ].reduce(function( views, axis ) {
       var _renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -75,9 +87,9 @@
       _renderer.setSize( 128, 128 );
       viewports.appendChild( _renderer.domElement );
 
-      var size = 4;
+      var size = 1;
       var _camera = new THREE.OrthographicCamera( -size, size, size, -size );
-      _camera.position[ axis ] = 8;
+      _camera.position[ axis ] = 2;
       _camera.lookAt( new THREE.Vector3() );
 
       views[ axis ] = {
@@ -91,7 +103,11 @@
     var controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.addEventListener( 'change', render );
 
-    baseGeometry = new THREE.BoxGeometry( 4, 4, 4, 8, 8, 8 );
+    baseGeometry = new THREE.BoxGeometry(
+      1, 1, 1,
+      config.widthSegments, config.heightSegments, config.depthSegments
+    );
+
     geometry = baseGeometry;
     material = new THREE.MeshStandardMaterial({ shading: THREE.FlatShading });
     mesh = new THREE.Mesh( geometry, material );
@@ -106,6 +122,24 @@
     scene.add( new THREE.AmbientLight( '#333' ) );
 
     textarea.addEventListener( 'input', onInput );
+
+    var gui = new dat.GUI();
+
+    [ 'widthSegments', 'heightSegments', 'depthSegments' ].forEach(function( segmentCount ) {
+      gui.add( config, segmentCount, 1, 16 )
+        .step( 1 )
+        .listen()
+        .onChange(function( count ) {
+          config[ segmentCount ] = count;
+
+          baseGeometry = new THREE.BoxGeometry(
+            1, 1, 1,
+            config.widthSegments, config.heightSegments, config.depthSegments
+          );
+
+          transformGeometry();
+        });
+    })
   }
 
   function render() {
