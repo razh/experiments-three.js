@@ -32,11 +32,19 @@
   }
 
   function transformGeometry() {
-    geometry = new THREE.Geometry().copy( baseGeometry );
-    geometry.vertices.forEach( transformVertex );
-    geometry.computeFaceNormals();
-    geometry.computeVertexNormals();
+    var _geometry = new THREE.Geometry().copy( baseGeometry );
 
+    // Handle invalid geometry (for example, NaN values).
+    try {
+      _geometry.vertices.forEach( transformVertex );
+      _geometry.computeFaceNormals();
+      _geometry.computeVertexNormals();
+    } catch ( error ) {
+      console.error( error );
+      return;
+    }
+
+    geometry = _geometry;
     mesh.geometry = geometry;
     mesh.needsUpdate = true;
 
