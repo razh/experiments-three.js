@@ -33,16 +33,9 @@
 
   function transformGeometry() {
     var _geometry = new THREE.Geometry().copy( baseGeometry );
-
-    // Handle invalid geometry (for example, NaN values).
-    try {
-      _geometry.vertices.forEach( transformVertex );
-      _geometry.computeFaceNormals();
-      _geometry.computeVertexNormals();
-    } catch ( error ) {
-      console.error( error );
-      return;
-    }
+    _geometry.vertices.forEach( transformVertex );
+    _geometry.computeFaceNormals();
+    _geometry.computeVertexNormals();
 
     geometry = _geometry;
     mesh.geometry = geometry;
@@ -130,6 +123,11 @@
     scene.add( new THREE.AmbientLight( '#333' ) );
 
     textarea.addEventListener( 'input', onInput );
+
+    // Prevent input from toggling dat.gui via hide shortcut ('h').
+    textarea.addEventListener( 'keydown', function( event ) {
+      event.stopPropagation();
+    });
 
     var gui = new dat.GUI();
 
