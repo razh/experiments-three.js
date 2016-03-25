@@ -11,7 +11,12 @@
   var geometry, material, mesh;
   var wireframe;
 
-  var textarea = document.getElementById( 'textarea' );
+  var textareas = {
+    x: document.getElementById( 'textarea-x' ),
+    y: document.getElementById( 'textarea-y' ),
+    z: document.getElementById( 'textarea-z' )
+  };
+
   var viewports = document.getElementById( 'viewports' );
 
   var config = {
@@ -23,9 +28,17 @@
   var transformVertex = function() {};
 
   // Set from window.location.hash.
-  var hash = decodeURIComponent( window.location.hash ).slice( 1 );
-  textarea.value = hash || '';
-  onInput();
+  window.location.hash
+    .slice( 1 )
+    .split( '&' )
+    .forEach(function( pair ) {
+      pair = pair.split( '=' );
+
+      var key = pair[0];
+      if ( textareas[ key ] ) {
+        textareas[ key ].value = decodeURIComponent( pair[1] );
+      }
+    });
 
   function createWireframe() {
     if ( wireframe && wireframe.parent ) {
@@ -52,20 +65,27 @@
   }
 
   function onInput() {
-    var lines = textarea.value.split( '\n' );
-
-    var x = lines[0] || 'x';
-    var y = lines[1] || 'y';
-    var z = lines[2] || 'z';
+    var x = textareas.x.value.trim() || 'x';
+    var y = textareas.y.value.trim() || 'y';
+    var z = textareas.z.value.trim() || 'z';
 
     try {
-      var fn = new Function(
-        [ 'x', 'y', 'z', 'xt', 'yt', 'zt' ],
-        'return [' + x + ', ' + y + ', ' + z + '];'
-      );
+      var fns = [ x, y, z ].map(function( body ) {
+        // HACK: Check for no explicit return.
+        if ( !/return/.test( body ) ) {
+          body = 'return ' + body + ';';
+        }
+
+        return new Function(
+          [ 'x', 'y', 'z', 'xt', 'yt', 'zt' ],
+          body
+        );
+      });
 
       transformVertex = modifiers.parametric( baseGeometry, function( vector, xt, yt, zt ) {
-        vector.fromArray( fn( vector.x, vector.y, vector.z, xt, yt, zt ) );
+        vector.fromArray(fns.map(function( fn ) {
+          return fn( vector.x, vector.y, vector.z, xt, yt, zt );
+        }));
       });
 
       transformGeometry();
@@ -74,11 +94,21 @@
       return;
     }
 
+    var query = Object.keys( textareas )
+      .map(function( key ) {
+        var value = textareas[ key ].value.trim();
+        if ( value ) {
+          return key + '=' + encodeURIComponent( value );
+        }
+      })
+      .filter( Boolean )
+      .join( '&' );
+
     // Update location.
     var hash = (
       window.location.origin +
       window.location.pathname +
-      '#' + encodeURIComponent( textarea.value )
+      '#' + query
     );
 
     window.history.replaceState( '', '', hash );
@@ -140,11 +170,15 @@
 
     scene.add( new THREE.AmbientLight( '#333' ) );
 
-    textarea.addEventListener( 'input', onInput );
+    Object.keys( textareas ).forEach(function( key ) {
+      var textarea = textareas[ key ];
 
-    // Prevent input from toggling dat.gui via hide shortcut ('h').
-    textarea.addEventListener( 'keydown', function( event ) {
-      event.stopPropagation();
+      textarea.addEventListener( 'input', onInput );
+
+      // Prevent input from toggling dat.gui via hide shortcut ('h').
+      textarea.addEventListener( 'keydown', function( event ) {
+        event.stopPropagation();
+      });
     });
 
     var gui = new dat.GUI();
@@ -176,6 +210,7 @@
   }
 
   init();
+  onInput();
   render();
 
   window.addEventListener( 'resize', function() {
