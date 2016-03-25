@@ -135,6 +135,9 @@
     light.position.set( 8, 8, 0 );
     scene.add( light );
 
+    var axisHelper = new THREE.AxisHelper();
+    scene.add( axisHelper );
+
     scene.add( new THREE.AmbientLight( '#333' ) );
 
     textarea.addEventListener( 'input', onInput );
