@@ -22,6 +22,11 @@
 
   var transformVertex = function() {};
 
+  // Set from window.location.hash.
+  var hash = decodeURIComponent( window.location.hash ).slice( 1 );
+  textarea.value = hash || '';
+  onInput();
+
   function createWireframe() {
     if ( wireframe && wireframe.parent ) {
       wireframe.parent.remove( wireframe );
@@ -66,7 +71,17 @@
       transformGeometry();
     } catch ( error ) {
       console.error( error );
+      return;
     }
+
+    // Update location.
+    var hash = (
+      window.location.origin +
+      window.location.pathname +
+      '#' + encodeURIComponent( textarea.value )
+    );
+
+    window.history.replaceState( '', '', hash );
   }
 
   function init() {
