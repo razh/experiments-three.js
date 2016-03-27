@@ -64,7 +64,7 @@
     render();
   }
 
-  function onInput() {
+  function onInput( event ) {
     var x = textareas.x.value.trim() || 'x';
     var y = textareas.y.value.trim() || 'y';
     var z = textareas.z.value.trim() || 'z';
@@ -90,8 +90,17 @@
 
       transformGeometry();
     } catch ( error ) {
+      if ( event ) {
+        event.target.setCustomValidity( 'Invalid function' );
+      }
+
       console.error( error );
       return;
+    }
+
+    if ( event ) {
+      // Set valid.
+      event.target.setCustomValidity( '' );
     }
 
     var query = Object.keys( textareas )
