@@ -1,4 +1,4 @@
-/* global THREE, dat, modifiers */
+/* global THREE, dat, modifiers, crateNumericInput */
 (function() {
   'use strict';
 
@@ -182,6 +182,7 @@
     Object.keys( textareas ).forEach(function( key ) {
       var textarea = textareas[ key ];
 
+      crateNumericInput( textarea );
       textarea.addEventListener( 'input', onInput );
 
       // Prevent input from toggling dat.gui via hide shortcut ('h').

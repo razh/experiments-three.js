@@ -1,4 +1,4 @@
-/* global THREE, createPoints, modifiers */
+/* global THREE, createPoints, modifiers, createNumericInput */
 (function() {
   'use strict';
 
@@ -112,6 +112,7 @@
     }
 
     onInput();
+    createNumericInput( textarea );
     textarea.addEventListener( 'input', onInput );
     segmentsInput.addEventListener( 'input', onInput );
 

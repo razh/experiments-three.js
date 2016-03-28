@@ -67,8 +67,6 @@ const createNumericInput = (() => {
         return;
       }
 
-      event.preventDefault();
-
       // Calculate selection range of number.
       const range = expandSelection(
         input.value,
@@ -82,7 +80,7 @@ const createNumericInput = (() => {
         return;
       }
 
-      const numberString = String( round( number + step, 2 ) );
+      const numberString = String( round( number + step, 6 ) );
 
       // Insert number string into current string.
       input.value = (
@@ -94,7 +92,8 @@ const createNumericInput = (() => {
       // Highlight current number.
       input.setSelectionRange( range[0], range[0] + numberString.length );
 
-      // Force update.
+      // Force update on input event.
+      event.preventDefault();
       input.dispatchEvent( new Event( 'input' ) );
     }
 
