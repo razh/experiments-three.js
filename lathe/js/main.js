@@ -157,11 +157,13 @@
     function transformLeft( ctx ) {
       ctx.translate( canvas.width / 2, canvas.height - radius );
       ctx.scale( scale, -scale );
+      ctx.translate( -box.min.x, -box.min.y );
     }
 
     function transformRight( ctx ) {
       ctx.translate( canvas.width / 2, canvas.height - radius );
       ctx.scale( -scale, -scale );
+      ctx.translate( -box.min.x, -box.min.y );
     }
 
     function inverseTransform( x, y ) {
@@ -174,6 +176,9 @@
 
       x /= -scale;
       y /= -scale;
+
+      x += box.min.x;
+      y += box.min.y;
 
       return {
         x: x,
