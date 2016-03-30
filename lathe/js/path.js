@@ -39,24 +39,24 @@
   // [operation name, offset to point position].
   var ops = {
     // M x y
-    M: ['moveTo'],
+    M: [ 'moveTo' ],
     // L x y
-    L: ['lineTo'],
+    L: [ 'lineTo' ],
     // Q x1 y1 x y
-    Q: ['quadraticCurveTo', 2],
+    Q: [ 'quadraticCurveTo', 2 ],
     // C x1 y1 x2 y2 x y
-    C: ['bezierCurveTo', 4]
+    C: [ 'bezierCurveTo', 4 ]
   };
 
   var relativeOps = {
     // m dx dy
-    m: ['moveTo'],
+    m: [ 'moveTo' ],
     // l dx dy
-    l: ['lineTo'],
+    l: [ 'lineTo' ],
     // q dx1 dy2 dx dy
-    q: ['quadraticCurveTo', 2],
+    q: [ 'quadraticCurveTo', 2 ],
     // c dx1 dt1 dx2 dt2 dx dt
-    c: ['bezierCurveTo', 4]
+    c: [ 'bezierCurveTo', 4 ]
   };
 
   function createPathPoints( string ) {

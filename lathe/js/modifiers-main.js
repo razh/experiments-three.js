@@ -1,4 +1,4 @@
-/* global THREE, dat, modifiers, crateNumericInput */
+/* global THREE, dat, modifiers, createNumericInput */
 (function() {
   'use strict';
 
@@ -20,6 +20,9 @@
   var viewports = document.getElementById( 'viewports' );
 
   var config = {
+    width: 1,
+    height: 1,
+    depth: 1,
     widthSegments: 8,
     heightSegments: 8,
     depthSegments: 8
@@ -39,6 +42,13 @@
         textareas[ key ].value = decodeURIComponent( pair[1] );
       }
     });
+
+  function createBaseGeometry( options ) {
+    return new THREE.BoxGeometry(
+      options.width, options.height, options.depth,
+      options.widthSegments, options.heightSegments, options.depthSegments
+    );
+  }
 
   function createWireframe() {
     if ( wireframe && wireframe.parent ) {
@@ -158,11 +168,7 @@
     var controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.addEventListener( 'change', render );
 
-    baseGeometry = new THREE.BoxGeometry(
-      1, 1, 1,
-      config.widthSegments, config.heightSegments, config.depthSegments
-    );
-
+    baseGeometry = createBaseGeometry( config );
     geometry = baseGeometry;
     material = new THREE.MeshStandardMaterial({ shading: THREE.FlatShading });
     mesh = new THREE.Mesh( geometry, material );
@@ -182,7 +188,7 @@
     Object.keys( textareas ).forEach(function( key ) {
       var textarea = textareas[ key ];
 
-      crateNumericInput( textarea );
+      createNumericInput( textarea );
       textarea.addEventListener( 'input', onInput );
 
       // Prevent input from toggling dat.gui via hide shortcut ('h').
@@ -193,18 +199,23 @@
 
     var gui = new dat.GUI();
 
+    [ 'width', 'height', 'depth' ].forEach(function( dimension ) {
+      gui.add( config, dimension, 0.1, 4 )
+        .listen()
+        .onChange(function( value ) {
+          config[ dimension ] = value;
+          baseGeometry = createBaseGeometry( config );
+          transformGeometry();
+        });
+    });
+
     [ 'widthSegments', 'heightSegments', 'depthSegments' ].forEach(function( segmentCount ) {
       gui.add( config, segmentCount, 1, 16 )
         .step( 1 )
         .listen()
         .onChange(function( count ) {
           config[ segmentCount ] = count;
-
-          baseGeometry = new THREE.BoxGeometry(
-            1, 1, 1,
-            config.widthSegments, config.heightSegments, config.depthSegments
-          );
-
+          baseGeometry = createBaseGeometry( config );
           transformGeometry();
         });
     })
