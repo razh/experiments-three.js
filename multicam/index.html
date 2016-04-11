@@ -7,13 +7,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
+    html, body {
+      height: 100%;
+    }
+
     body {
+      display: flex;
       margin: 0;
       background-color: #000;
+    }
+
+    .col-50 {
+      width: 50%;
+    }
+
+    .row-50 {
+      height: 50%;
     }
   </style>
 </head>
 <body>
+  <div class="col-50" id="main"></div>
+  <div class="col-50">
+    <div class="row-50" id="mounted"></div>
+    <div class="row-50" id="follow"></div>
+  </div>
+
   <script src="../node_modules/three/three.js"></script>
   <script src="../node_modules/three/examples/js/controls/OrbitControls.js"></script>
   <script src="./js/index.js"></script>
