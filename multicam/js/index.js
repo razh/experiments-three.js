@@ -48,7 +48,9 @@
     light.color.setHSL( 0.1, 0.1, 0.95 );
     light.castShadow = true;
     light.shadow.mapSize.set( 1024, 1024 );
+    light.shadow.camera.top = 24;
     light.position.set( 8, 32, 32 );
+    scene.add( light )
 
     var planeGeometry = new THREE.PlaneBufferGeometry( 2048, 2048 );
     var plane = new THREE.Mesh( planeGeometry, new THREE.MeshStandardMaterial({
@@ -59,6 +61,27 @@
     plane.rotateX( -Math.PI / 2 );
     plane.receiveShadow = true;
     scene.add( plane );
+
+    // Tower.
+    var towerGeometry = new THREE.BoxBufferGeometry( 0.2, 4, 0.2 );
+    var tower = new THREE.Mesh( towerGeometry, new THREE.MeshStandardMaterial({
+      roughness: 0.8
+    }));
+    tower.position.set( 0, 2, -1.5 );
+    tower.castShadow = true;
+    tower.receiveShadow = true;
+    scene.add( tower );
+
+    // Launchpad.
+    var launchPadGeometry = new THREE.BoxBufferGeometry( 4, 0.1, 4 );
+    var launchPad = new THREE.Mesh( launchPadGeometry, new THREE.MeshStandardMaterial({
+      color: '#888',
+      metalness: 0.1,
+      roughness: 0.9
+    }));
+    launchPad.castShadow = true;
+    launchPad.receiveShadow = true;
+    scene.add( launchPad );
 
     geometry = new THREE.LatheGeometry([
       [ 0, 0 ],
@@ -86,10 +109,6 @@
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     scene.add( mesh );
-
-    // Track mesh with light.
-    mesh.add( light );
-    light.target = mesh;
 
     // Cameras.
     views.main.camera.position.set( 0, 4, 8 );
