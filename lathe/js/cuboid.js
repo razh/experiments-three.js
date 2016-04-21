@@ -1,10 +1,42 @@
-/* global THREE */
+/* global THREE, createNumericInput */
 (function() {
   'use strict';
 
   var container;
 
   var scene, camera, renderer;
+
+  var geometry, material, mesh;
+
+  var textarea = document.getElementById( 'points' );
+
+  function fromInput( lines ) {
+    return lines.split( '\n' ).map(function( line ) {
+      return line.split( ' ' ).map( parseFloat );
+    });
+  }
+
+  function toInput( vertices ) {
+    return vertices.map(function( vertex ) {
+      return vertex.toArray().join( ' ' );
+    }).join( '\n' );
+  }
+
+  function onInput( event ) {
+    var arrays = fromInput( event.target.value );
+
+    arrays.forEach(function( array, index ) {
+      geometry.vertices[ index ].fromArray( array );
+    });
+
+    geometry.computeFaceNormals();
+    geometry.computeVertexNormals();
+
+    geometry.normalsNeedUpdate = true;
+    geometry.verticesNeedUpdate = true;
+
+    render();
+  }
 
   function init() {
     container = document.createElement( 'div' );
@@ -18,6 +50,26 @@
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight );
     camera.position.set( 0, 0, 8 );
+
+    var controls = new THREE.OrbitControls( camera, renderer.domElement );
+    controls.addEventListener( 'change', render );
+
+    geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    material = new THREE.MeshStandardMaterial({
+      shading: THREE.FlatShading
+    });
+    mesh = new THREE.Mesh( geometry, material );
+    scene.add( mesh );
+
+    scene.add( new THREE.AmbientLight( '#333' ) );
+
+    var light = new THREE.DirectionalLight();
+    light.position.set( 0, 8, 8 );
+    scene.add( light );
+
+    createNumericInput( textarea );
+    textarea.value = toInput( geometry.vertices );
+    textarea.addEventListener( 'input', onInput );
   }
 
   function render() {
@@ -32,6 +84,7 @@
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
+    render();
   });
 
 })();

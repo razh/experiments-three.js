@@ -10,12 +10,36 @@
     body {
       margin: 0;
       background-color: #000;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    .controls {
+      position: absolute;
+      right: 1rem;
+      bottom: 1rem;
+    }
+
+    .form-control {
+      display: block;
+      width: 100%;
+    }
+
+    #points {
+      height: 16em;
+      background-color: rgba(0, 0, 0, 0.5);
+      font-family: Menlo, Monaco, monospace;
+      color: #fff;
     }
   </style>
 </head>
 <body>
+  <div class="controls">
+    <textarea class="form-control" id="points"></textarea>
+  </div>
+
   <script src="../node_modules/three/three.js"></script>
   <script src="../node_modules/three/examples/js/controls/OrbitControls.js"></script>
+  <script src="./js/numeric-input.js"></script>
   <script src="./js/cuboid.js"></script>
 </body>
 </html>
