@@ -8,7 +8,22 @@
 
   var geometry, material, mesh;
 
-  var textarea = document.getElementById( 'points' );
+  var textareas = {
+    xyz: document.getElementById( 'textarea-xyz' ),
+    xy: document.getElementById( 'textarea-xy' ),
+    yz: document.getElementById( 'textarea-yz' ),
+    xz: document.getElementById( 'textarea-xz' )
+  };
+
+  function forceGeometryUpdate() {
+    geometry.computeFaceNormals();
+    geometry.computeVertexNormals();
+
+    geometry.normalsNeedUpdate = true;
+    geometry.verticesNeedUpdate = true;
+
+    render();
+  }
 
   function fromInput( lines ) {
     return lines.split( '\n' ).map(function( line ) {
@@ -29,13 +44,36 @@
       geometry.vertices[ index ].fromArray( array );
     });
 
-    geometry.computeFaceNormals();
-    geometry.computeVertexNormals();
+    forceGeometryUpdate();
+  }
 
-    geometry.normalsNeedUpdate = true;
-    geometry.verticesNeedUpdate = true;
+  function createComponentInput( textarea, components ) {
+    var keys = components.split( '' );
 
-    render();
+    function toComponentInput( vertices ) {
+      return vertices.map(function( vertex ) {
+        return keys.map(function( key ) {
+          return vertex[ key ];
+        }).join( ' ' );
+      }).join( '\n' );
+    }
+
+    function onComponentInput( event ) {
+      var arrays = fromInput( event.target.value );
+
+      arrays.forEach(function( array, index ) {
+        var vertex = geometry.vertices[ index ];
+
+        keys.forEach(function( key, keyIndex ) {
+          vertex[ key ] = array[ keyIndex ];
+        });
+      });
+
+      forceGeometryUpdate();
+    }
+
+    textarea.value = toComponentInput( geometry.vertices );
+    textarea.addEventListener( 'input', onComponentInput );
   }
 
   function init() {
@@ -67,9 +105,18 @@
     light.position.set( 0, 8, 8 );
     scene.add( light );
 
-    createNumericInput( textarea );
-    textarea.value = toInput( geometry.vertices );
-    textarea.addEventListener( 'input', onInput );
+    // 3D.
+    Object.keys( textareas ).forEach(function( key ) {
+      createNumericInput( textareas[ key ] );
+    });
+
+    textareas.xyz.value = toInput( geometry.vertices );
+    textareas.xyz.addEventListener( 'input', onInput );
+
+    // 2D.
+    [ 'xy', 'yz', 'xz' ].forEach(function( components ) {
+      createComponentInput( textareas[ components ], components );
+    });
   }
 
   function render() {
