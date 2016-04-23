@@ -8,6 +8,8 @@
 
   var geometry, material, mesh;
 
+  var dispatcher = new THREE.EventDispatcher();
+
   var textareas = {
     xyz: document.getElementById( 'textarea-xyz' ),
     xy: document.getElementById( 'textarea-xy' ),
@@ -23,6 +25,8 @@
     geometry.verticesNeedUpdate = true;
 
     render();
+
+    dispatcher.dispatchEvent({ type: 'change' });
   }
 
   function fromInput( lines ) {
@@ -110,7 +114,11 @@
 
     setValue();
     textarea.addEventListener( 'input', onComponentInput );
-    textarea.addEventListener( 'focus', setValue );
+    dispatcher.addEventListener( 'change', function() {
+      if ( textarea !== document.activeElement ) {
+        setValue();
+      }
+    });
   }
 
   function init() {
@@ -153,7 +161,11 @@
 
     setValue();
     textareas.xyz.addEventListener( 'input', onInput );
-    textareas.xyz.addEventListener( 'focus', setValue );
+    dispatcher.addEventListener( 'change', function() {
+      if ( textareas.xyz !== document.activeElement ) {
+        setValue();
+      }
+    });
 
     // 2D.
     [ 'xy', 'yz', 'xz' ].forEach(function( components ) {
