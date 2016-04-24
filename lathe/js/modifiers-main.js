@@ -168,13 +168,7 @@
     var controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.addEventListener( 'change', render );
 
-    baseGeometry = createBaseGeometry( config );
-    geometry = baseGeometry;
-    material = new THREE.MeshStandardMaterial({ shading: THREE.FlatShading });
-    mesh = new THREE.Mesh( geometry, material );
-    scene.add( mesh );
-
-    createWireframe( mesh );
+    scene.add( new THREE.AmbientLight( '#333' ) );
 
     var light = new THREE.DirectionalLight();
     light.position.set( 8, 8, 0 );
@@ -183,7 +177,12 @@
     var axisHelper = new THREE.AxisHelper();
     scene.add( axisHelper );
 
-    scene.add( new THREE.AmbientLight( '#333' ) );
+    baseGeometry = createBaseGeometry( config );
+    geometry = baseGeometry;
+    material = new THREE.MeshStandardMaterial({ shading: THREE.FlatShading });
+    mesh = new THREE.Mesh( geometry, material );
+    scene.add( mesh );
+    createWireframe( mesh );
 
     Object.keys( textareas ).forEach(function( key ) {
       var textarea = textareas[ key ];

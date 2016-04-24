@@ -7,6 +7,7 @@
   var scene, camera, renderer;
 
   var geometry, material, mesh;
+  var wireframe;
 
   var dispatcher = new THREE.EventDispatcher();
 
@@ -17,12 +18,23 @@
     xz: document.getElementById( 'textarea-xz' )
   };
 
+  function createWireframe() {
+    if ( wireframe && wireframe.parent ) {
+      wireframe.parent.remove( wireframe );
+    }
+
+    wireframe = new THREE.WireframeHelper( mesh );
+    scene.add( wireframe );
+  }
+
   function forceGeometryUpdate() {
     geometry.computeFaceNormals();
     geometry.computeVertexNormals();
 
     geometry.normalsNeedUpdate = true;
     geometry.verticesNeedUpdate = true;
+
+    createWireframe( mesh );
 
     render();
 
@@ -137,18 +149,22 @@
     var controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.addEventListener( 'change', render );
 
+    scene.add( new THREE.AmbientLight( '#333' ) );
+
+    var light = new THREE.DirectionalLight();
+    light.position.set( 0, 8, 8 );
+    scene.add( light );
+
+    var axisHelper = new THREE.AxisHelper();
+    scene.add( axisHelper );
+
     geometry = new THREE.BoxGeometry( 1, 1, 1 );
     material = new THREE.MeshStandardMaterial({
       shading: THREE.FlatShading
     });
     mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
-
-    scene.add( new THREE.AmbientLight( '#333' ) );
-
-    var light = new THREE.DirectionalLight();
-    light.position.set( 0, 8, 8 );
-    scene.add( light );
+    createWireframe( mesh );
 
     Object.keys( textareas ).forEach(function( key ) {
       createNumericInput( textareas[ key ] );
