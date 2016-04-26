@@ -8,6 +8,7 @@
 
   var geometry, material, mesh;
   var wireframe;
+  var vertexHelpers;
 
   var dispatcher = new THREE.EventDispatcher();
 
@@ -25,6 +26,29 @@
 
     wireframe = new THREE.WireframeHelper( mesh );
     scene.add( wireframe );
+  }
+
+  function createVertexHelpers( vertices ) {
+    var size = 0.15;
+
+    if ( vertexHelpers ) {
+      vertexHelpers.forEach(function( vertexHelper ) {
+        if ( vertexHelper && vertexHelper.parent ) {
+          vertexHelper.parent.remove( vertexHelper );
+        }
+      });
+    }
+
+    vertexHelpers = vertices.map(function( vertex ) {
+      var vertexHelper = new THREE.Mesh(
+        new THREE.BoxBufferGeometry( size, size, size ),
+        new THREE.MeshBasicMaterial()
+      );
+
+      vertexHelper.position.copy( vertex );
+      scene.add( vertexHelper );
+      return vertexHelper;
+    });
   }
 
   function forceGeometryUpdate() {
@@ -84,6 +108,18 @@
     return vertexMap;
   }
 
+  // Events that might affect cursor position.
+  var cursorEventTypes = [ 'click', 'focus', 'keydown', 'select' ];
+
+  function getSelectionLineRange( event ) {
+    var target = event.target;
+
+    return [
+      target.value.substr( 0, target.selectionStart ).split( '\n' ).length - 1,
+      target.value.substr( 0, target.selectionEnd ).split( '\n' ).length - 1
+    ];
+  }
+
   function createComponentInput( textarea, components ) {
     var keys = components.split( '' );
 
@@ -130,6 +166,29 @@
       if ( textarea !== document.activeElement ) {
         setValue();
       }
+    });
+
+    function onComponentSelectionChange( event ) {
+      var selectionLineRange = getSelectionLineRange( event );
+      var selectedVertices = [];
+
+      for ( var i = selectionLineRange[0]; i <= selectionLineRange[1]; i++ ) {
+        var vertexKey = vertexKeys[i];
+        var vertices = vertexMap[ vertexKey ];
+
+        if ( vertices ) {
+          vertices.forEach(function( vertex ) {
+            selectedVertices.push( vertex )
+          });
+        }
+      }
+
+      createVertexHelpers( selectedVertices );
+      render();
+    }
+
+    cursorEventTypes.forEach(function( eventType ) {
+      textarea.addEventListener( eventType, onComponentSelectionChange );
     });
   }
 
@@ -181,6 +240,22 @@
       if ( textareas.xyz !== document.activeElement ) {
         setValue();
       }
+    });
+
+    function onSelectionChange( event ) {
+      var selectionLineRange = getSelectionLineRange( event );
+      var selectedVertices = [];
+
+      for ( var i = selectionLineRange[0]; i <= selectionLineRange[1]; i++ ) {
+        selectedVertices.push( geometry.vertices[i] );
+      }
+
+      createVertexHelpers( selectedVertices );
+      render();
+    }
+
+    cursorEventTypes.forEach(function( eventType ) {
+      textareas.xyz.addEventListener( eventType, onSelectionChange );
     });
 
     // 2D.
