@@ -11,9 +11,6 @@
    */
   var TAU = 2 * Math.PI;
 
-  var RAD_TO_DEG = 180 / Math.PI;
-  var DEG_TO_RAD = Math.PI / 180;
-
   var container;
 
   var scene, camera, controls, renderer;
@@ -398,7 +395,7 @@
     axisHelper.rotation.copy( mesh.rotation );
 
     if ( config.animateAngle ) {
-      config.angle = ( config.angle + 90 * DEG_TO_RAD * dt ) % TAU;
+      config.angle = ( config.angle + 90 * THREE.Math.DEG2RAD * dt ) % TAU;
       updateCalabiVertices();
     }
   }

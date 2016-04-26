@@ -175,11 +175,8 @@ var Hydra = (function() {
       if ( influence > 0 ) {
         body[i].goalInfluence = 0;
 
-        v0.subVectors( body[i].goalPosition, body[i].position );
-        length = v0.length();
-        if ( length > config.goalDelta ) {
-          v0.setLength( config.goalDelta );
-        }
+        v0.subVectors( body[i].goalPosition, body[i].position )
+          .clampLength( 0, config.goalDelta );
 
         body[i].delta.add(
           v0.multiplyScalar( influence * config.goalTension )
@@ -198,12 +195,8 @@ var Hydra = (function() {
         delta = vector.copy( body[i].position )
           .add( v3 )
           .sub( body[ i + 1 ].position )
-          .multiplyScalar( config.goalTension );
-
-        length = delta.length();
-        if ( length > config.bendDelta ) {
-          delta.setLength( config.bendDelta );
-        }
+          .multiplyScalar( config.goalTension )
+          .clampLength( 0, config.bendDelta )
 
         body[ i + 1 ].delta.add( delta );
       }
@@ -213,12 +206,8 @@ var Hydra = (function() {
         delta = vector.copy( body[i].position )
           .sub( v3 )
           .sub( body[ i - 1 ].position )
-          .multiplyScalar( config.goalTension );
-
-        length = delta.length();
-        if ( length > config.bendDelta ) {
-          delta.setLength( config.bendDelta );
-        }
+          .multiplyScalar( config.goalTension )
+          .clampLength( 0, config.bendDelta );
 
         body[ i + 1 ].delta.add( delta.multiplyScalar( 0.8 ) );
       }
