@@ -10,6 +10,10 @@
   var wireframe;
   var vertexHelpers;
 
+  var transformControls;
+  var vertexObject;
+  var selectedVertex;
+
   var dispatcher = new THREE.EventDispatcher();
 
   var textareas = {
@@ -26,6 +30,17 @@
 
     wireframe = new THREE.WireframeHelper( mesh );
     scene.add( wireframe );
+  }
+
+  function setSelectedVertex( vertex ) {
+    selectedVertex = vertex;
+
+    if ( selectedVertex ) {
+      vertexObject.position.copy( selectedVertex );
+      transformControls.attach( vertexObject )
+    } else {
+      transformControls.detach()
+    }
   }
 
   function createVertexHelpers( vertices ) {
@@ -184,6 +199,7 @@
       }
 
       createVertexHelpers( selectedVertices );
+      setSelectedVertex( selectedVertices[0] );
       render();
     }
 
@@ -225,6 +241,18 @@
     scene.add( mesh );
     createWireframe( mesh );
 
+    vertexObject = new THREE.Object3D();
+    transformControls = new THREE.TransformControls( camera, renderer.domElement );
+    scene.add( vertexObject );
+    scene.add( transformControls );
+
+    transformControls.addEventListener( 'change', function() {
+      if ( selectedVertex ) {
+        selectedVertex.copy( vertexObject.position );
+        forceGeometryUpdate();
+      }
+    });
+
     Object.keys( textareas ).forEach(function( key ) {
       createNumericInput( textareas[ key ] );
     });
@@ -251,6 +279,7 @@
       }
 
       createVertexHelpers( selectedVertices );
+      setSelectedVertex( selectedVertices[0] );
       render();
     }
 
