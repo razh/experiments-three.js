@@ -33,6 +33,10 @@
   }
 
   function setSelectedVertex( vertex ) {
+    if ( vertex === selectedVertex ) {
+      return;
+    }
+
     selectedVertex = vertex;
 
     if ( selectedVertex ) {
