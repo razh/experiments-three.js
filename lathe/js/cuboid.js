@@ -1,4 +1,4 @@
-/* global THREE, createNumericInput */
+/* global THREE, createNumericInput, remove, createVertexHelper, updateGeometry */
 (function() {
   'use strict';
 
@@ -23,12 +23,6 @@
     xz: document.getElementById( 'textarea-xz' )
   };
 
-  function remove( object ) {
-    if ( object && object.parent ) {
-      object.parent.remove( object );
-    }
-  }
-
   function createWireframe() {
     remove( wireframe );
     wireframe = new THREE.WireframeHelper( mesh );
@@ -51,31 +45,19 @@
   }
 
   function createVertexHelpers( vertices ) {
-    var size = 0.15;
-
     if ( vertexHelpers ) {
       vertexHelpers.forEach( remove );
     }
 
     vertexHelpers = vertices.map(function( vertex ) {
-      var vertexHelper = new THREE.Mesh(
-        new THREE.BoxBufferGeometry( size, size, size ),
-        new THREE.MeshBasicMaterial()
-      );
-
-      vertexHelper.position.copy( vertex );
+      var vertexHelper = createVertexHelper( vertex, 0.15 );
       scene.add( vertexHelper );
       return vertexHelper;
     });
   }
 
   function forceGeometryUpdate() {
-    geometry.computeFaceNormals();
-    geometry.computeVertexNormals();
-
-    geometry.normalsNeedUpdate = true;
-    geometry.verticesNeedUpdate = true;
-
+    updateGeometry( geometry );
     createWireframe( mesh );
 
     render();

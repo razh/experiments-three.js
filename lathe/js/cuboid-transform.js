@@ -1,4 +1,4 @@
-/* global THREE */
+/* global THREE, remove, updateGeometry */
 (function() {
   'use strict';
 
@@ -9,21 +9,13 @@
   var geometry, material, mesh;
   var wireframe;
 
-  var faceHelpers;
-  var edgeHelpers;
-  var vertexHelpers;
-
+  var vertexObject;
   var transformControls;
 
   var state = {
-    vertex: null
+    nearestVertex: null,
+    isTransforming: false
   };
-
-  function remove( object ) {
-    if ( object && object.parent ) {
-      object.parent.remove( object );
-    }
-  }
 
   function createWireframe() {
     remove( wireframe );
@@ -31,30 +23,25 @@
     scene.add( wireframe );
   }
 
+  function forceGeometryUpdate() {
+    updateGeometry( geometry );
+    createWireframe( mesh );
+    render();
+  }
 
-  function highlightVertex( vertex ) {
-    if ( vertex === state.vertex ) {
+  function setNearestVertex( vertex ) {
+    if ( vertex === state.nearestVertex ) {
       return;
     }
 
-    state.vertex = vertex;
+    state.nearestVertex = vertex;
 
-    if ( vertexHelpers ) {
-      vertexHelpers.forEach( remove );
+    if ( vertex ) {
+      vertexObject.position.copy( vertex );
+      transformControls.attach( vertexObject )
+    } else {
+      transformControls.detach()
     }
-
-    var size = 0.15;
-
-    vertexHelpers = [ vertex ].map(function( vertex ) {
-      var vertexHelper = new THREE.Mesh(
-        new THREE.BoxBufferGeometry( size, size, size ),
-        new THREE.MeshBasicMaterial()
-      );
-
-      vertexHelper.position.copy( vertex );
-      scene.add( vertexHelper );
-      return vertexHelper;
-    });
   }
 
   function init() {
@@ -91,6 +78,26 @@
     mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
     createWireframe( mesh );
+
+    vertexObject = new THREE.Object3D();
+    transformControls = new THREE.TransformControls( camera, renderer.domElement );
+    scene.add( vertexObject );
+    scene.add( transformControls );
+
+    transformControls.addEventListener( 'mousedown', function() {
+      state.isTransforming = true;
+    });
+
+    transformControls.addEventListener( 'mouseup', function() {
+      state.isTransforming = false;
+    });
+
+    transformControls.addEventListener( 'change', function() {
+      if ( state.nearestVertex ) {
+        state.nearestVertex.copy( vertexObject.position );
+        forceGeometryUpdate();
+      }
+    });
   }
 
   function render() {
@@ -104,6 +111,10 @@
   var vector = new THREE.Vector3();
 
   function onMouseMove( event ) {
+    if ( state.isTransforming ) {
+      return;
+    }
+
     mouse.set( event.clientX, event.clientY );
 
     var minDistanceToSquared = Infinity;
@@ -124,7 +135,7 @@
       }
     });
 
-    highlightVertex( minVertex );
+    setNearestVertex( minVertex );
     render();
   }
 
