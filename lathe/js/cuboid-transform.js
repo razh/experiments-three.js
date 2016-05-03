@@ -15,13 +15,46 @@
 
   var transformControls;
 
-  function createWireframe() {
-    if ( wireframe && wireframe.parent ) {
-      wireframe.parent.remove( wireframe );
-    }
+  var state = {
+    vertex: null
+  };
 
+  function remove( object ) {
+    if ( object && object.parent ) {
+      object.parent.remove( object );
+    }
+  }
+
+  function createWireframe() {
+    remove( wireframe );
     wireframe = new THREE.WireframeHelper( mesh );
     scene.add( wireframe );
+  }
+
+
+  function highlightVertex( vertex ) {
+    if ( vertex === state.vertex ) {
+      return;
+    }
+
+    state.vertex = vertex;
+
+    if ( vertexHelpers ) {
+      vertexHelpers.forEach( remove );
+    }
+
+    var size = 0.15;
+
+    vertexHelpers = [ vertex ].map(function( vertex ) {
+      var vertexHelper = new THREE.Mesh(
+        new THREE.BoxBufferGeometry( size, size, size ),
+        new THREE.MeshBasicMaterial()
+      );
+
+      vertexHelper.position.copy( vertex );
+      scene.add( vertexHelper );
+      return vertexHelper;
+    });
   }
 
   function init() {
@@ -51,7 +84,9 @@
 
     geometry = new THREE.BoxGeometry( 1, 1, 1 );
     material = new THREE.MeshStandardMaterial({
-      shading: THREE.FlatShading
+      shading: THREE.FlatShading,
+      opacity: 0.8,
+      transparent: true
     });
     mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
@@ -64,6 +99,36 @@
 
   init();
   render();
+
+  var mouse = new THREE.Vector2();
+  var vector = new THREE.Vector3();
+
+  function onMouseMove( event ) {
+    mouse.set( event.clientX, event.clientY );
+
+    var minDistanceToSquared = Infinity;
+    var minVertex;
+
+    geometry.vertices.forEach(function( vertex ) {
+      vector.copy( vertex ).project( camera );
+
+      vector.set(
+        window.innerWidth  * ( 1 + vector.x ) / 2,
+        window.innerHeight * ( 1 - vector.y ) / 2
+      );
+
+      var distanceToSquared = mouse.distanceToSquared( vector );
+      if ( distanceToSquared < minDistanceToSquared ) {
+        minDistanceToSquared = distanceToSquared;
+        minVertex = vertex;
+      }
+    });
+
+    highlightVertex( minVertex );
+    render();
+  }
+
+  document.addEventListener( 'mousemove', onMouseMove );
 
   window.addEventListener( 'resize', function() {
     camera.aspect = window.innerWidth / window.innerHeight;

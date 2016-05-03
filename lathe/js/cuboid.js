@@ -23,11 +23,14 @@
     xz: document.getElementById( 'textarea-xz' )
   };
 
-  function createWireframe() {
-    if ( wireframe && wireframe.parent ) {
-      wireframe.parent.remove( wireframe );
+  function remove( object ) {
+    if ( object && object.parent ) {
+      object.parent.remove( object );
     }
+  }
 
+  function createWireframe() {
+    remove( wireframe );
     wireframe = new THREE.WireframeHelper( mesh );
     scene.add( wireframe );
   }
@@ -51,11 +54,7 @@
     var size = 0.15;
 
     if ( vertexHelpers ) {
-      vertexHelpers.forEach(function( vertexHelper ) {
-        if ( vertexHelper && vertexHelper.parent ) {
-          vertexHelper.parent.remove( vertexHelper );
-        }
-      });
+      vertexHelpers.forEach( remove );
     }
 
     vertexHelpers = vertices.map(function( vertex ) {
