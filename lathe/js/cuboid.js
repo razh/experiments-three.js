@@ -7,6 +7,7 @@
   var scene, camera, renderer;
 
   var geometry, material, mesh;
+  var baseGeometry;
   var wireframe;
   var vertexHelpers;
 
@@ -17,6 +18,7 @@
   var dispatcher = new THREE.EventDispatcher();
 
   var textareas = {
+    delta: document.getElementById( 'textarea-delta' ),
     xyz: document.getElementById( 'textarea-xyz' ),
     xy: document.getElementById( 'textarea-xy' ),
     yz: document.getElementById( 'textarea-yz' ),
@@ -193,6 +195,22 @@
     });
   }
 
+  function computeDeltaString( precision ) {
+    var vector = new THREE.Vector3();
+
+    return baseGeometry.vertices.map(function( a, i ) {
+      var b = geometry.vertices[i];
+
+      return vector
+        .subVectors( a, b )
+        .toArray()
+        .map(function( component ) {
+          return parseFloat( component.toFixed( precision ) );
+        })
+        .join( ' ' );
+    }).join( '\n' );
+  }
+
   function init() {
     container = document.createElement( 'div' );
     document.body.appendChild( container );
@@ -218,7 +236,8 @@
     var axisHelper = new THREE.AxisHelper();
     scene.add( axisHelper );
 
-    geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    baseGeometry = new THREE.BoxGeometry( 1, 1, 1 );
+    geometry = baseGeometry.clone();
     material = new THREE.MeshStandardMaterial({
       shading: THREE.FlatShading
     });
@@ -276,6 +295,14 @@
     [ 'xy', 'yz', 'xz' ].forEach(function( components ) {
       createComponentInput( textareas[ components ], components );
     });
+
+    // Delta.
+    function setDeltaValue() {
+      textareas.delta.value = computeDeltaString( 2 );
+    }
+
+    setDeltaValue();
+    dispatcher.addEventListener( 'change', setDeltaValue );
   }
 
   function render() {
