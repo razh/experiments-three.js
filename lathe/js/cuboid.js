@@ -10,6 +10,7 @@
   var baseGeometry;
   var wireframe;
   var vertexHelpers;
+  var vertexLabels;
 
   var transformControls;
   var vertexObject;
@@ -56,6 +57,40 @@
       var vertexHelper = createVertexHelper( vertex, 0.15 );
       scene.add( vertexHelper );
       return vertexHelper;
+    });
+  }
+
+  function createVertexLabels( vertices ) {
+    vertexLabels = vertices.map(function( vertex, index ) {
+      var canvas = document.createElement( 'canvas' );
+      var ctx = canvas.getContext( '2d' );
+
+      canvas.width = 512;
+      canvas.height = 512;
+
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      ctx.fillStyle = '#fff';
+      ctx.font = ( canvas.width ) + 'px Menlo, Monaco, monospace';
+      ctx.fillText( index, canvas.width / 2, canvas.height / 2 );
+
+      var texture = new THREE.Texture( canvas );
+      texture.needsUpdate = true;
+
+      var sprite = new THREE.Sprite(
+        new THREE.SpriteMaterial({ map: texture, transparent: true })
+      );
+
+      sprite.scale.multiplyScalar( 0.5 );
+      scene.add( sprite );
+      return sprite;
+    });
+  }
+
+  function updateVertexLabels( vertices ) {
+    vertices.map(function( vertex, index ) {
+      vertexLabels[ index ].position.copy( vertex );
     });
   }
 
@@ -216,7 +251,7 @@
     container = document.createElement( 'div' );
     document.body.appendChild( container );
 
-    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
     container.appendChild( renderer.domElement );
@@ -245,6 +280,7 @@
     mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
     createWireframe( mesh );
+    createVertexLabels( geometry.vertices );
 
     vertexObject = new THREE.Object3D();
     transformControls = new THREE.TransformControls( camera, renderer.domElement );
@@ -335,6 +371,7 @@
   }
 
   function render() {
+    updateVertexLabels( geometry.vertices );
     renderer.render( scene, camera );
   }
 
