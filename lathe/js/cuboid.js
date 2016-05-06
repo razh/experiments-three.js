@@ -18,6 +18,7 @@
   var dispatcher = new THREE.EventDispatcher();
 
   var textareas = {
+    commands: document.getElementById( 'textarea-commands' ),
     delta: document.getElementById( 'textarea-delta' ),
     xyz: document.getElementById( 'textarea-xyz' ),
     xy: document.getElementById( 'textarea-xy' ),
@@ -303,6 +304,27 @@
 
     setDeltaValue();
     dispatcher.addEventListener( 'change', setDeltaValue );
+
+    // Commands.
+    textareas.commands.addEventListener( 'input', function( event ) {
+      try {
+        var fn = new Function( [ 'vertices' ], event.target.value );
+
+        var _geometry = new THREE.Geometry().copy( baseGeometry );
+        fn( _geometry.vertices );
+
+        geometry = _geometry;
+        mesh.geometry = geometry;
+        mesh.needsUpdate = true;
+
+        forceGeometryUpdate();
+        render();
+
+        event.target.setCustomValidity( '' );
+      } catch ( error ) {
+        event.target.setCustomValidity( 'Invalid function' );
+      }
+    });
   }
 
   function render() {

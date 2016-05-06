@@ -32,10 +32,17 @@
       font-family: Menlo, Monaco, monospace;
       color: #fff;
     }
+
+    textarea:invalid {
+      outline-color: red;
+    }
   </style>
 </head>
 <body>
   <div class="controls">
+    <label for="textarea-commands">commands</label>
+    <textarea class="form-control" id="textarea-commands"></textarea>
+
     <label for="textarea-delta">delta</label>
     <textarea class="form-control" id="textarea-delta" readonly></textarea>
 
