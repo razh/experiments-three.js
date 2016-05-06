@@ -259,7 +259,14 @@
     });
 
     Object.keys( textareas ).forEach(function( key ) {
-      createNumericInput( textareas[ key ] );
+      var textarea = textareas[ key ];
+
+      createNumericInput( textarea );
+
+      // Disable OrbitControls while in textarea.
+      textarea.addEventListener( 'keydown', function( event ) {
+        event.stopPropagation();
+      });
     });
 
     // 3D.
