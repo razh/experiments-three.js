@@ -1,4 +1,4 @@
-/* global THREE, createNumericInput, remove, createVertexHelper, updateGeometry */
+/* global THREE, dat, createNumericInput, remove, createVertexHelper, updateGeometry */
 (function() {
   'use strict';
 
@@ -18,6 +18,12 @@
 
   var dispatcher = new THREE.EventDispatcher();
 
+  var config = {
+    width: 1,
+    height: 1,
+    depth: 1
+  };
+
   var textareas = {
     commands: document.getElementById( 'textarea-commands' ),
     delta: document.getElementById( 'textarea-delta' ),
@@ -26,6 +32,14 @@
     yz: document.getElementById( 'textarea-yz' ),
     xz: document.getElementById( 'textarea-xz' )
   };
+
+  function createBaseGeometry( options ) {
+    return new THREE.BoxGeometry(
+      options.width,
+      options.height,
+      options.depth
+    );
+  }
 
   function createWireframe() {
     remove( wireframe );
@@ -92,6 +106,12 @@
     vertices.map(function( vertex, index ) {
       vertexLabels[ index ].position.copy( vertex );
     });
+  }
+
+  function setGeometry( _geometry ) {
+    geometry = _geometry;
+    mesh.geometry = geometry;
+    mesh.needsUpdate = true;
   }
 
   function forceGeometryUpdate() {
@@ -272,7 +292,7 @@
     var axisHelper = new THREE.AxisHelper();
     scene.add( axisHelper );
 
-    baseGeometry = new THREE.BoxGeometry( 1, 1, 1 );
+    baseGeometry = createBaseGeometry( config );
     geometry = baseGeometry.clone();
     material = new THREE.MeshStandardMaterial({
       shading: THREE.FlatShading
@@ -356,17 +376,26 @@
         var _geometry = new THREE.Geometry().copy( baseGeometry );
         fn( _geometry.vertices );
 
-        geometry = _geometry;
-        mesh.geometry = geometry;
-        mesh.needsUpdate = true;
-
+        setGeometry( _geometry );
         forceGeometryUpdate();
-        render();
 
         event.target.setCustomValidity( '' );
       } catch ( error ) {
         event.target.setCustomValidity( 'Invalid function' );
       }
+    });
+
+    var gui = new dat.GUI();
+
+    [ 'width', 'height', 'depth' ].forEach(function( dimension ) {
+      gui.add( config, dimension, 0.1, 4 )
+        .listen()
+        .onChange(function( value ) {
+          config[ dimension ] = value;
+          baseGeometry = createBaseGeometry( config );
+          setGeometry( baseGeometry );
+          forceGeometryUpdate();
+        });
     });
   }
 
