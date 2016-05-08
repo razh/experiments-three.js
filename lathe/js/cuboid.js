@@ -14,7 +14,6 @@
 
   var transformControls;
   var vertexObject;
-  var selectedVertex;
 
   var dispatcher = new THREE.EventDispatcher();
 
@@ -22,6 +21,11 @@
     width: 1,
     height: 1,
     depth: 1
+  };
+
+  var state = {
+    selectedVertices: [],
+    selectedVertex: null
   };
 
   var textareas = {
@@ -48,18 +52,24 @@
   }
 
   function setSelectedVertex( vertex ) {
-    if ( vertex === selectedVertex ) {
+    if ( vertex === state.selectedVertex ) {
       return;
     }
 
-    selectedVertex = vertex;
+    state.selectedVertex = vertex;
 
-    if ( selectedVertex ) {
-      vertexObject.position.copy( selectedVertex );
+    if ( state.selectedVertex ) {
       transformControls.attach( vertexObject )
     } else {
-      transformControls.detach()
+      transformControls.detach();
     }
+  }
+
+  function setSelectedVertices( vertices ) {
+    vertices = vertices || [];
+    state.selectedVertices = vertices;
+    createVertexHelpers( vertices );
+    setSelectedVertex( vertices[0] );
   }
 
   function createVertexHelpers( vertices ) {
@@ -71,6 +81,12 @@
       var vertexHelper = createVertexHelper( vertex, 0.15 );
       scene.add( vertexHelper );
       return vertexHelper;
+    });
+  }
+
+  function updateVertexHelpers( vertices ) {
+    vertices.map(function( vertex, index ) {
+      vertexHelpers[ index ].position.copy( vertex );
     });
   }
 
@@ -241,8 +257,7 @@
         }
       }
 
-      createVertexHelpers( selectedVertices );
-      setSelectedVertex( selectedVertices[0] );
+      setSelectedVertices( selectedVertices );
       render();
     }
 
@@ -308,8 +323,8 @@
     scene.add( transformControls );
 
     transformControls.addEventListener( 'change', function() {
-      if ( selectedVertex ) {
-        selectedVertex.copy( vertexObject.position );
+      if ( state.selectedVertex ) {
+        state.selectedVertex.copy( vertexObject.position );
         forceGeometryUpdate();
       }
     });
@@ -346,8 +361,7 @@
         selectedVertices.push( geometry.vertices[i] );
       }
 
-      createVertexHelpers( selectedVertices );
-      setSelectedVertex( selectedVertices[0] );
+      setSelectedVertices( selectedVertices );
       render();
     }
 
@@ -400,6 +414,12 @@
   }
 
   function render() {
+    if ( state.selectedVertex ) {
+      vertexObject.position.copy( state.selectedVertex );
+      transformControls.update();
+    }
+
+    updateVertexHelpers( state.selectedVertices );
     updateVertexLabels( geometry.vertices );
     renderer.render( scene, camera );
   }
