@@ -25,7 +25,8 @@
 
   var state = {
     selectedVertices: [],
-    selectedVertex: null
+    selectedVertex: null,
+    transform: function( vertices ) { return vertices; }
   };
 
   var textareas = {
@@ -393,6 +394,9 @@
         setGeometry( _geometry );
         forceGeometryUpdate();
 
+        // Update transform function only if no errors have occurred.
+        state.transform = fn;
+
         event.target.setCustomValidity( '' );
       } catch ( error ) {
         event.target.setCustomValidity( 'Invalid function' );
@@ -403,11 +407,16 @@
 
     [ 'width', 'height', 'depth' ].forEach(function( dimension ) {
       gui.add( config, dimension, 0.1, 4 )
+        .step( 0.1 )
         .listen()
         .onChange(function( value ) {
           config[ dimension ] = value;
           baseGeometry = createBaseGeometry( config );
-          setGeometry( baseGeometry );
+
+          var _geometry = new THREE.Geometry().copy( baseGeometry );
+          state.transform( _geometry.vertices );
+
+          setGeometry( _geometry );
           forceGeometryUpdate();
         });
     });
