@@ -67,10 +67,10 @@ const createNumericInput = (() => {
         return;
       }
 
-      // Calculate selection range of number.
+      // Calculate selection range of first number.
       const range = expandSelection(
         input.value,
-        [ input.selectionStart, input.selectionEnd ],
+        [ input.selectionStart, input.selectionStart ],
         string => NUMBER_REGEX.test( string )
       );
 
@@ -82,19 +82,17 @@ const createNumericInput = (() => {
 
       const numberString = String( round( number + step, 6 ) );
 
-      // Insert number string into current string.
-      input.value = (
-        input.value.slice( 0, range[0] ) +
-        numberString +
-        input.value.slice( range[1] )
-      );
+      // Highlight first number.
+      input.setSelectionRange( range[0], range[1] );
 
-      // Highlight current number.
+      // Insert number string into selection.
+      document.execCommand( 'insertText', false, numberString );
+
+      // Highlight current selection.
       input.setSelectionRange( range[0], range[0] + numberString.length );
 
-      // Force update on input event.
+      // Force default arrow-key actions.
       event.preventDefault();
-      input.dispatchEvent( new Event( 'input' ) );
     }
 
     input.addEventListener( 'keydown', onInput );
