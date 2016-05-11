@@ -38,6 +38,15 @@
     xz: document.getElementById( 'textarea-xz' )
   };
 
+  //  0.001
+  var PRECISION = 3;
+
+  function round( precision ) {
+    return function( number ) {
+      return parseFloat( number.toFixed( precision ) )
+    };
+  }
+
   function createBaseGeometry( options ) {
     return new THREE.BoxGeometry(
       options.width,
@@ -148,7 +157,7 @@
 
   function toInput( vertices ) {
     return vertices.map(function( vertex ) {
-      return vertex.toArray().join( ' ' );
+      return vertex.toArray().map( round( PRECISION ) ).join( ' ' );
     }).join( '\n' );
   }
 
@@ -208,9 +217,12 @@
       return vertexKeys.map(function( vertexKey ) {
         var vertex = vertexMap[ vertexKey ][0];
 
-        return keys.map(function( key ) {
-          return vertex[ key ];
-        }).join( ' ' );
+        return keys
+          .map(function( key ) {
+            return vertex[ key ];
+          })
+          .map( round( PRECISION ) )
+          .join( ' ' );
       }).join( '\n' );
     }
 
@@ -276,9 +288,7 @@
       return vector
         .subVectors( a, b )
         .toArray()
-        .map(function( component ) {
-          return parseFloat( component.toFixed( precision ) );
-        })
+        .map( round( precision ) )
         .join( ' ' );
     }).join( '\n' );
   }
@@ -403,11 +413,13 @@
       }
     });
 
-    var gui = new dat.GUI();
+    var gui = new dat.GUI({
+      width: 320
+    });
 
     [ 'width', 'height', 'depth' ].forEach(function( dimension ) {
       gui.add( config, dimension, 0.1, 4 )
-        .step( 0.1 )
+        .step( 0.01 )
         .listen()
         .onChange(function( value ) {
           config[ dimension ] = value;
