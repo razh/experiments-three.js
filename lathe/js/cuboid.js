@@ -279,6 +279,26 @@
     });
   }
 
+  function onCommandsInput( event ) {
+    try {
+      var fn = new Function( [ 'vertices' ], event.target.value );
+
+      var _geometry = new THREE.Geometry().copy( baseGeometry );
+      fn( _geometry.vertices );
+
+      setGeometry( _geometry );
+      forceGeometryUpdate();
+
+      // Update transform function only if no errors have occurred.
+      state.transform = fn;
+      setQueryString();
+
+      event.target.setCustomValidity( '' );
+    } catch ( error ) {
+      event.target.setCustomValidity( 'Invalid function' );
+    }
+  }
+
   function computeDeltaString( precision ) {
     var vector = new THREE.Vector3();
 
@@ -291,6 +311,35 @@
         .map( round( precision ) )
         .join( ' ' );
     }).join( '\n' );
+  }
+
+  function setQueryString() {
+    var _round = round( PRECISION );
+
+    var params = {
+      width: _round(config.width ),
+      height: _round( config.height ),
+      depth: _round( config.depth ),
+      commands: textareas.commands.value.trim()
+    };
+
+    var query = Object.keys( params )
+      .map(function( key ) {
+        var value = params[ key ];
+        if ( value ) {
+          return key + '=' + encodeURIComponent( value );
+        }
+      })
+      .filter( Boolean )
+      .join( '&' );
+
+    var hash = (
+      window.location.origin +
+      window.location.pathname +
+      '#' + query
+    );
+
+    window.history.replaceState( '', '', hash );
   }
 
   function init() {
@@ -318,10 +367,29 @@
     var axisHelper = new THREE.AxisHelper();
     scene.add( axisHelper );
 
+    // Parse query string.
+    var params = window.location.hash
+      .slice( 1 )
+      .split( '&' )
+      .reduce(function( object, pair ) {
+        pair = pair.split( '=' );
+        object[ pair[0] ] = decodeURIComponent( pair[1] );
+        return object;
+      }, {} );
+
+    // Set default values.
+    config.width = parseFloat( params.width ) || config.width;
+    config.height = parseFloat( params.height ) || config.height;
+    config.depth = parseFloat( params.depth ) || config.depth;
+    textareas.commands.value = params.commands || '';
+
+    // Build mesh.
     baseGeometry = createBaseGeometry( config );
     geometry = baseGeometry.clone();
     material = new THREE.MeshStandardMaterial({
-      shading: THREE.FlatShading
+      shading: THREE.FlatShading,
+      transparent: true,
+      opacity: 0.95
     });
     mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
@@ -394,24 +462,11 @@
     dispatcher.addEventListener( 'change', setDeltaValue );
 
     // Commands.
-    textareas.commands.addEventListener( 'input', function( event ) {
-      try {
-        var fn = new Function( [ 'vertices' ], event.target.value );
-
-        var _geometry = new THREE.Geometry().copy( baseGeometry );
-        fn( _geometry.vertices );
-
-        setGeometry( _geometry );
-        forceGeometryUpdate();
-
-        // Update transform function only if no errors have occurred.
-        state.transform = fn;
-
-        event.target.setCustomValidity( '' );
-      } catch ( error ) {
-        event.target.setCustomValidity( 'Invalid function' );
-      }
-    });
+    textareas.commands.addEventListener( 'input', onCommandsInput );
+    // Set from query string.
+    if ( textareas.commands.value ) {
+      textareas.commands.dispatchEvent( new Event( 'input' ) );
+    }
 
     var gui = new dat.GUI({
       width: 320
@@ -419,7 +474,7 @@
 
     [ 'width', 'height', 'depth' ].forEach(function( dimension ) {
       gui.add( config, dimension, 0.1, 4 )
-        .step( 0.01 )
+        .step( 0.1 )
         .listen()
         .onChange(function( value ) {
           config[ dimension ] = value;
@@ -430,6 +485,8 @@
 
           setGeometry( _geometry );
           forceGeometryUpdate();
+
+          setQueryString();
         });
     });
   }
