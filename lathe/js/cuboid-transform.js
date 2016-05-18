@@ -69,6 +69,12 @@
     var axisHelper = new THREE.AxisHelper();
     scene.add( axisHelper );
 
+    var gridHelper = new THREE.GridHelper( 2, 0.2 );
+    gridHelper.position.y = -1;
+    gridHelper.material.opacity = 0.5;
+    gridHelper.material.transparent = true;
+    scene.add( gridHelper );
+
     geometry = new THREE.BoxGeometry( 1, 1, 1 );
     material = new THREE.MeshStandardMaterial({
       shading: THREE.FlatShading,

@@ -367,6 +367,12 @@
     var axisHelper = new THREE.AxisHelper();
     scene.add( axisHelper );
 
+    var gridHelper = new THREE.GridHelper( 4, 0.4 );
+    gridHelper.position.y = -2;
+    gridHelper.material.opacity = 0.5;
+    gridHelper.material.transparent = true;
+    scene.add( gridHelper );
+
     // Parse query string.
     var params = window.location.hash
       .slice( 1 )
