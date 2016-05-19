@@ -1,4 +1,13 @@
-/* global THREE, dat, createNumericInput, remove, createVertexHelper, updateGeometry */
+/*
+global
+THREE
+dat
+createNumericInput
+remove
+createVertexHelper
+updateGeometry
+translateBoxVertices
+*/
 (function() {
   'use strict';
 
@@ -279,9 +288,16 @@
     });
   }
 
+  function translateBoxVerticesHelper( vertices, vectors ) {
+    // translateBoxVertices() expects an instance of THREE.Geometry.
+    return translateBoxVertices({ vertices: vertices }, vectors );
+  }
+
   function onCommandsInput( event ) {
     try {
-      var fn = new Function( [ 'vertices' ], event.target.value );
+      // Partial application of translateBoxVertices() as `t`.
+      var fn = new Function( [ 't', 'vertices' ], event.target.value )
+        .bind( undefined, translateBoxVerticesHelper );
 
       var _geometry = new THREE.Geometry().copy( baseGeometry );
       fn( _geometry.vertices );

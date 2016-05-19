@@ -1,6 +1,6 @@
 /* global THREE */
-/* exported translateBox */
-var translateBox = (function() {
+/* exported translateBoxVertices */
+var translateBoxVertices = (function() {
   'use strict';
 
   // Vertices.
@@ -98,7 +98,7 @@ var translateBox = (function() {
   return function translate( geometry, vectors ) {
     Object.keys( vectors ).forEach(function( key ) {
       var delta = vectors[ key ];
-      var indices = Indices[ key ];
+      var indices = Indices[ key.toUpperCase() ];
 
       if ( Array.isArray( delta ) ) {
         vector.fromArray( delta );
