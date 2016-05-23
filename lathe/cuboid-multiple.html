@@ -10,10 +10,34 @@
     body {
       margin: 0;
       background-color: #000;
+      color: #fff;
+      font-family: Futura, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    .controls {
+      position: absolute;
+      right: 1rem;
+      bottom: 1rem;
+    }
+
+    textarea.form-control {
+      width: 16em;
+      height: 10em;
+      background-color: rgba(0, 0, 0, 0.5);
+      font-family: Menlo, Monaco, monospace;
+      color: #fff;
+    }
+
+    textarea:invalid {
+      outline-color: red;
     }
   </style>
 </head>
 <body>
+  <div class="controls">
+    <textarea class="form-control" id="textarea-commands"></textarea>
+  </div>
+
   <script src="../node_modules/three/three.js"></script>
   <script src="../node_modules/three/examples/js/controls/OrbitControls.js"></script>
   <script src="./js/numeric-input.js"></script>
