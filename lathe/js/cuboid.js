@@ -343,7 +343,7 @@ translateBoxVertices
       .map(function( key ) {
         var value = params[ key ];
         if ( value ) {
-          return key + '=' + encodeURIComponent( value );
+          return [ key, value ].map( encodeURIComponent ).join( '=' );
         }
       })
       .filter( Boolean )
@@ -352,7 +352,7 @@ translateBoxVertices
     var hash = (
       window.location.origin +
       window.location.pathname +
-      '#' + query
+      '?' + query
     );
 
     window.history.replaceState( '', '', hash );
@@ -390,12 +390,12 @@ translateBoxVertices
     scene.add( gridHelper );
 
     // Parse query string.
-    var params = window.location.hash
+    var params = window.location.search
       .slice( 1 )
       .split( '&' )
       .reduce(function( object, pair ) {
-        pair = pair.split( '=' );
-        object[ pair[0] ] = decodeURIComponent( pair[1] );
+        pair = pair.split( '=' ).map( decodeURIComponent );
+        object[ pair[0] ] = pair[1];
         return object;
       }, {} );
 

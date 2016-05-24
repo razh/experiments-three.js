@@ -30,8 +30,8 @@
 
   var transformVertex = function() {};
 
-  // Set from window.location.hash.
-  window.location.hash
+  // Set from window.location.search.
+  window.location.search
     .slice( 1 )
     .split( '&' )
     .forEach(function( pair ) {
@@ -117,7 +117,7 @@
       .map(function( key ) {
         var value = textareas[ key ].value.trim();
         if ( value ) {
-          return key + '=' + encodeURIComponent( value );
+          return [ key, value ].map( encodeURIComponent ).join( '=' );
         }
       })
       .filter( Boolean )
@@ -127,7 +127,7 @@
     var hash = (
       window.location.origin +
       window.location.pathname +
-      '#' + query
+      '?' + query
     );
 
     window.history.replaceState( '', '', hash );

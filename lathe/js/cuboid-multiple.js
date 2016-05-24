@@ -39,6 +39,29 @@
     })
   }
 
+  function getQueryParam( key ) {
+    var params = window.location.search
+      .slice( 1 )
+      .split( '&' )
+      .reduce(function( object, pair ) {
+        pair = pair.split( '=' ).map( decodeURIComponent );
+        object[ pair[0] ] = pair[1];
+        return object;
+      }, {} );
+
+      return params[ key ];
+  }
+
+  function setQueryString( key, value ) {
+    var hash = (
+      window.location.origin +
+      window.location.pathname +
+      '?' + encodeURIComponent( key ) + '=' + encodeURIComponent( value )
+    );
+
+    window.history.replaceState( '', '', hash );
+  }
+
   function onInput( event ) {
     try {
       var fn = new Function( [ 'b' ], event.target.value );
@@ -49,6 +72,8 @@
 
       setGeometry( _geometry );
       render();
+
+      setQueryString( 'commands', event.target.value.trim() );
 
       event.target.setCustomValidity( '' );
     } catch ( error ) {
@@ -94,6 +119,8 @@
     textarea.addEventListener( 'keydown', function( event ) {
       event.stopPropagation();
     });
+
+    textarea.value = getQueryParam( 'commands' ) || '';
   }
 
   function render() {
