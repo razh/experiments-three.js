@@ -1,4 +1,4 @@
-/* global THREE, createNumericInput, updateGeometry, translateBoxVertices */
+/* global THREE, createNumericInput, remove updateGeometry, translateBoxVertices */
 (function() {
   'use strict';
 
@@ -7,6 +7,7 @@
   var scene, camera, renderer;
 
   var geometry, material, mesh;
+  var wireframe;
 
   function setGeometry( _geometry ) {
     geometry = _geometry;
@@ -30,6 +31,12 @@
     }
 
     return geometry;
+  }
+
+  function createWireframe() {
+    remove( wireframe );
+    wireframe = new THREE.WireframeHelper( mesh );
+    scene.add( wireframe );
   }
 
   function mergeGeometries( geometries ) {
@@ -71,6 +78,7 @@
       updateGeometry( _geometry );
 
       setGeometry( _geometry );
+      createWireframe( mesh );
       render();
 
       setQueryString( 'commands', event.target.value.trim() );
@@ -121,6 +129,7 @@
     });
 
     textarea.value = getQueryParam( 'commands' ) || '';
+    textarea.dispatchEvent( new Event( 'input' ) );
   }
 
   function render() {
