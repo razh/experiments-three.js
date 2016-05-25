@@ -69,11 +69,44 @@
     window.history.replaceState( '', '', hash );
   }
 
+  function reargMethod( key ) {
+    return function() {
+      var args = arguments;
+
+      return function( geometry ) {
+        geometry[ key ].apply( geometry, args );
+      }
+    };
+  }
+
+  var geometryMethods = [
+    'rotateX',
+    'rotateY',
+    'rotateZ',
+    'translate',
+    'scale'
+  ];
+
+  var shorthandGeometryMethods = [ 'rx', 'ry', 'rz', 't', 's' ];
+
+  var reargGeometryMethods = geometryMethods.reduce(function( fns, key ) {
+    fns.push( reargMethod( key ) );
+    return fns;
+  }, [] );
+
   function onInput( event ) {
     try {
-      var fn = new Function( [ 'b' ], event.target.value );
+      var args = {
+        keys: [ '_' ]
+          .concat( geometryMethods )
+          .concat( shorthandGeometryMethods ),
+        values: [ createBoxGeometry ]
+          .concat( reargGeometryMethods )
+          .concat( reargGeometryMethods )
+      };
+      var fn = new Function( args.keys, event.target.value );
 
-      var _geometries = fn( createBoxGeometry );
+      var _geometries = fn.apply( undefined, args.values );
       var _geometry = mergeGeometries( _geometries );
       updateGeometry( _geometry );
 
