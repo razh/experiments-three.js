@@ -63,7 +63,7 @@
     var hash = (
       window.location.origin +
       window.location.pathname +
-      '?' + encodeURIComponent( key ) + '=' + encodeURIComponent( value )
+      '?' + [ key, value ].map( encodeURIComponent ).join( '=' )
     );
 
     window.history.replaceState( '', '', hash );
@@ -104,6 +104,7 @@
           .concat( reargGeometryMethods )
           .concat( reargGeometryMethods )
       };
+
       var fn = new Function( args.keys, event.target.value );
 
       var _geometries = fn.apply( undefined, args.values );

@@ -32,11 +32,37 @@
     textarea:invalid {
       outline-color: red;
     }
+
+    .help {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+    }
+
+    .help-header:hover + .help-content {
+      display: block;
+    }
+
+    .help-content {
+      display: none;
+    }
   </style>
 </head>
 <body>
   <div class="controls">
     <textarea class="form-control" id="textarea-commands"spellcheck="false"></textarea>
+  </div>
+
+  <div class="help">
+    <div class="help-header">Help</div>
+    <dl class="help-content">
+      <dt>_(dimensions, transformFns, vectors)</dt>
+      <dd>dimensions: <code>Array&lt;number&gt;</code></dd>
+      <dd>transformFns: <code>Function | Array&lt;Function&gt;</code></dd>
+      <dd>vectors:
+        <code>number | { [key: string]: number } | Array&lt;number&gt;</code>
+      </dd>
+    </dl>
   </div>
 
   <script src="../node_modules/three/three.js"></script>
