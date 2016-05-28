@@ -145,6 +145,15 @@
     light.position.set( 0, 8, 8 );
     scene.add( light );
 
+    var axisHelper = new THREE.AxisHelper();
+    scene.add( axisHelper );
+
+    var gridHelper = new THREE.GridHelper( 4, 0.4 );
+    gridHelper.position.y = -2;
+    gridHelper.material.opacity = 0.5;
+    gridHelper.material.transparent = true;
+    scene.add( gridHelper );
+
     geometry = new THREE.BoxGeometry( 1, 1, 1 );
     material = new THREE.MeshStandardMaterial({
       shading: THREE.FlatShading,
