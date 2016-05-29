@@ -170,8 +170,13 @@
     });
 
     var max = Math.max.apply( null, distances );
-    camera.far = Math.min( max * 1.5, 2000 );
-    camera.updateProjectionMatrix();
+    var far = Math.min( max * 1.5, 2000 );
+
+    // Prevent degenrate projection matrix.
+    if ( far !== camera.near ) {
+      camera.far = far;
+      camera.updateProjectionMatrix();
+    }
   }
 
   function animate() {
