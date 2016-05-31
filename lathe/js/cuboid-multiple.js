@@ -40,6 +40,10 @@
   }
 
   function mergeGeometries( geometries ) {
+    if ( !Array.isArray( geometries ) ) {
+      return geometries;
+    }
+
     return geometries.reduce(function( a, b ) {
       a.merge( b );
       return a;
@@ -171,7 +175,7 @@
       event.stopPropagation();
     });
 
-    textarea.value = getQueryParam( 'commands' ) || '';
+    textarea.value = getQueryParam( 'commands' ) || 'return _([1, 1, 1])';
     textarea.dispatchEvent( new Event( 'input' ) );
   }
 
