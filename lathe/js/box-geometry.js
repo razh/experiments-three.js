@@ -1,6 +1,6 @@
 /* global THREE */
 /* exported translateBoxVertices */
-var translateBoxVertices = (function() {
+window.translateBoxVertices = (function() {
   'use strict';
 
   // Vertices.
