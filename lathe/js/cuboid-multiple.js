@@ -1,4 +1,12 @@
-/* global THREE, createNumericInput, remove updateGeometry, translateBoxVertices */
+/*
+global
+THREE,
+createNumericInput
+remove,
+updateGeometry
+createTextLabel
+translateBoxVertices
+*/
 (function() {
   'use strict';
 
@@ -8,6 +16,7 @@
 
   var geometry, material, mesh;
   var wireframe;
+  var geometryLabels;
 
   function setGeometry( _geometry ) {
     geometry = _geometry;
@@ -48,6 +57,28 @@
       a.merge( b );
       return a;
     })
+  }
+
+  function computeBoundingBoxes( geometries ) {
+    if ( !Array.isArray( geometries ) ) {
+      geometries.computeBoundingBox();
+      return [ geometries.boundingBox ];
+    }
+
+    return geometries.map(function( geometry ) {
+      geometry.computeBoundingBox();
+      return geometry.boundingBox;
+    });
+  }
+
+  function createBoundingBoxLabels( boundingBoxes ) {
+    return boundingBoxes.map(function( boundingBox, index ) {
+      var label = createTextLabel( index );
+      label.scale.multiplyScalar( 0.5 );
+      label.material.depthTest = false;
+      boundingBox.center( label.position );
+      return label;
+    });
   }
 
   function getQueryParam( key ) {
@@ -112,6 +143,15 @@
       var fn = new Function( args.keys, event.target.value );
 
       var _geometries = fn.apply( undefined, args.values );
+      // Add geometry labels.
+      remove( geometryLabels );
+      geometryLabels = new THREE.Group();
+      createBoundingBoxLabels( computeBoundingBoxes( _geometries ) )
+        .map(function( label ) {
+          geometryLabels.add( label );
+        });
+      scene.add( geometryLabels );
+
       var _geometry = mergeGeometries( _geometries );
       updateGeometry( _geometry );
 
