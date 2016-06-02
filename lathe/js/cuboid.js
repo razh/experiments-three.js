@@ -6,6 +6,7 @@ createNumericInput
 remove
 createVertexHelper
 updateGeometry
+createTextLabel
 translateBoxVertices
 */
 (function() {
@@ -111,26 +112,7 @@ translateBoxVertices
 
   function createVertexLabels( vertices ) {
     vertexLabels = vertices.map(function( vertex, index ) {
-      var canvas = document.createElement( 'canvas' );
-      var ctx = canvas.getContext( '2d' );
-
-      canvas.width = 512;
-      canvas.height = 512;
-
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-
-      ctx.fillStyle = '#fff';
-      ctx.font = ( canvas.width ) + 'px Menlo, Monaco, monospace';
-      ctx.fillText( index, canvas.width / 2, canvas.height / 2 );
-
-      var texture = new THREE.Texture( canvas );
-      texture.needsUpdate = true;
-
-      var sprite = new THREE.Sprite(
-        new THREE.SpriteMaterial({ map: texture, transparent: true })
-      );
-
+      var sprite = createTextLabel( index );
       sprite.scale.multiplyScalar( 0.5 );
       scene.add( sprite );
       return sprite;

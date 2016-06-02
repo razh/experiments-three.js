@@ -1,5 +1,5 @@
 /* global THREE */
-/* exported remove, createVertexHelper, updateGeometry */
+/* exported remove, createVertexHelper, updateGeometry, createTextLabel */
 function remove( object ) {
   if ( object && object.parent ) {
     object.parent.remove( object );
@@ -23,4 +23,28 @@ function updateGeometry( geometry ) {
 
   geometry.normalsNeedUpdate = true;
   geometry.verticesNeedUpdate = true;
+}
+
+function createTextLabel( text, size ) {
+  size = size || 512;
+
+  var canvas = document.createElement( 'canvas' );
+  var ctx = canvas.getContext( '2d' );
+
+  canvas.width = size;
+  canvas.height = size;
+
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  ctx.fillStyle = '#fff';
+  ctx.font = ( canvas.width ) + 'px Menlo, Monaco, monospace';
+  ctx.fillText( text, canvas.width / 2, canvas.height / 2 );
+
+  var texture = new THREE.Texture( canvas );
+  texture.needsUpdate = true;
+
+  return new THREE.Sprite(
+    new THREE.SpriteMaterial({ map: texture, transparent: true })
+  );
 }
