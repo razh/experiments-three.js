@@ -110,6 +110,7 @@ translateBoxVertices
 
       return function( geometry ) {
         geometry[ key ].apply( geometry, args );
+        return geometry;
       }
     };
   }
@@ -132,10 +133,10 @@ translateBoxVertices
   function onInput( event ) {
     try {
       var args = {
-        keys: [ '_' ]
+        keys: [ '_', '$$' ]
           .concat( geometryMethods )
           .concat( shorthandGeometryMethods ),
-        values: [ createBoxGeometry ]
+        values: [ createBoxGeometry, mergeGeometries ]
           .concat( reargGeometryMethods )
           .concat( reargGeometryMethods )
       };
