@@ -14,6 +14,14 @@
       font-family: Futura, "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
 
+    ul {
+      padding-left: 20px;
+    }
+
+    dd {
+      margin-left: 20px;
+    }
+
     .controls {
       position: absolute;
       right: 1rem;
@@ -37,9 +45,10 @@
       position: absolute;
       top: 1rem;
       left: 1rem;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
     }
 
-    .help-header:hover + .help-content {
+    .help:hover > .help-content {
       display: block;
     }
 
@@ -56,11 +65,43 @@
   <div class="help">
     <div class="help-header">Help</div>
     <dl class="help-content">
-      <dt>_(dimensions, transformFns, vectors)</dt>
-      <dd>dimensions: <code>Array&lt;number&gt;</code></dd>
-      <dd>transformFns: <code>Function | Array&lt;Function&gt;</code></dd>
-      <dd>vectors:
-        <code>number | { [key: string]: number } | Array&lt;number&gt;</code>
+      <dt>_(dimensions, transforms, vectors)</dt>
+      <dd>
+        Box geometry helper
+        <dl>
+          <dt>dimensions</dt>
+          <dd><code>Array&lt;number&gt;</code></dd>
+
+          <dt>transforms</dt>
+          <dd><code>Function | Array&lt;Function&gt;</code></dd>
+
+          <dt>vectors</dt>
+          <dd>
+            <code>
+              { [key: string]: number | { [key: string]: number } | Array&lt;number&gt; }
+            </code>
+          </dd>
+        </dl>
+      </dd>
+
+      <dt>$$(geometries)</dt>
+      <dd>
+        Merge geometries
+        <dl>
+          <dt>geometries</dt>
+          <dd><code>THREE.Geometry | Array&lt;THREE.Geometry&gt;</code></dd>
+        </dl>
+      </dd>
+
+      <dt>Transform functions</dt>
+      <dd>
+        <ul>
+          <li><code>rotateX(angle) | rx(angle)</code></li>
+          <li><code>rotateY(angle) | ry(angle)</code></li>
+          <li><code>rotateZ(angle) | rz(angle)</code></li>
+          <li><code>translate(x, y, z) | t(x, y, z)</code></li>
+          <li><code>scale(x, y, z) | s(x, y, z)</code></li>
+        </ul>
       </dd>
     </dl>
   </div>

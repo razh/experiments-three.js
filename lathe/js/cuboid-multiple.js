@@ -24,18 +24,18 @@ translateBoxVertices
     mesh.needsUpdate = true;
   }
 
-  function createBoxGeometry( dimensions, transformFn, vectors ) {
+  function createBoxGeometry( dimensions, transforms, vectors ) {
     var geometry = new THREE.BoxGeometry( dimensions[0], dimensions[1], dimensions[2] );
 
     if ( typeof vectors === 'object' ) {
       translateBoxVertices( geometry, vectors );
     }
 
-    if ( typeof transformFn === 'function' ) {
-      transformFn( geometry );
-    } else if ( Array.isArray( transformFn ) ) {
-      transformFn.forEach(function( transformFn ) {
-        transformFn( geometry );
+    if ( typeof transforms === 'function' ) {
+      transforms( geometry );
+    } else if ( Array.isArray( transforms ) ) {
+      transforms.forEach(function( transform ) {
+        transform( geometry );
       });
     }
 
