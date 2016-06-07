@@ -5,6 +5,7 @@ createNumericInput
 remove,
 updateGeometry
 createTextLabel
+createBoxTextures
 translateBoxVertices
 */
 (function() {
@@ -200,11 +201,18 @@ translateBoxVertices
     scene.add( gridHelper );
 
     geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    material = new THREE.MeshStandardMaterial({
-      shading: THREE.FlatShading,
-      transparent: true,
-      opacity: 0.95
-    });
+    material = new THREE.MultiMaterial(
+     createBoxTextures().map(function( texture ) {
+        return new THREE.MeshStandardMaterial({
+          emissive: '#333',
+          emissiveMap: texture,
+          shading: THREE.FlatShading,
+          transparent: true,
+          opacity: 0.95
+        });
+      })
+    );
+
     mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
 

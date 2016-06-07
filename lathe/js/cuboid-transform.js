@@ -1,4 +1,4 @@
-/* global THREE, remove, updateGeometry */
+/* global THREE, remove, updateGeometry, createBoxTextures */
 (function() {
   'use strict';
 
@@ -76,11 +76,18 @@
     scene.add( gridHelper );
 
     geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    material = new THREE.MeshStandardMaterial({
-      shading: THREE.FlatShading,
-      opacity: 0.8,
-      transparent: true
-    });
+    material = new THREE.MultiMaterial(
+     createBoxTextures().map(function( texture ) {
+        return new THREE.MeshStandardMaterial({
+          emissive: '#333',
+          emissiveMap: texture,
+          shading: THREE.FlatShading,
+          transparent: true,
+          opacity: 0.8
+        });
+      })
+    );
+
     mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
     createWireframe( mesh );

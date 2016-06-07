@@ -38,7 +38,7 @@ function createTextLabel( text, size ) {
   ctx.textBaseline = 'middle';
 
   ctx.fillStyle = '#fff';
-  ctx.font = ( canvas.width ) + 'px Menlo, Monaco, monospace';
+  ctx.font = canvas.width + 'px Menlo, Monaco, monospace';
   ctx.fillText( text, canvas.width / 2, canvas.height / 2 );
 
   var texture = new THREE.Texture( canvas );
