@@ -1,7 +1,7 @@
 /* global THREE */
 /* exported createBoxTextures */
 function createBoxTextures( keys, size ) {
-  keys = keys || [ 'right', 'left', 'top', 'bottom', 'back', 'front' ];
+  keys = keys || [ 'right', 'left', 'top', 'bottom', 'front', 'back' ];
   size = size || 512;
 
   return keys.map(function( key )  {
