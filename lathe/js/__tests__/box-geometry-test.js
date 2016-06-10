@@ -3,12 +3,14 @@
 'use strict';
 
 jest
-  .unmock( '../box-geometry.js' )
-  .unmock( 'three' );
+  .unmock( 'three' )
+  .unmock( '../box-indices.js' )
+  .unmock( '../box-geometry.js' );
 
 const THREE = window.THREE = require('three');
 
 describe( 'translateBoxVertices', () => {
+  require('../box-indices');
   require('../box-geometry');
   const { translateBoxVertices } = window;
 
