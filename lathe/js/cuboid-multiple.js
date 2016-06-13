@@ -26,7 +26,11 @@ translateBoxVertices
   }
 
   function createBoxGeometry( dimensions, transforms, vectors ) {
-    var geometry = new THREE.BoxGeometry( dimensions[0], dimensions[1], dimensions[2] );
+    var geometry = new THREE.BoxGeometry(
+      dimensions[ 0 ],
+      dimensions[ 1 ],
+      dimensions[ 2 ]
+    );
 
     if ( typeof vectors === 'object' ) {
       translateBoxVertices( geometry, vectors );

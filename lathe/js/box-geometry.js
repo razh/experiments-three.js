@@ -31,5 +31,5 @@ window.translateBoxVertices = (function() {
     });
 
     return geometry;
-  }
+  };
 }());
