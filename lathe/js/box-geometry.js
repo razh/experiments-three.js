@@ -1,12 +1,12 @@
 /* eslint-env es6 */
 /* global THREE, Indices */
-window.translateBoxVertices = (function() {
+function transformBoxVertices( method ) {
   'use strict';
 
   const vector = new THREE.Vector3();
   const zero = new THREE.Vector3();
 
-  return function translate( geometry, vectors ) {
+  return function transform( geometry, vectors ) {
     Object.keys( vectors ).forEach( key => {
       const delta = vectors[ key ];
       const indices = Indices[ key.toUpperCase() ];
@@ -23,13 +23,16 @@ window.translateBoxVertices = (function() {
 
       if ( Array.isArray( indices ) ) {
         indices.forEach( index =>
-          geometry.vertices[ index ].add( vector )
+          geometry.vertices[ index ][ method ]( vector )
         );
       } else {
-        geometry.vertices[ indices ].add( vector );
+        geometry.vertices[ indices ][ method ]( vector );
       }
     });
 
     return geometry;
   };
-}());
+}
+
+window.translateBoxVertices = transformBoxVertices( 'add' );
+window.scaleBoxVertices = transformBoxVertices( 'multiply' );
