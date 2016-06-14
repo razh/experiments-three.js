@@ -6,6 +6,9 @@ remove,
 updateGeometry
 createTextLabel
 createBoxTextures
+alignBox
+applyBoxVertexColors
+defaultsVertexColor
 translateBoxVertices
 */
 (function() {
@@ -135,13 +138,25 @@ translateBoxVertices
     return fns;
   }, [] );
 
+  function reargAlign( elements ) {
+    return function( geometry ) {
+      return alignBox( geometry, elements );
+    };
+  }
+
+  function reargColors( colors ) {
+    return function( geometry ) {
+      return applyBoxVertexColors( geometry, colors );
+    };
+  }
+
   function onInput( event ) {
     try {
       var args = {
-        keys: [ '_', '$$' ]
+        keys: [ '_', '$$', 'align', 'color' ]
           .concat( geometryMethods )
           .concat( shorthandGeometryMethods ),
-        values: [ createBoxGeometry, mergeGeometries ]
+        values: [ createBoxGeometry, mergeGeometries, reargAlign, reargColors ]
           .concat( reargGeometryMethods )
           .concat( reargGeometryMethods )
       };
@@ -159,6 +174,7 @@ translateBoxVertices
       scene.add( geometryLabels );
 
       var _geometry = mergeGeometries( _geometries );
+      defaultsVertexColor( _geometry );
       updateGeometry( _geometry );
 
       setGeometry( _geometry );
@@ -189,7 +205,7 @@ translateBoxVertices
     var controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.addEventListener( 'change', render );
 
-    scene.add( new THREE.AmbientLight( '#333' ) );
+    scene.add( new THREE.AmbientLight( '#777' ) );
 
     var light = new THREE.DirectionalLight();
     light.position.set( 0, 8, 8 );
@@ -208,11 +224,12 @@ translateBoxVertices
     material = new THREE.MultiMaterial(
      createBoxTextures().map(function( texture ) {
         return new THREE.MeshStandardMaterial({
-          emissive: '#333',
+          emissive: '#777',
           emissiveMap: texture,
           shading: THREE.FlatShading,
           transparent: true,
-          opacity: 0.95
+          opacity: 0.95,
+          vertexColors: THREE.VertexColors
         });
       })
     );
