@@ -1,3 +1,4 @@
+/* eslint-env es6 */
 /*
 global
 THREE,
@@ -10,6 +11,7 @@ alignBox
 applyBoxVertexColors
 defaultsVertexColor
 translateBoxVertices
+scaleBoxVertices
 */
 (function() {
   'use strict';
@@ -28,24 +30,14 @@ translateBoxVertices
     mesh.needsUpdate = true;
   }
 
-  function createBoxGeometry( dimensions, transforms, vectors ) {
+  function createBoxGeometry( dimensions, ...transforms ) {
     var geometry = new THREE.BoxGeometry(
       dimensions[ 0 ],
       dimensions[ 1 ],
       dimensions[ 2 ]
     );
 
-    if ( typeof vectors === 'object' ) {
-      translateBoxVertices( geometry, vectors );
-    }
-
-    if ( typeof transforms === 'function' ) {
-      transforms( geometry );
-    } else if ( Array.isArray( transforms ) ) {
-      transforms.forEach(function( transform ) {
-        transform( geometry );
-      });
-    }
+    transforms.forEach( transform => transform( geometry ) );
 
     return geometry;
   }
@@ -138,25 +130,29 @@ translateBoxVertices
     return fns;
   }, [] );
 
-  function reargAlign( elements ) {
-    return function( geometry ) {
-      return alignBox( geometry, elements );
-    };
+  function rearg( fn ) {
+    return options => geometry => fn( geometry, options );
   }
 
-  function reargColors( colors ) {
-    return function( geometry ) {
-      return applyBoxVertexColors( geometry, colors );
-    };
-  }
+  const reargAlign = rearg( alignBox );
+  const reargColors = rearg( applyBoxVertexColors );
+  const reargTranslateVertices = rearg( translateBoxVertices );
+  const reargScaleVertices = rearg( scaleBoxVertices );
 
   function onInput( event ) {
     try {
       var args = {
-        keys: [ '_', '$$', 'align', 'color' ]
+        keys: [ '_', '$$', 'align', 'color', '$t', '$s' ]
           .concat( geometryMethods )
           .concat( shorthandGeometryMethods ),
-        values: [ createBoxGeometry, mergeGeometries, reargAlign, reargColors ]
+        values: [
+          createBoxGeometry,
+          mergeGeometries,
+          reargAlign,
+          reargColors,
+          reargTranslateVertices,
+          reargScaleVertices
+        ]
           .concat( reargGeometryMethods )
           .concat( reargGeometryMethods )
       };
