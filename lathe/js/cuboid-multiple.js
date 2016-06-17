@@ -30,12 +30,8 @@ scaleBoxVertices
     mesh.needsUpdate = true;
   }
 
-  function createBoxGeometry( dimensions, ...transforms ) {
-    var geometry = new THREE.BoxGeometry(
-      dimensions[ 0 ],
-      dimensions[ 1 ],
-      dimensions[ 2 ]
-    );
+  function createBoxGeometry( parameters, ...transforms ) {
+    const geometry = new THREE.BoxGeometry( ...parameters );
 
     transforms.forEach( transform => transform( geometry ) );
 
@@ -105,11 +101,9 @@ scaleBoxVertices
   }
 
   function reargMethod( key ) {
-    return function() {
-      var args = arguments;
-
-      return function( geometry ) {
-        geometry[ key ].apply( geometry, args );
+    return ( ...args ) => {
+      return geometry => {
+        geometry[ key ]( ...args );
         return geometry;
       }
     };
