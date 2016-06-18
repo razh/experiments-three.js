@@ -136,7 +136,16 @@ scaleBoxVertices
   function onInput( event ) {
     try {
       var args = {
-        keys: [ '_', '$$', 'align', 'color', '$t', '$s' ]
+        keys: [
+          '_',
+          '$$',
+          'align',
+          'color',
+          '$translate',
+          '$t',
+          '$scale',
+          '$s'
+        ]
           .concat( geometryMethods )
           .concat( shorthandGeometryMethods ),
         values: [
@@ -145,6 +154,8 @@ scaleBoxVertices
           reargAlign,
           reargColors,
           reargTranslateVertices,
+          reargTranslateVertices,
+          reargScaleVertices,
           reargScaleVertices
         ]
           .concat( reargGeometryMethods )
