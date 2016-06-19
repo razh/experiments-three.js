@@ -16,13 +16,13 @@ scaleBoxVertices
 (function() {
   'use strict';
 
-  var container;
+  let container;
 
-  var scene, camera, renderer;
+  let scene, camera, renderer;
 
-  var geometry, material, mesh;
-  var wireframe;
-  var geometryLabels;
+  let geometry, material, mesh;
+  let wireframe;
+  let geometryLabels;
 
   function setGeometry( _geometry ) {
     geometry = _geometry;
@@ -32,9 +32,7 @@ scaleBoxVertices
 
   function createBoxGeometry( parameters, ...transforms ) {
     const geometry = new THREE.BoxGeometry( ...parameters );
-
     transforms.forEach( transform => transform( geometry ) );
-
     return geometry;
   }
 
@@ -49,7 +47,7 @@ scaleBoxVertices
       return geometries;
     }
 
-    return geometries.reduce(function( a, b ) {
+    return geometries.reduce( ( a, b ) => {
       a.merge( b );
       return a;
     })
@@ -61,15 +59,15 @@ scaleBoxVertices
       return [ geometries.boundingBox ];
     }
 
-    return geometries.map(function( geometry ) {
+    return geometries.map( geometry => {
       geometry.computeBoundingBox();
       return geometry.boundingBox;
     });
   }
 
   function createBoundingBoxLabels( boundingBoxes ) {
-    return boundingBoxes.map(function( boundingBox, index ) {
-      var label = createTextLabel( index );
+    return boundingBoxes.map( ( boundingBox, index ) => {
+      const label = createTextLabel( index );
       label.scale.multiplyScalar( 0.5 );
       label.material.depthTest = false;
       boundingBox.center( label.position );
@@ -78,20 +76,20 @@ scaleBoxVertices
   }
 
   function getQueryParam( key ) {
-    var params = window.location.search
+    const params = window.location.search
       .slice( 1 )
       .split( '&' )
-      .reduce(function( object, pair ) {
+      .reduce( ( object, pair ) => {
         pair = pair.split( '=' ).map( decodeURIComponent );
         object[ pair[0] ] = pair[1];
         return object;
       }, {} );
 
-      return params[ key ];
+    return params[ key ];
   }
 
   function setQueryString( key, value ) {
-    var hash = (
+    const hash = (
       window.location.origin +
       window.location.pathname +
       '?' + [ key, value ].map( encodeURIComponent ).join( '=' )
@@ -109,7 +107,7 @@ scaleBoxVertices
     };
   }
 
-  var geometryMethods = [
+  const geometryMethods = [
     'rotateX',
     'rotateY',
     'rotateZ',
@@ -117,12 +115,9 @@ scaleBoxVertices
     'scale'
   ];
 
-  var shorthandGeometryMethods = [ 'rx', 'ry', 'rz', 't', 's' ];
+  const shorthandGeometryMethods = [ 'rx', 'ry', 'rz', 't', 's' ];
 
-  var reargGeometryMethods = geometryMethods.reduce(function( fns, key ) {
-    fns.push( reargMethod( key ) );
-    return fns;
-  }, [] );
+  const reargGeometryMethods = geometryMethods.map( reargMethod );
 
   function rearg( fn ) {
     return options => geometry => fn( geometry, options );
@@ -135,7 +130,7 @@ scaleBoxVertices
 
   function onInput( event ) {
     try {
-      var args = {
+      const args = {
         keys: [
           '_',
           '$$',
@@ -162,19 +157,17 @@ scaleBoxVertices
           .concat( reargGeometryMethods )
       };
 
-      var fn = new Function( args.keys, event.target.value );
+      const fn = new Function( args.keys, event.target.value );
 
-      var _geometries = fn.apply( undefined, args.values );
+      const _geometries = fn( ...args.values );
       // Add geometry labels.
       remove( geometryLabels );
       geometryLabels = new THREE.Group();
       createBoundingBoxLabels( computeBoundingBoxes( _geometries ) )
-        .map(function( label ) {
-          geometryLabels.add( label );
-        });
+        .map( label => geometryLabels.add( label ) );
       scene.add( geometryLabels );
 
-      var _geometry = mergeGeometries( _geometries );
+      const _geometry = mergeGeometries( _geometries );
       defaultsVertexColor( _geometry );
       updateGeometry( _geometry );
 
@@ -203,19 +196,19 @@ scaleBoxVertices
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight );
     camera.position.set( 0, 0, 8 );
 
-    var controls = new THREE.OrbitControls( camera, renderer.domElement );
+    const controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.addEventListener( 'change', render );
 
     scene.add( new THREE.AmbientLight( '#777' ) );
 
-    var light = new THREE.DirectionalLight();
+    const light = new THREE.DirectionalLight();
     light.position.set( 0, 8, 8 );
     scene.add( light );
 
-    var axisHelper = new THREE.AxisHelper();
+    const axisHelper = new THREE.AxisHelper();
     scene.add( axisHelper );
 
-    var gridHelper = new THREE.GridHelper( 4, 0.4 );
+    const gridHelper = new THREE.GridHelper( 4, 0.4 );
     gridHelper.position.y = -2;
     gridHelper.material.opacity = 0.5;
     gridHelper.material.transparent = true;
@@ -223,28 +216,26 @@ scaleBoxVertices
 
     geometry = new THREE.BoxGeometry( 1, 1, 1 );
     material = new THREE.MultiMaterial(
-     createBoxTextures().map(function( texture ) {
-        return new THREE.MeshStandardMaterial({
+     createBoxTextures().map( texture =>
+        new THREE.MeshStandardMaterial({
           emissive: '#777',
           emissiveMap: texture,
           shading: THREE.FlatShading,
           transparent: true,
           opacity: 0.95,
           vertexColors: THREE.VertexColors
-        });
-      })
+        })
+      )
     );
 
     mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
 
-    var textarea = document.getElementById( 'textarea-commands' );
+    const textarea = document.getElementById( 'textarea-commands' );
     createNumericInput( textarea );
     textarea.addEventListener( 'input', onInput );
     // Disable OrbitControls while textarea is focused.
-    textarea.addEventListener( 'keydown', function( event ) {
-      event.stopPropagation();
-    });
+    textarea.addEventListener( 'keydown', event => event.stopPropagation() );
 
     textarea.value = getQueryParam( 'commands' ) || 'return _([1, 1, 1])';
     textarea.dispatchEvent( new Event( 'input' ) );
@@ -257,12 +248,11 @@ scaleBoxVertices
   init();
   render();
 
-  window.addEventListener( 'resize', function() {
+  window.addEventListener( 'resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
     render();
   });
-
-})();
+}());
