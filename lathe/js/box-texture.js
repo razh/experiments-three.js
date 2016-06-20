@@ -1,28 +1,32 @@
+/* eslint-env es6 */
 /* global THREE */
-/* exported createBoxTextures */
-function createBoxTextures( keys, size ) {
-  keys = keys || [ 'px', 'nx', 'py', 'ny', 'pz', 'nz' ];
-  size = size || 512;
+window.createBoxTextures = (function() {
+  'use strict';
 
-  return keys.map(function( key )  {
-    var canvas = document.createElement( 'canvas' );
-    var ctx = canvas.getContext( '2d' );
+  return function textures(
+    keys = [ 'px', 'nx', 'py', 'ny', 'pz', 'nz' ],
+    size = 512
+  ) {
+    return keys.map( key => {
+      const canvas = document.createElement( 'canvas' );
+      const ctx = canvas.getContext( '2d' );
 
-    canvas.width = size;
-    canvas.height = size;
+      canvas.width = size;
+      canvas.height = size;
 
-    ctx.fillStyle = '#000'
-    ctx.fillRect( 0, 0, size, size );
+      ctx.fillStyle = '#000'
+      ctx.fillRect( 0, 0, size, size );
 
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
 
-    ctx.fillStyle = '#fff';
-    ctx.font = ( canvas.width / 4 ) + 'px Menlo, Monaco, monospace';
-    ctx.fillText( key, canvas.width / 2, canvas.height / 2 );
+      ctx.fillStyle = '#fff';
+      ctx.font = ( canvas.width / 4 ) + 'px Menlo, Monaco, monospace';
+      ctx.fillText( key, canvas.width / 2, canvas.height / 2 );
 
-    var texture = new THREE.Texture( canvas );
-    texture.needsUpdate = true;
-    return texture;
-  });
-}
+      const texture = new THREE.Texture( canvas );
+      texture.needsUpdate = true;
+      return texture;
+    });
+  };
+}());
