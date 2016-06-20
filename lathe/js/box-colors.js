@@ -1,5 +1,5 @@
 /* eslint-env es6 */
-/* global THREE, Indices */
+/* global THREE, VertexIndices, FaceIndices */
 window.applyBoxVertexColors = (function() {
   'use strict';
 
@@ -20,7 +20,7 @@ window.applyBoxVertexColors = (function() {
   return function vertexColors( geometry, colors ) {
     Object.keys( colors ).forEach( key => {
       const color = new THREE.Color( colors[ key ] );
-      const indices = Indices[ key.toUpperCase() ];
+      const indices = VertexIndices[ key.toUpperCase() ];
 
       geometry.faces.forEach( face => {
         if ( Array.isArray( indices ) ) {
@@ -50,6 +50,21 @@ window.defaultsVertexColor = (function() {
           face.vertexColors[ i ] = defaultColor;
         }
       }
+    });
+
+    return geometry;
+  };
+}());
+
+window.applyBoxFaceColors = (function() {
+  'use strict';
+
+  return function faceColors( geometry, colors ) {
+    Object.keys( colors ).forEach( key => {
+      const color = colors[ key ];
+      const indices = FaceIndices[ key.toUpperCase() ];
+
+      indices.forEach( index => geometry.faces[ index ].color.set( color ) );
     });
 
     return geometry;

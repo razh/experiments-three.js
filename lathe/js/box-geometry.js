@@ -1,5 +1,5 @@
 /* eslint-env es6 */
-/* global THREE, Indices */
+/* global THREE, VertexIndices */
 function transformBoxVertices( method ) {
   'use strict';
 
@@ -9,7 +9,7 @@ function transformBoxVertices( method ) {
   return function transform( geometry, vectors ) {
     Object.keys( vectors ).forEach( key => {
       const delta = vectors[ key ];
-      const indices = Indices[ key.toUpperCase() ];
+      const indices = VertexIndices[ key.toUpperCase() ];
 
       if ( Array.isArray( delta ) ) {
         vector.fromArray( delta );

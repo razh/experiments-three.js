@@ -1,5 +1,5 @@
 /* eslint-env es6 */
-window.Indices = (function() {
+window.VertexIndices = (function() {
   'use strict';
 
   // Vertices.
@@ -145,6 +145,40 @@ window.Indices = (function() {
     FRONT_LEFT: LEFT_FRONT,
 
     // Faces.
+    RIGHT,
+    LEFT,
+    TOP,
+    BOTTOM,
+    FRONT,
+    BACK
+  };
+}());
+
+window.FaceIndices = (function() {
+  'use strict';
+
+  const PX = [ 0, 1 ];
+  const NX = [ 2, 3 ];
+  const PY = [ 4, 5 ];
+  const NY = [ 6, 7 ];
+  const PZ = [ 8, 9 ];
+  const NZ = [ 10, 11 ];
+
+  const RIGHT = PX;
+  const LEFT = NX;
+  const TOP = PY;
+  const BOTTOM = NY;
+  const FRONT = PZ;
+  const BACK = NZ;
+
+  return {
+    PX,
+    NX,
+    PY,
+    NY,
+    PZ,
+    NZ,
+
     RIGHT,
     LEFT,
     TOP,

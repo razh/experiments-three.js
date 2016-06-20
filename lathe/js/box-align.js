@@ -1,12 +1,12 @@
 /* eslint-env es6 */
-/* global THREE, Indices */
+/* global THREE, VertexIndices */
 window.alignBox = (function() {
   'use strict';
 
   const centroid = new THREE.Vector3();
 
   return function align( geometry, alignment ) {
-    const indices = Indices[ alignment.toUpperCase() ];
+    const indices = VertexIndices[ alignment.toUpperCase() ];
 
     if ( Array.isArray( indices ) ) {
       centroid.set( 0, 0, 0 );
