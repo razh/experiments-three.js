@@ -65,7 +65,7 @@
   <div class="help">
     <div class="help-header">Help</div>
     <dl class="help-content">
-      <dt>_(dimensions, transforms, vectors)</dt>
+      <dt>_(dimensions, ...transforms)</dt>
       <dd>
         Box geometry helper
         <dl>
@@ -73,14 +73,7 @@
           <dd><code>Array&lt;number&gt;</code></dd>
 
           <dt>transforms</dt>
-          <dd><code>Function | Array&lt;Function&gt;</code></dd>
-
-          <dt>vectors</dt>
-          <dd>
-            <code>
-              { [key: string]: number | { [key: string]: number } | Array&lt;number&gt; }
-            </code>
-          </dd>
+          <dd><code>Array&lt;Function&gt;</code></dd>
         </dl>
       </dd>
 
@@ -96,11 +89,15 @@
       <dt>Transform functions</dt>
       <dd>
         <ul>
+          <li><code>align(vector)</code></li>
+          <li><code>color(vectors)</code></li>
           <li><code>rotateX(angle) | rx(angle)</code></li>
           <li><code>rotateY(angle) | ry(angle)</code></li>
           <li><code>rotateZ(angle) | rz(angle)</code></li>
           <li><code>translate(x, y, z) | t(x, y, z)</code></li>
           <li><code>scale(x, y, z) | s(x, y, z)</code></li>
+          <li><code>$translate(vectors) | $t(vectors)</code></li>
+          <li><code>$scale(vectors) | $s(vectors)</code></li>
         </ul>
       </dd>
     </dl>
