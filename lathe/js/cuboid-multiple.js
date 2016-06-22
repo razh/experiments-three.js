@@ -132,6 +132,7 @@ scaleBoxVertices
     try {
       const args = {
         keys: [
+          'THREE',
           '_',
           '$$',
           'align',
@@ -144,6 +145,7 @@ scaleBoxVertices
           .concat( geometryMethods )
           .concat( shorthandGeometryMethods ),
         values: [
+          THREE,
           createBoxGeometry,
           mergeGeometries,
           reargAlign,
