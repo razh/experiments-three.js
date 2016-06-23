@@ -19,6 +19,8 @@ scaleBoxVertices
   let container;
 
   let scene, camera, renderer;
+  let raycaster;
+  let mouse;
 
   let geometry, material, mesh;
   let wireframe;
@@ -198,6 +200,9 @@ scaleBoxVertices
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight );
     camera.position.set( 0, 0, 8 );
 
+    raycaster = new THREE.Raycaster();
+    mouse = new THREE.Vector2();
+
     const controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.addEventListener( 'change', render );
 
@@ -249,6 +254,20 @@ scaleBoxVertices
 
   init();
   render();
+
+  document.addEventListener( 'mousemove', event => {
+    mouse.x =  ( event.clientX / renderer.domElement.width  ) * 2 - 1;
+    mouse.y = -( event.clientY / renderer.domElement.height ) * 2 + 1;
+
+    raycaster.setFromCamera( mouse, camera );
+
+    const intersections = raycaster.intersectObject( mesh );
+    if ( intersections.length ) {
+      const intersection = intersections[0];
+      const point = intersection.point;
+      console.log( point.toArray() );
+    }
+  });
 
   window.addEventListener( 'resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
