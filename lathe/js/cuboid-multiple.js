@@ -1,9 +1,10 @@
 /* eslint-env es6 */
 /*
 global
-THREE,
+THREE
 createNumericInput
-remove,
+remove
+round
 updateGeometry
 createTextLabel
 createBoxTextures
@@ -255,6 +256,8 @@ scaleBoxVertices
   init();
   render();
 
+  var debugEl = document.querySelector( '.debug' );
+
   document.addEventListener( 'mousemove', event => {
     mouse.x =  ( event.clientX / renderer.domElement.width  ) * 2 - 1;
     mouse.y = -( event.clientY / renderer.domElement.height ) * 2 + 1;
@@ -265,7 +268,10 @@ scaleBoxVertices
     if ( intersections.length ) {
       const intersection = intersections[0];
       const point = intersection.point;
-      console.log( point.toArray() );
+
+      debugEl.textContent = point.toArray().map( round( 2 ) ).join( ', ' );
+    } else {
+      debugEl.textContent = '';
     }
   });
 

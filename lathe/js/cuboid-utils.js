@@ -1,11 +1,23 @@
 /* global THREE */
-/* exported remove, createVertexHelper, updateGeometry, createTextLabel */
+/*
+exported
+remove
+round
+createVertexHelper
+updateGeometry
+createTextLabel
+*/
 function remove( object ) {
   if ( object && object.parent ) {
     object.parent.remove( object );
   }
 }
 
+function round( precision ) {
+  return function( number ) {
+    return Number( number.toFixed( precision ) )
+  };
+}
 
 function createVertexHelper( vertex, size ) {
   var vertexHelper = new THREE.Mesh(

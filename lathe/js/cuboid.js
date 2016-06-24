@@ -4,6 +4,7 @@ THREE
 dat
 createNumericInput
 remove
+round
 createVertexHelper
 updateGeometry
 createTextLabel
@@ -50,12 +51,6 @@ translateBoxVertices
 
   //  0.001
   var PRECISION = 3;
-
-  function round( precision ) {
-    return function( number ) {
-      return parseFloat( number.toFixed( precision ) )
-    };
-  }
 
   function createBaseGeometry( options ) {
     return new THREE.BoxGeometry(

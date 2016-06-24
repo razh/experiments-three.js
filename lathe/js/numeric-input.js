@@ -19,7 +19,7 @@ const createNumericInput = (() => {
   const DOWN = 40;
 
   function round( number, precision ) {
-    return parseFloat( number.toFixed( precision ) );
+    return Number( number.toFixed( precision ) );
   }
 
   function isModified( event, modifiers ) {
