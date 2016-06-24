@@ -35,6 +35,9 @@ function updateGeometry( geometry ) {
 
   geometry.normalsNeedUpdate = true;
   geometry.verticesNeedUpdate = true;
+
+  geometry.computeBoundingBox();
+  geometry.computeBoundingSphere();
 }
 
 function createTextLabel( text, size ) {
