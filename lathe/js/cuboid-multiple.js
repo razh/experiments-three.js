@@ -256,7 +256,11 @@ scaleBoxVertices
   init();
   render();
 
-  var debugEl = document.querySelector( '.debug' );
+  const debugEl = document.querySelector( '.debug' );
+
+  function formatNumber( precision = 2 ) {
+    return number => ( number < 0 ? '' : '\u00a0' ) + number.toFixed( precision );
+  }
 
   document.addEventListener( 'mousemove', event => {
     mouse.x =  ( event.clientX / renderer.domElement.width  ) * 2 - 1;
@@ -269,7 +273,7 @@ scaleBoxVertices
       const intersection = intersections[0];
       const point = intersection.point;
 
-      debugEl.textContent = point.toArray().map( round( 2 ) ).join( ', ' );
+      debugEl.textContent = point.toArray().map( formatNumber() ).join( ', ' );
     } else {
       debugEl.textContent = '';
     }
