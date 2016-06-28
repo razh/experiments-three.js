@@ -245,8 +245,21 @@ scaleBoxVertices
     // Disable OrbitControls while textarea is focused.
     textarea.addEventListener( 'keydown', event => event.stopPropagation() );
 
-    textarea.value = getQueryParam( 'commands' ) || 'return _([1, 1, 1])';
-    textarea.dispatchEvent( new Event( 'input' ) );
+    (function() {
+      // Fetch from file-path if it exists.
+      const path = getQueryParam( 'path' );
+      if ( path ) {
+        window.history.pushState( '', '', window.location.href );
+        return fetch( path ).then( res => res.text() );
+      }
+
+      const value = getQueryParam( 'commands' ) || 'return _([1, 1, 1])';
+      return Promise.resolve( value );
+    }())
+      .then( value => {
+        textarea.value = value;
+        textarea.dispatchEvent( new Event( 'input' ) );
+      });
   }
 
   function render() {
