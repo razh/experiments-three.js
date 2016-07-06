@@ -47,6 +47,18 @@ const createNumericInput = (() => {
   }
 
   return function create( input ) {
+    function getDirection( event ) {
+      if ( event.keyCode === UP ) {
+        return 1;
+      } else if ( event.keyCode === DOWN ) {
+        return -1;
+      } else if ( event.type === 'wheel' ) {
+        return Math.sign( event.deltaY );
+      }
+
+      return 0;
+    }
+
     function onInput( event ) {
       let step;
 
@@ -61,9 +73,8 @@ const createNumericInput = (() => {
         return;
       }
 
-      if ( event.keyCode === DOWN ) {
-        step = -step;
-      } else if ( event.keyCode !== UP ) {
+      step *= getDirection( event );
+      if ( !step ) {
         return;
       }
 
@@ -96,9 +107,11 @@ const createNumericInput = (() => {
     }
 
     input.addEventListener( 'keydown', onInput );
+    input.addEventListener( 'wheel', onInput );
 
     return function destroy() {
       input.removeEventListener( 'keydown', onInput );
+      input.removeEventListener( 'wheel', onInput );
     };
   };
 })();
