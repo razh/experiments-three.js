@@ -4,7 +4,6 @@ global
 THREE
 createNumericInput
 remove
-round
 updateGeometry
 createTextLabel
 createBoxTextures
@@ -245,10 +244,12 @@ scaleBoxVertices
     // Disable OrbitControls while textarea is focused.
     textarea.addEventListener( 'keydown', event => event.stopPropagation() );
 
+    // Get default value.
     (function() {
       // Fetch from file-path if it exists.
       const path = getQueryParam( 'path' );
       if ( path ) {
+        // Save path before replaceState.
         window.history.pushState( '', '', window.location.href );
         return fetch( path ).then( res => res.text() );
       }

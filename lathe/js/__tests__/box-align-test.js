@@ -32,15 +32,15 @@ describe( 'alignBox', () => {
     ).toBe( true );
 
     // Align top_left edge.
-    geometry = alignBox( base.clone(), 'top_left');
+    geometry = alignBox( base.clone(), 'top_left' );
 
     geometry.computeBoundingBox();
 
     expect(
       geometry.boundingBox.equals(
         new THREE.Box3(
-          new THREE.Vector3( 0, 0, -0.5 ),
-          new THREE.Vector3( 1, -1, 0.5 )
+          new THREE.Vector3( 0, -1, -0.5 ),
+          new THREE.Vector3( 1, 0, 0.5 )
         )
       )
     ).toBe( true );
