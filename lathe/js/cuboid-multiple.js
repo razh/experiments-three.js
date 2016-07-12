@@ -9,7 +9,7 @@ createTextLabel
 createBoxTextures
 alignBox
 applyBoxVertexColors
-defaultsVertexColor
+defaultVertexColors
 translateBoxVertices
 scaleBoxVertices
 */
@@ -42,6 +42,14 @@ scaleBoxVertices
     remove( wireframe );
     wireframe = new THREE.WireframeHelper( mesh );
     scene.add( wireframe );
+  }
+
+  function applyDefaultVertexColors( geometries ) {
+    if ( !Array.isArray( geometries ) ) {
+      return applyDefaultVertexColors( geometry );
+    }
+
+    return geometries.map( geometry => defaultVertexColors( geometry ) );
   }
 
   function mergeGeometries( geometries ) {
@@ -171,8 +179,8 @@ scaleBoxVertices
         .map( label => geometryLabels.add( label ) );
       scene.add( geometryLabels );
 
+      applyDefaultVertexColors( _geometries );
       const _geometry = mergeGeometries( _geometries );
-      defaultsVertexColor( _geometry );
       updateGeometry( _geometry );
 
       setGeometry( _geometry );

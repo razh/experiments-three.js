@@ -38,7 +38,7 @@ window.applyBoxVertexColors = (function() {
 }());
 
 // Like _.defaults, but with THREE.Face vertexColors.
-window.defaultsVertexColor = (function() {
+window.defaultVertexColors = (function() {
   'use strict';
 
   return function defaults( geometry, defaultColor ) {
