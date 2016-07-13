@@ -46,7 +46,7 @@ scaleBoxVertices
 
   function applyDefaultVertexColors( geometries ) {
     if ( !Array.isArray( geometries ) ) {
-      return applyDefaultVertexColors( geometry );
+      return defaultVertexColors( geometry );
     }
 
     return geometries.map( geometry => defaultVertexColors( geometry ) );
