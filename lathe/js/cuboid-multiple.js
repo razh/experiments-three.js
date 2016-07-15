@@ -38,6 +38,14 @@ scaleBoxVertices
     return geometry;
   }
 
+  function createGeometryLabels( geometries ) {
+    remove( geometryLabels );
+    geometryLabels = new THREE.Group();
+    createBoundingBoxLabels( computeBoundingBoxes( geometries ) )
+      .map( label => geometryLabels.add( label ) );
+    scene.add( geometryLabels );
+  }
+
   function createWireframe() {
     remove( wireframe );
     wireframe = new THREE.WireframeHelper( mesh );
@@ -172,12 +180,7 @@ scaleBoxVertices
       const fn = new Function( args.keys, event.target.value );
 
       const _geometries = fn( ...args.values );
-      // Add geometry labels.
-      remove( geometryLabels );
-      geometryLabels = new THREE.Group();
-      createBoundingBoxLabels( computeBoundingBoxes( _geometries ) )
-        .map( label => geometryLabels.add( label ) );
-      scene.add( geometryLabels );
+      createGeometryLabels( _geometries );
 
       applyDefaultVertexColors( _geometries );
       const _geometry = mergeGeometries( _geometries );
