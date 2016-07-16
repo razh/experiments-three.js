@@ -69,7 +69,7 @@
     var axisHelper = new THREE.AxisHelper();
     scene.add( axisHelper );
 
-    var gridHelper = new THREE.GridHelper( 2, 0.2 );
+    var gridHelper = new THREE.GridHelper( 2, 20 );
     gridHelper.position.y = -1;
     gridHelper.material.opacity = 0.5;
     gridHelper.material.transparent = true;

@@ -226,7 +226,7 @@ scaleBoxVertices
     const axisHelper = new THREE.AxisHelper();
     scene.add( axisHelper );
 
-    const gridHelper = new THREE.GridHelper( 4, 0.4 );
+    const gridHelper = new THREE.GridHelper( 4, 20 );
     gridHelper.position.y = -2;
     gridHelper.material.opacity = 0.5;
     gridHelper.material.transparent = true;
