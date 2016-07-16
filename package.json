@@ -21,10 +21,10 @@
   },
   "homepage": "https://github.com/razh/experiments-three.js#readme",
   "dependencies": {
-    "three": "0.78.0"
+    "three": "0.79.0"
   },
   "devDependencies": {
-    "eslint": "^3.0.1",
-    "jest-cli": "^13.2.2"
+    "eslint": "^3.1.0",
+    "jest-cli": "^13.2.3"
   }
 }
