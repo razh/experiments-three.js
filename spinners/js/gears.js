@@ -84,6 +84,40 @@ var drawGear = (function() {
     return ctx;
   }
 
-  return drawGear;
+  drawGear.lineTo = lineTo;
 
-})();
+  return drawGear;
+}());
+
+/* exported drawLineCurveCircle */
+var drawLineCurveCircle = (function() {
+  'use strict';
+
+  /*
+    Create a circle with a fixed number of LineCurves.
+
+    Unlike THREE.EllipseCurve, this provides controls over the number of
+    segments.
+   */
+  return function drawLineCurveCircle( ctx, radius, segments ) {
+    radius = radius || 50;
+    segments = segments !== undefined ? Math.max( 3, segments ) : 8;
+
+    var segmentAngle = 2 * Math.PI / segments;
+
+    ctx.moveTo( radius, 0 );
+
+    var angle;
+    for ( var i = 0; i < segments; i++ ) {
+      angle = ( i + 1 ) * segmentAngle;
+
+      if ( i < segments - 1 ) {
+        drawGear.lineTo( ctx, radius, angle );
+      }
+    }
+
+    ctx.closePath();
+
+    return ctx;
+  };
+}());

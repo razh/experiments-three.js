@@ -1,4 +1,4 @@
-/* global THREE, drawGear */
+/* global THREE, drawGear, drawLineCurveCircle */
 (function() {
   'use strict';
 
@@ -177,8 +177,11 @@
       var planetPosition = planetRadius + sunRadius + toothHeight + 2 * bevelSize;
       var annulusRadius = planetPosition + planetRadius + toothHeight + 2 * bevelSize;
 
-      var annulusGearShape = new THREE.Shape();
-      annulusGearShape.absarc( 0, 0, annulusRadius + toothHeight, 0, 2 * Math.PI );
+      var annulusGearShape = drawLineCurveCircle(
+        new THREE.Shape(),
+        annulusRadius + toothHeight,
+        2 * annulusTeethCount
+      );
 
       var annulusHole = drawGear( new THREE.Shape(), annulusRadius, annulusTeethCount, [
         [ 0.2, annulusRadius ],
@@ -189,8 +192,11 @@
 
       annulusGearShape.holes.push( annulusHole );
 
-      var hole = new THREE.Shape();
-      hole.absarc( 0, 0, 0.4 * planetRadius, 0, 2 * Math.PI );
+      var hole = drawLineCurveCircle(
+        new THREE.Shape(),
+        0.4 * planetRadius,
+        2 * annulusTeethCount
+      );
 
       var sunGearShape = drawGear( new THREE.Shape(), sunRadius, sunTeethCount, [
         [ 0.2, sunRadius ],
