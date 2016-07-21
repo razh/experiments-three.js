@@ -24,7 +24,10 @@ scaleBoxVertices
 
   let geometry, material, mesh;
   let wireframe;
+  let debugMaterial;
   let geometryLabels;
+
+  let DEBUG = true;
 
   function setGeometry( _geometry ) {
     geometry = _geometry;
@@ -233,7 +236,15 @@ scaleBoxVertices
     scene.add( gridHelper );
 
     geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    material = new THREE.MultiMaterial(
+
+    material = new THREE.MeshStandardMaterial({
+      shading: THREE.FlatShading,
+      transparent: true,
+      opacity: 0.95,
+      vertexColors: THREE.VertexColors
+    });
+
+    debugMaterial = new THREE.MultiMaterial(
      createBoxTextures().map( texture =>
         new THREE.MeshStandardMaterial({
           emissive: '#777',
@@ -281,7 +292,7 @@ scaleBoxVertices
   init();
   render();
 
-  const debugEl = document.querySelector( '.debug' );
+  const intersectionEl = document.querySelector( '.js-intersection' );
 
   function formatNumber( precision = 2 ) {
     return number => ( number < 0 ? '' : '\u00a0' ) + number.toFixed( precision );
@@ -298,10 +309,21 @@ scaleBoxVertices
       const intersection = intersections[0];
       const point = intersection.point;
 
-      debugEl.textContent = point.toArray().map( formatNumber() ).join( ', ' );
+      intersectionEl.textContent = point.toArray().map( formatNumber() ).join( ', ' );
     } else {
-      debugEl.textContent = '';
+      intersectionEl.textContent = '';
     }
+  });
+
+  const debugEl = document.querySelector( '.js-debug' );
+  debugEl.checked = DEBUG;
+
+  debugEl.addEventListener( 'change', () => {
+    DEBUG = !DEBUG;
+    wireframe.visible = DEBUG;
+    geometryLabels.visible = DEBUG;
+    mesh.material = DEBUG ? debugMaterial : material;
+    render();
   });
 
   window.addEventListener( 'resize', () => {

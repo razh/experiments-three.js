@@ -57,6 +57,11 @@
     }
 
     .debug {
+      display: block;
+      text-align: right;
+    }
+
+    .intersection {
       position: absolute;
       bottom: 1em;
       left: 1em;
@@ -66,6 +71,11 @@
 </head>
 <body>
   <div class="controls">
+    <label class="debug">
+      <input type="checkbox" class="js-debug">
+      Debug
+    </label>
+
     <textarea class="form-control" id="textarea-commands"spellcheck="false"></textarea>
   </div>
 
@@ -110,7 +120,7 @@
     </dl>
   </div>
 
-  <div class="debug"></div>
+  <div class="intersection js-intersection"></div>
 
   <script src="../node_modules/three/build/three.js"></script>
   <script src="../node_modules/three/examples/js/controls/OrbitControls.js"></script>
