@@ -42,16 +42,24 @@ scaleBoxVertices
   }
 
   function createGeometryLabels( geometries ) {
+    const visible = geometryLabels ? geometryLabels.visible : true;
     remove( geometryLabels );
+
     geometryLabels = new THREE.Group();
+    geometryLabels.visible = visible;
     createBoundingBoxLabels( computeBoundingBoxes( geometries ) )
       .map( label => geometryLabels.add( label ) );
+
     scene.add( geometryLabels );
   }
 
   function createWireframe() {
+    const visible = wireframe ? wireframe.visible : true;
     remove( wireframe );
+
     wireframe = new THREE.WireframeHelper( mesh );
+    wireframe.visible = visible;
+
     scene.add( wireframe );
   }
 
