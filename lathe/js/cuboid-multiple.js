@@ -265,7 +265,7 @@ scaleBoxVertices
       )
     );
 
-    mesh = new THREE.Mesh( geometry, material );
+    mesh = new THREE.Mesh( geometry, DEBUG ? debugMaterial : material );
     scene.add( mesh );
 
     const textarea = document.getElementById( 'textarea-commands' );
