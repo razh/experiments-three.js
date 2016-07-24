@@ -1,4 +1,4 @@
-/* global THREE, dat, modifiers, createNumericInput */
+/* global THREE, dat, modifiers, createNumericInput, createViewports */
 (function() {
   'use strict';
 
@@ -146,24 +146,7 @@
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight );
     camera.position.set( 0, 1, 2 );
 
-    views = [ 'x', 'y', 'z' ].reduce(function( views, axis ) {
-      var _renderer = new THREE.WebGLRenderer({ antialias: true });
-      _renderer.setPixelRatio( window.devicePixelRatio );
-      _renderer.setSize( 128, 128 );
-      viewports.appendChild( _renderer.domElement );
-
-      var size = 1;
-      var _camera = new THREE.OrthographicCamera( -size, size, size, -size );
-      _camera.position[ axis ] = 2;
-      _camera.lookAt( new THREE.Vector3() );
-
-      views[ axis ] = {
-        renderer: _renderer,
-        camera: _camera
-      };
-
-      return views;
-    }, {} );
+    views = createViewports( viewports );
 
     var controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.addEventListener( 'change', render );
