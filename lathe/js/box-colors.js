@@ -70,3 +70,23 @@ window.applyBoxFaceColors = (function() {
     return geometry;
   };
 }());
+
+window.applyBoxFaceVertexColors = (function() {
+  'use strict';
+
+  return function faceVertexColors( geometry, colors ) {
+    Object.keys( colors ).forEach( key => {
+      const color = new THREE.Color( colors[ key ] );
+      const indices = FaceIndices[ key.toUpperCase() ];
+
+      indices.forEach( index => {
+        const face = geometry.faces[ index ];
+        for ( let i = 0; i < 3; i++ ) {
+          face.vertexColors[ i ] = color;
+        }
+      });
+    });
+
+    return geometry;
+  };
+}());

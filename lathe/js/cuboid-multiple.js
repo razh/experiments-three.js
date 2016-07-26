@@ -9,6 +9,7 @@ createTextLabel
 createBoxTextures
 alignBox
 applyBoxVertexColors
+applyBoxFaceVertexColors
 defaultVertexColors
 translateBoxVertices
 scaleBoxVertices
@@ -154,6 +155,7 @@ scaleBoxVertices
 
   const reargAlign = rearg( alignBox );
   const reargColors = rearg( applyBoxVertexColors );
+  const reargFaceColors = rearg( applyBoxFaceVertexColors );
   const reargTranslateVertices = rearg( translateBoxVertices );
   const reargScaleVertices = rearg( scaleBoxVertices );
 
@@ -166,6 +168,7 @@ scaleBoxVertices
           '$$',
           'align',
           'color',
+          'faceColor',
           '$translate',
           '$t',
           '$scale',
@@ -179,6 +182,7 @@ scaleBoxVertices
           mergeGeometries,
           reargAlign,
           reargColors,
+          reargFaceColors,
           reargTranslateVertices,
           reargTranslateVertices,
           reargScaleVertices,
