@@ -1,34 +1,26 @@
+/* eslint-env es6 */
 /* global THREE */
 (function() {
   'use strict';
 
   function createPoints( string ) {
-    var lines = string.split( '\n' );
-    var line;
+    const lines = string.split( '\n' );
 
-    var points = [];
-    var point;
-    var x, y;
-    for ( var i = 0; i < lines.length; i++ ) {
-      line = lines[i].trim();
+    const points = [];
+    for ( let i = 0; i < lines.length; i++ ) {
+      const line = lines[i].trim();
 
       if ( !line.length ) {
         continue;
       }
 
-      point = line.split( ' ' ).map( parseFloat );
+      const point = line.split( ' ' ).map( parseFloat );
 
       if ( !point.length || point.some( isNaN ) ) {
         continue;
       }
 
-      x = point[0];
-      y = point[1];
-
-      if ( point.length === 1 ) {
-        y = x;
-      }
-
+      const [ x, y = x ] = point;
       points.push( new THREE.Vector2( x, y ) );
     }
 
@@ -37,7 +29,7 @@
 
   // SVG path operations.
   // [operation name, offset to point position].
-  var ops = {
+  const ops = {
     // M x y
     M: [ 'moveTo' ],
     // L x y
@@ -45,10 +37,10 @@
     // Q x1 y1 x y
     Q: [ 'quadraticCurveTo', 2 ],
     // C x1 y1 x2 y2 x y
-    C: [ 'bezierCurveTo', 4 ]
+    C: [ 'bezierCurveTo', 4 ],
   };
 
-  var relativeOps = {
+  const relativeOps = {
     // m dx dy
     m: [ 'moveTo' ],
     // l dx dy
@@ -56,31 +48,28 @@
     // q dx1 dy2 dx dy
     q: [ 'quadraticCurveTo', 2 ],
     // c dx1 dt1 dx2 dt2 dx dt
-    c: [ 'bezierCurveTo', 4 ]
+    c: [ 'bezierCurveTo', 4 ],
   };
 
   function createPathPoints( string ) {
-    var lines = string.split( '\n' );
-    var line;
+    const lines = string.split( '\n' );
 
-    var path = new THREE.Path();
-    var point;
-    var previousPoint, absolutePoint;
-    var op, opcode;
-    for ( var i = 0; i < lines.length; i++ ) {
-      line = lines[i].trim();
+    const path = new THREE.Path();
+    for ( let i = 0; i < lines.length; i++ ) {
+      let line = lines[i].trim();
 
       if ( !line.length ) {
         continue;
       }
 
+      let opcode;
       // Does this line start with an opcode?
       if ( /^[A-Za-z]/.test( line ) ) {
         opcode = line.slice( 0, 1 );
         line = line.slice( 1 ).trim();
       }
 
-      point = line.split( ' ' ).map( parseFloat );
+      const point = line.split( ' ' ).map( parseFloat );
 
       if ( !point.length || point.some( isNaN ) ) {
         continue;
@@ -88,31 +77,25 @@
 
       // moveTo.
       if ( !i ) {
-        path.moveTo.apply( path, point );
-        previousPoint = point;
+        path.moveTo( ...point );
       }
 
       // Absolute path commands.
       else if ( ops[ opcode ] ) {
-        op = ops[ opcode ];
-        path[ op[0] ].apply( path, point );
-        previousPoint = point.slice( op[1] || 0 );
+        const op = ops[ opcode ];
+        path[ op[0] ]( ...point );
       }
 
       // Relative path commands.
       else if ( relativeOps[ opcode ] ) {
-        op = relativeOps[ opcode ];
-        if ( !previousPoint ) {
-          continue;
-        }
+        const op = relativeOps[ opcode ];
 
-        // Convert to absolute coordinates.
-        absolutePoint = point.map(function( n, index ) {
-          return n + previousPoint[ index % 2 ];
+        // Convert each tuple to absolute coordinates.
+        const absolutePoint = point.map( ( n, index ) => {
+          return n + path.currentPoint.getComponent( index % 2 );
         });
 
-        path[ op[0] ].apply( path, absolutePoint );
-        previousPoint = absolutePoint.slice( op[1] || 0 );
+        path[ op[0] ]( ...absolutePoint );
       }
     }
 
@@ -121,5 +104,4 @@
 
   window.createPoints = createPoints;
   window.createPathPoints = createPathPoints;
-
-})();
+}());
