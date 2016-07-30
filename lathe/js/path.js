@@ -28,27 +28,26 @@
   }
 
   // SVG path operations.
-  // [operation name, offset to point position].
   const ops = {
     // M x y
-    M: [ 'moveTo' ],
+    M: 'moveTo',
     // L x y
-    L: [ 'lineTo' ],
+    L: 'lineTo',
     // Q x1 y1 x y
-    Q: [ 'quadraticCurveTo', 2 ],
+    Q: 'quadraticCurveTo',
     // C x1 y1 x2 y2 x y
-    C: [ 'bezierCurveTo', 4 ],
+    C: 'bezierCurveTo',
   };
 
   const relativeOps = {
     // m dx dy
-    m: [ 'moveTo' ],
+    m: 'moveTo',
     // l dx dy
-    l: [ 'lineTo' ],
+    l: 'lineTo',
     // q dx1 dy2 dx dy
-    q: [ 'quadraticCurveTo', 2 ],
+    q: 'quadraticCurveTo',
     // c dx1 dt1 dx2 dt2 dx dt
-    c: [ 'bezierCurveTo', 4 ],
+    c: 'bezierCurveTo',
   };
 
   function createPathPoints( string ) {
@@ -83,7 +82,7 @@
       // Absolute path commands.
       else if ( ops[ opcode ] ) {
         const op = ops[ opcode ];
-        path[ op[0] ]( ...point );
+        path[ op ]( ...point );
       }
 
       // Relative path commands.
@@ -95,7 +94,7 @@
           return n + path.currentPoint.getComponent( index % 2 );
         });
 
-        path[ op[0] ]( ...absolutePoint );
+        path[ op ]( ...absolutePoint );
       }
     }
 
