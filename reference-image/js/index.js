@@ -1,5 +1,5 @@
 /* eslint-env es6 */
-/* global THREE */
+/* global THREE, ReferenceImage */
 (function() {
   'use strict';
 
@@ -24,6 +24,16 @@
     controls.addEventListener( 'change', render );
 
     scene.add( new THREE.AmbientLight( '#777' ) );
+
+    const ref = new ReferenceImage();
+    scene.add( ref );
+
+    const refElement = document.createElement( 'div' );
+    refElement.className = 'reference';
+    refElement.appendChild( ref.domElement );
+    document.body.appendChild( refElement );
+
+    ref.dispatcher.addEventListener( 'change', render );
   }
 
   function render() {
