@@ -3,7 +3,6 @@
 global
 THREE
 createNumericInput
-createViewports
 remove
 updateGeometry
 createTextLabel
@@ -21,7 +20,6 @@ scaleBoxVertices
   let container;
 
   let scene, camera, renderer;
-  let views;
   let raycaster;
   let mouse;
 
@@ -228,8 +226,6 @@ scaleBoxVertices
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight );
     camera.position.set( 0, 0, 8 );
 
-    views = createViewports( document.querySelector( '.js-viewports' ) );
-
     raycaster = new THREE.Raycaster();
     mouse = new THREE.Vector2();
 
@@ -303,11 +299,6 @@ scaleBoxVertices
 
   function render() {
     renderer.render( scene, camera );
-
-    Object.keys( views ).forEach( key => {
-      const view = views[ key ];
-      view.renderer.render( scene, view.camera );
-    });
   }
 
   init();
