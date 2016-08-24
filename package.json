@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/razh/experiments-three.js#readme",
   "dependencies": {
-    "three": "0.79.0"
+    "three": "0.80.1"
   },
   "devDependencies": {
     "eslint": "^3.3.1",
