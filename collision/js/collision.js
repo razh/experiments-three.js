@@ -72,7 +72,18 @@ const Collision = {
             dz = d0z < d1z ? d0z : -d1z;
           }
 
-          Collision.penetration.set(dx, dy, dz);
+          // Determine minimum axis of separation.
+          const adx = Math.abs(dx);
+          const ady = Math.abs(dy);
+          const adz = Math.abs(dz);
+
+          if (adx <= ady && adx <= adz) {
+            Collision.penetration.set(dx, 0, 0);
+          } else if (ady <= adx && ady <= adz) {
+            Collision.penetration.set(0, dy, 0);
+          } else {
+            Collision.penetration.set(0, 0, dz);
+          }
 
           if (bodyA.physics === BODY_STATIC) {
             bodyB.position.sub(Collision.penetration);
