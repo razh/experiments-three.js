@@ -156,6 +156,7 @@ scaleBoxVertices
   const reargAlign = rearg( alignBox );
   const reargColors = rearg( applyBoxVertexColors );
   const reargFaceColors = rearg( applyBoxFaceVertexColors );
+  const reargDefaultColors = rearg( defaultVertexColors );
   const reargTranslateVertices = rearg( translateBoxVertices );
   const reargScaleVertices = rearg( scaleBoxVertices );
 
@@ -169,6 +170,7 @@ scaleBoxVertices
           'align',
           'color',
           'faceColor',
+          'defaultColor',
           '$translate',
           '$t',
           '$scale',
@@ -183,6 +185,7 @@ scaleBoxVertices
           reargAlign,
           reargColors,
           reargFaceColors,
+          reargDefaultColors,
           reargTranslateVertices,
           reargTranslateVertices,
           reargScaleVertices,
