@@ -209,6 +209,7 @@ scaleBoxVertices
 
       event.target.setCustomValidity( '' );
     } catch ( error ) {
+      console.error( error );
       event.target.setCustomValidity( 'Invalid function' );
     }
   }
