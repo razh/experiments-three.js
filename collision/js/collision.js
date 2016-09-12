@@ -75,7 +75,7 @@ const Collision = {
           Collision.penetration.set(dx, dy, dz);
 
           if (bodyA.physics === BODY_STATIC) {
-            bodyB.position.add(Collision.penetration);
+            bodyB.position.sub(Collision.penetration);
           } else if (bodyB.physics === BODY_STATIC) {
             bodyA.position.add(Collision.penetration);
           } else {
