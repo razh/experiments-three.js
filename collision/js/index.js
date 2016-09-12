@@ -61,11 +61,30 @@
       scene.add( mesh );
       boxes.push( mesh );
     }
+
+    const userBoxMesh = new THREE.Mesh(
+      new THREE.BoxGeometry( 1, 1, 1 ),
+      new THREE.MeshStandardMaterial({
+        emissive: 'green',
+      })
+    );
+
+    userBoxMesh.boundingBox = new THREE.Box3().setFromObject( userBoxMesh );
+    userBoxMesh.position.set( 8, 0, 0 );
+    userBoxMesh.physics = BODY_DYNAMIC;
+
+    scene.add( userBoxMesh );
+    boxes.push( userBoxMesh );
+
+    const transformControls = new THREE.TransformControls( camera, renderer.domElement );
+    transformControls.addEventListener( 'change', render );
+    transformControls.attach( userBoxMesh );
+    scene.add( transformControls );
   }
 
   function render() {
-    renderer.render( scene, camera );
     Collision.update( boxes );
+    renderer.render( scene, camera );
   }
 
   init();
