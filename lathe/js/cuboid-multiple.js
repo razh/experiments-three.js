@@ -31,6 +31,10 @@ scaleBoxVertices
   let DEBUG = true;
 
   function setGeometry( _geometry ) {
+    if ( geometry ) {
+      geometry.dispose();
+    }
+
     geometry = _geometry;
     mesh.geometry = geometry;
     mesh.needsUpdate = true;
