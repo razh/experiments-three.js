@@ -99,9 +99,22 @@ scaleBoxVertices
     });
   }
 
+  var getBoundingBoxLabel = (function() {
+    var labels = {};
+
+    return function( index ) {
+      if ( labels[ index ] ) {
+        return labels[ index ];
+      }
+
+      labels[ index ] = createTextLabel( index );
+      return labels[ index ];
+    };
+  }());
+
   function createBoundingBoxLabels( boundingBoxes ) {
     return boundingBoxes.map( ( boundingBox, index ) => {
-      const label = createTextLabel( index );
+      const label = getBoundingBoxLabel( index );
       label.scale.multiplyScalar( 0.5 );
       label.material.depthTest = false;
       boundingBox.center( label.position );
