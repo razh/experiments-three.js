@@ -178,6 +178,10 @@ scaleBoxVertices
   const reargTranslateVertices = rearg( translateBoxVertices );
   const reargScaleVertices = rearg( scaleBoxVertices );
 
+  function reargRelativeAlign( geometryA, alignmentA ) {
+    return rearg( relativeAlignBox( geometryA, alignmentA ) );
+  }
+
   function onInput( event ) {
     try {
       const args = {
@@ -202,7 +206,7 @@ scaleBoxVertices
           createBoxGeometry,
           mergeGeometries,
           reargAlign,
-          relativeAlignBox,
+          reargRelativeAlign,
           reargColors,
           reargFaceColors,
           reargDefaultColors,
