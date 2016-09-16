@@ -8,6 +8,7 @@ updateGeometry
 createTextLabel
 createBoxTextures
 alignBox
+relativeAlignBox
 applyBoxVertexColors
 applyBoxFaceVertexColors
 defaultVertexColors
@@ -185,6 +186,7 @@ scaleBoxVertices
           '_',
           '$$',
           'align',
+          'relativeAlign',
           'color',
           'faceColor',
           'defaultColor',
@@ -200,6 +202,7 @@ scaleBoxVertices
           createBoxGeometry,
           mergeGeometries,
           reargAlign,
+          relativeAlignBox,
           reargColors,
           reargFaceColors,
           reargDefaultColors,
