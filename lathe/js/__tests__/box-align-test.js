@@ -2,11 +2,6 @@
 
 'use strict';
 
-jest
-  .unmock( 'three' )
-  .unmock( '../box-indices.js' )
-  .unmock( '../box-align.js' );
-
 const THREE = window.THREE = require('three');
 
 describe( 'alignBox', () => {

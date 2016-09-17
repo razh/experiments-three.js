@@ -2,11 +2,6 @@
 
 'use strict';
 
-jest
-  .unmock( 'three' )
-  .unmock( '../box-indices.js' )
-  .unmock( '../box-geometry.js' );
-
 const THREE = window.THREE = require('three');
 
 describe( 'translateBoxVertices', () => {
