@@ -122,7 +122,7 @@ scaleBoxVertices
       const label = getBoundingBoxLabel( index );
       label.scale.multiplyScalar( 0.5 );
       label.material.depthTest = false;
-      boundingBox.center( label.position );
+      boundingBox.getCenter( label.position );
       return label;
     });
   }

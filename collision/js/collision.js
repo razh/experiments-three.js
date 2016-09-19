@@ -39,8 +39,8 @@ const Collision = {
 
         if (boxA.intersectsBox(boxB)) {
           // Resolve collision.
-          boxA.center(Collision.centerA);
-          boxB.center(Collision.centerB);
+          boxA.getCenter(Collision.centerA);
+          boxB.getCenter(Collision.centerB);
 
           Collision.normal.subVectors(Collision.centerA, Collision.centerB);
 
