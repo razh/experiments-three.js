@@ -71,7 +71,11 @@
         }
       }
 
-      wireframe = new THREE.WireframeHelper( mesh, 0 );
+      wireframe = new THREE.LineSegments(
+        new THREE.WireframeGeometry( mesh.geometry ),
+        new THREE.LineBasicMaterial({ color: 0 })
+      );
+
       wireframe.visible = visible;
       scene.add( wireframe );
     }

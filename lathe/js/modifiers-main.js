@@ -55,7 +55,11 @@
       wireframe.parent.remove( wireframe );
     }
 
-    wireframe = new THREE.WireframeHelper( mesh );
+    wireframe = new THREE.LineSegments(
+      new THREE.WireframeGeometry( mesh.geometry ),
+      new THREE.LineBasicMaterial()
+    );
+
     scene.add( wireframe );
   }
 
