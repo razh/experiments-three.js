@@ -56,6 +56,11 @@
       display: none;
     }
 
+    .help-content code {
+      font-family: Menlo, Monaco, monospace;
+      font-size: 16px;
+    }
+
     .debug {
       display: block;
       text-align: right;
@@ -107,6 +112,7 @@
       <dd>
         <ul>
           <li><code>align(vector: string)</code></li>
+          <li><code>relativeAlign(geometry: THREE.Geometry, vector: string)(vector: string)</code></li>
           <li><code>color(vectors: { [key: string]: color: number | string })</code></li>
           <li><code>faceColor(vectors: { [key: string]: color: number | string })</code></li>
           <li><code>defaultColor(color: number | string })</code></li>
