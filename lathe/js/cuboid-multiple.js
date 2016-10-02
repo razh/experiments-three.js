@@ -238,6 +238,10 @@ scaleBoxVertices
 
       setQueryString( 'commands', event.target.value.trim() );
 
+      if ( !event.target.validity.valid ) {
+        console.info( '' );
+      }
+
       event.target.setCustomValidity( '' );
     } catch ( error ) {
       console.error( error );
