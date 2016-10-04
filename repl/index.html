@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>REPL</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      color: #fff;
+    }
+
+    .controls {
+      position: absolute;
+      right: 1rem;
+      bottom: 1rem;
+    }
+
+    textarea.form-control {
+      width: 32em;
+      height: 28em;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      font-size: 12px;
+      font-family: Menlo, Monaco, monospace;
+    }
+
+    textarea:invalid {
+      outline-color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <textarea class="form-control" id="textarea-commands" spellcheck="false"></textarea>
+  </div>
+
+  <script src="../node_modules/three/build/three.js"></script>
+  <script src="../node_modules/three/examples/js/controls/OrbitControls.js"></script>
+  <script src="../lathe/js/cuboid-utils.js"></script>
+  <script src="./js/repl.js"></script>
+</body>
+</html>
