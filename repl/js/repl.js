@@ -55,6 +55,10 @@
 
         render();
 
+        const params = new URLSearchParams( window.location.search );
+        params.set( 'commands', event.target.value.trim() );
+        window.history.replaceState( '', '', `${ location.pathname }?${ params }` );
+
         if ( !event.target.validity.valid ) {
           console.info( '' );
         }
@@ -68,6 +72,12 @@
 
     const textarea = document.getElementById( 'textarea-commands' );
     textarea.addEventListener( 'input', onInput );
+    // Disable OrbitControls while textarea is focused.
+    textarea.addEventListener( 'keydown', event => event.stopPropagation() );
+
+    const params = new URLSearchParams( window.location.search )
+    textarea.value = params.get( 'commands' );
+    textarea.dispatchEvent( new Event( 'input' ) );
   }
 
   function render() {
