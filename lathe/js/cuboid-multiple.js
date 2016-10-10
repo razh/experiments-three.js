@@ -104,10 +104,10 @@ scaleBoxVertices
     });
   }
 
-  var getBoundingBoxLabel = (function() {
-    var labels = {};
+  const getBoundingBoxLabel = (function() {
+    const labels = {};
 
-    return function( index ) {
+    return index => {
       if ( labels[ index ] ) {
         return labels[ index ];
       }
