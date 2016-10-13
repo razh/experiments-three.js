@@ -1,5 +1,5 @@
 /* eslint-env es6 */
-/* global THREE */
+/* global THREE, createNumericInput */
 
 (function() {
   'use strict';
@@ -71,6 +71,7 @@
     }
 
     const textarea = document.getElementById( 'textarea-commands' );
+    createNumericInput( textarea );
     textarea.addEventListener( 'input', onInput );
     // Disable OrbitControls while textarea is focused.
     textarea.addEventListener( 'keydown', event => event.stopPropagation() );
