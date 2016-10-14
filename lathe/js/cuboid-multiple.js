@@ -172,7 +172,7 @@ scaleBoxVertices
   const reargGeometryMethods = geometryMethods.map( reargMethod );
 
   function rearg( fn ) {
-    return options => geometry => fn( geometry, options );
+    return ( ...args ) => geometry => fn( geometry, ...args );
   }
 
   const reargAlign = rearg( alignBox );
