@@ -89,7 +89,7 @@ scaleBoxVertices
     return geometries.reduce( ( a, b ) => {
       a.merge( b );
       return a;
-    })
+    });
   }
 
   function computeBoundingBoxes( geometries ) {
@@ -155,7 +155,7 @@ scaleBoxVertices
       return geometry => {
         geometry[ key ]( ...args );
         return geometry;
-      }
+      };
     };
   }
 

@@ -79,7 +79,7 @@ translateBoxVertices
     state.selectedVertex = vertex;
 
     if ( state.selectedVertex ) {
-      transformControls.attach( vertexObject )
+      transformControls.attach( vertexObject );
     } else {
       transformControls.detach();
     }
@@ -256,7 +256,7 @@ translateBoxVertices
 
         if ( vertices ) {
           vertices.forEach(function( vertex ) {
-            selectedVertices.push( vertex )
+            selectedVertices.push( vertex );
           });
         }
       }

@@ -15,7 +15,7 @@ function remove( object ) {
 
 function round( precision ) {
   return function( number ) {
-    return Number( number.toFixed( precision ) )
+    return Number( number.toFixed( precision ) );
   };
 }
 

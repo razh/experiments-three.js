@@ -9,7 +9,7 @@ describe( 'translateBoxVertices', () => {
   require('../box-geometry');
   const { translateBoxVertices } = window;
 
-  const base = new THREE.BoxGeometry( 1, 1, 1 )
+  const base = new THREE.BoxGeometry( 1, 1, 1 );
 
   it( 'should change the geometry bounding box', () => {
     // Moving the entire right side.

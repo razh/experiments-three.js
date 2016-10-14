@@ -76,7 +76,7 @@
     // Disable OrbitControls while textarea is focused.
     textarea.addEventListener( 'keydown', event => event.stopPropagation() );
 
-    const params = new URLSearchParams( window.location.search )
+    const params = new URLSearchParams( window.location.search );
     textarea.value = params.get( 'commands' );
     textarea.dispatchEvent( new Event( 'input' ) );
   }

@@ -43,9 +43,9 @@
 
     if ( vertex ) {
       vertexObject.position.copy( vertex );
-      transformControls.attach( vertexObject )
+      transformControls.attach( vertexObject );
     } else {
-      transformControls.detach()
+      transformControls.detach();
     }
   }
 
@@ -82,7 +82,7 @@
 
     geometry = new THREE.BoxGeometry( 1, 1, 1 );
     material = new THREE.MultiMaterial(
-     createBoxTextures().map(function( texture ) {
+      createBoxTextures().map(function( texture ) {
         return new THREE.MeshStandardMaterial({
           emissive: '#333',
           emissiveMap: texture,

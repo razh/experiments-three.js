@@ -122,8 +122,8 @@
   }
 
   function u0( real, imag ) {
-    var a = expi( real, imag ),
-        b = expi( -real, -imag );
+    var a = expi( real, imag );
+    var b = expi( -real, -imag );
 
     a.real = 0.5 * ( a.real + b.real );
     a.imag = 0.5 * ( a.imag + b.imag );
@@ -132,8 +132,8 @@
   }
 
   function u1( real, imag ) {
-    var a = expi( real, imag ),
-        b = expi( -real, -imag );
+    var a = expi( real, imag );
+    var b = expi( -real, -imag );
 
     a.real = 0.5 * ( a.real - b.real );
     a.imag = 0.5 * ( a.imag - b.imag );
@@ -170,11 +170,11 @@
   }
 
   function calabi( n, alpha, count, rmin, rmax ) {
-    var cos = Math.cos( alpha ),
-        sin = Math.sin( alpha );
+    var cos = Math.cos( alpha );
+    var sin = Math.sin( alpha );
 
-    var dr = ( rmax - rmin ) / ( count - 1 ),
-        di = ( 0.5 * Math.PI ) / ( count - 1 );
+    var dr = ( rmax - rmin ) / ( count - 1 );
+    var di = ( 0.5 * Math.PI ) / ( count - 1 );
 
     var data = new Float32Array( 3 * n * n * count * count );
     var k0, k1;
@@ -375,8 +375,8 @@
       .onChange( createMesh );
   }
 
-  var prevTime = Date.now(),
-      currTime;
+  var prevTime = Date.now();
+  var currTime;
 
   function animate() {
     currTime = Date.now();

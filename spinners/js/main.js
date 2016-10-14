@@ -161,7 +161,7 @@
             particle.object.rotation.setFromVector3( vector );
           });
         }
-      }
+      };
     })(),
 
     gears: (function() {
@@ -267,7 +267,7 @@
           rightPlanetGear.rotation.z -= dt;
           bottomPlanetGear.rotation.z -= dt;
         }
-      }
+      };
     })()
   };
 
@@ -378,7 +378,7 @@
     if ( event.keyCode === 16 ) {
       toggleZoom();
     }
-  })
+  });
 
   // Double click to restart animation.
   document.addEventListener( 'dblclick', toggle );

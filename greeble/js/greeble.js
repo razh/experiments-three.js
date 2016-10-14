@@ -3,7 +3,7 @@
 var greeble = (function () {
   'use strict';
 
-  var triangle = new THREE.Triangle()
+  var triangle = new THREE.Triangle();
 
   /**
    * Copies of various utility functions from THREE.GeometryUtils.

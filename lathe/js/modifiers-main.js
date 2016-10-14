@@ -210,7 +210,7 @@
           baseGeometry = createBaseGeometry( config );
           transformGeometry();
         });
-    })
+    });
   }
 
   function render() {

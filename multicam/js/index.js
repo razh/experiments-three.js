@@ -50,7 +50,7 @@
     light.shadow.mapSize.set( 1024, 1024 );
     light.shadow.camera.top = 24;
     light.position.set( 8, 32, 32 );
-    scene.add( light )
+    scene.add( light );
 
     var planeGeometry = new THREE.PlaneBufferGeometry( 2048, 2048 );
     var plane = new THREE.Mesh( planeGeometry, new THREE.MeshStandardMaterial({

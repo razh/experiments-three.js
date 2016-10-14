@@ -9,7 +9,7 @@ describe( 'alignBox', () => {
   require('../box-align');
   const { alignBox } = window;
 
-  const base = new THREE.BoxGeometry( 1, 1, 1 )
+  const base = new THREE.BoxGeometry( 1, 1, 1 );
 
   it( 'should shift the vertex or face-centroid to the origin', () => {
     // Align right face.

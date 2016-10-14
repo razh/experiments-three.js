@@ -14,7 +14,7 @@ window.createBoxTextures = (function() {
       canvas.width = size;
       canvas.height = size;
 
-      ctx.fillStyle = '#000'
+      ctx.fillStyle = '#000';
       ctx.fillRect( 0, 0, size, size );
 
       ctx.textAlign = 'center';
