@@ -7,6 +7,7 @@ const THREE = window.THREE = require('three');
 describe( 'alignBox', () => {
   require('../box-indices');
   require('../box-align');
+  require('../centroid');
   const { alignBox } = window;
 
   const base = new THREE.BoxGeometry( 1, 1, 1 );

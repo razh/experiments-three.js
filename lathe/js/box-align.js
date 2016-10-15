@@ -1,23 +1,5 @@
 /* eslint-env es6 */
-/* global THREE, VertexIndices */
-function computeCentroid( geometry, indices, centroid ) {
-  centroid = centroid || new THREE.Vector3();
-
-  if ( Array.isArray( indices ) ) {
-    centroid.set( 0, 0, 0 );
-
-    indices.forEach( index =>
-      centroid.add( geometry.vertices[ index ] )
-    );
-
-    centroid.divideScalar( indices.length );
-  } else {
-    centroid.copy( geometry.vertices[ indices ] );
-  }
-
-  return centroid;
-}
-
+/* global THREE, VertexIndices, computeCentroid */
 window.alignBox = (function() {
   'use strict';
 
