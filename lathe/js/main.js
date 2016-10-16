@@ -107,7 +107,6 @@
 
       // Update location.
       var hash = (
-        window.location.origin +
         window.location.pathname +
         '#' + encodeURIComponent( textarea.value )
       );

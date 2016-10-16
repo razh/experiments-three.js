@@ -128,11 +128,7 @@
       .join( '&' );
 
     // Update location.
-    var hash = (
-      window.location.origin +
-      window.location.pathname +
-      '?' + query
-    );
+    var hash = window.location.pathname + '?' + query;
 
     window.history.replaceState( '', '', hash );
   }

@@ -127,22 +127,8 @@ scaleBoxVertices
     });
   }
 
-  function getQueryParam( key ) {
-    const params = window.location.search
-      .slice( 1 )
-      .split( '&' )
-      .reduce( ( object, pair ) => {
-        pair = pair.split( '=' ).map( decodeURIComponent );
-        object[ pair[0] ] = pair[1];
-        return object;
-      }, {} );
-
-    return params[ key ];
-  }
-
   function setQueryString( key, value ) {
     const hash = (
-      window.location.origin +
       window.location.pathname +
       '?' + [ key, value ].map( encodeURIComponent ).join( '=' )
     );
@@ -314,17 +300,19 @@ scaleBoxVertices
     // Disable OrbitControls while textarea is focused.
     textarea.addEventListener( 'keydown', event => event.stopPropagation() );
 
+    const params = new URLSearchParams( window.location.search );
+
     // Get default value.
     (function() {
       // Fetch from file-path if it exists.
-      const path = getQueryParam( 'path' );
+      const path = params.get( 'path' );
       if ( path ) {
         // Save path before replaceState.
         window.history.pushState( '', '', window.location.href );
         return fetch( path ).then( res => res.text() );
       }
 
-      const value = getQueryParam( 'commands' ) || 'return _([1, 1, 1])';
+      const value = params.get( 'commands' ) || 'return _([1, 1, 1])';
       return Promise.resolve( value );
     }())
       .then( value => {
