@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
-    "test": "jest",
-    "test:watch": "jest"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -25,6 +24,6 @@
   },
   "devDependencies": {
     "eslint": "^3.7.0",
-    "jest-cli": "^15.1.1"
+    "jest-cli": "^16.0.1"
   }
 }
