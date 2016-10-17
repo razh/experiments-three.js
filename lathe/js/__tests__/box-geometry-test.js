@@ -11,7 +11,7 @@ describe( 'translateBoxVertices', () => {
 
   const base = new THREE.BoxGeometry( 1, 1, 1 );
 
-  it( 'should change the geometry bounding box', () => {
+  it( 'changes the geometry bounding box', () => {
     // Moving the entire right side.
     const geometry = translateBoxVertices( base.clone(), {
       right: { x: 1 }

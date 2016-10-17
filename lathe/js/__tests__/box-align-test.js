@@ -12,7 +12,7 @@ describe( 'alignBox', () => {
 
   const base = new THREE.BoxGeometry( 1, 1, 1 );
 
-  it( 'should shift the vertex or face-centroid to the origin', () => {
+  it( 'shifts the vertex or face-centroid to the origin', () => {
     // Align right face.
     let geometry = alignBox( base.clone(), 'right' );
 
