@@ -1,6 +1,5 @@
-/*jshint bitwise:false*/
-/*global THREE, interpolateCatmullRom*/
-/*exported Hydra*/
+/* global THREE, interpolateCatmullRom */
+/* exported Hydra */
 var Hydra = (function() {
   'use strict';
 
@@ -196,7 +195,7 @@ var Hydra = (function() {
           .add( v3 )
           .sub( body[ i + 1 ].position )
           .multiplyScalar( config.goalTension )
-          .clampLength( 0, config.bendDelta )
+          .clampLength( 0, config.bendDelta );
 
         body[ i + 1 ].delta.add( delta );
       }
@@ -748,7 +747,7 @@ var Hydra = (function() {
           distanceBackFromHead += this.body[i].actualLength;
         }
 
-       return;
+        return;
 
       case Task.HYDRA_PULLBACK:
         if ( this.body.length < 2 ) {

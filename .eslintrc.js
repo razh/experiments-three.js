@@ -8,11 +8,11 @@ module.exports = {
     Promise: true,
   },
   rules: {
-    'comma-spacing': [2, { before: false, after: true }],
-    indent: ['error', 2],
-    'no-console': 0,
+    'comma-spacing': ['error', { before: false, after: true }],
+    indent: ['error', 2, { SwitchCase: 1 }],
+    'no-console': 'off',
     'object-curly-spacing': ['error', 'always'],
     semi: ['error', 'always'],
-    quotes: [2, 'single', 'avoid-escape'],
+    quotes: ['error', 'single', 'avoid-escape'],
   },
 };
