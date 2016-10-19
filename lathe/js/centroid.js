@@ -1,9 +1,7 @@
 /* eslint-env es6 */
 /* global THREE */
-function computeCentroid( geometry, indices, centroid ) {
+function computeCentroid( geometry, indices, centroid = new THREE.Vector3() ) {
   'use strict';
-
-  centroid = centroid || new THREE.Vector3();
 
   if ( Array.isArray( indices ) ) {
     centroid.set( 0, 0, 0 );
