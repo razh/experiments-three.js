@@ -26,6 +26,13 @@ build/Release
 
 # Dependency directory
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
-node_modules
+# node_modules
 
 app/bower_components/threejs/examples/
+
+node_modules/**
+!node_modules/**/
+
+!node_modules/three/build/three.js
+!node_modules/three/examples/js/controls/OrbitControls.js
+!node_modules/three/examples/js/controls/TransformControls.js
