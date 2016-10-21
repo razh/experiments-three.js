@@ -1,21 +1,21 @@
 /* eslint-env es6 */
 /* global THREE */
-function computeCentroid( geometry, indices, centroid = new THREE.Vector3() ) {
+window.computeCentroid = (function() {
   'use strict';
 
-  if ( Array.isArray( indices ) ) {
-    centroid.set( 0, 0, 0 );
+  return function centroid( geometry, indices, vector = new THREE.Vector3() ) {
+    if ( Array.isArray( indices ) ) {
+      vector.set( 0, 0, 0 );
 
-    indices.forEach( index =>
-      centroid.add( geometry.vertices[ index ] )
-    );
+      indices.forEach( index =>
+        vector.add( geometry.vertices[ index ] )
+      );
 
-    centroid.divideScalar( indices.length );
-  } else {
-    centroid.copy( geometry.vertices[ indices ] );
-  }
+      vector.divideScalar( indices.length );
+    } else {
+      vector.copy( geometry.vertices[ indices ] );
+    }
 
-  return centroid;
-}
-
-window.computeCentroid = computeCentroid;
+    return vector;
+  };
+}());
