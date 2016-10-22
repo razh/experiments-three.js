@@ -37,6 +37,9 @@ window.VertexIndices = (function() {
   const PZ = [].concat( PX_PZ, NX_PZ );
   const NZ = [].concat( PX_NZ, NX_NZ );
 
+  // All vertices.
+  const ALL = [].concat( PX, NX );
+
   // Vertices.
   // Front-back order is reversed for the left side.
   const RIGHT_TOP_FRONT    = 0;
@@ -106,6 +109,9 @@ window.VertexIndices = (function() {
     NY,
     PZ,
     NZ,
+
+    // All vertices.
+    ALL,
 
     // Vertices.
     RIGHT_TOP_FRONT,
