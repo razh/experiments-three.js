@@ -3,7 +3,7 @@
 window.applyBoxNoise = (function() {
   'use strict';
 
-  return function noise( geometry, key, noise ) {
+  return function applyNoise( geometry, key, noise ) {
     const indices = VertexIndices[ key.toUpperCase() ];
 
     if ( Array.isArray( indices ) ) {
