@@ -3,13 +3,12 @@
 window.lerpBoxVertex = (function() {
   'use strict';
 
-  return function lerpA( vertexA, t ) {
+  return function lerp( geometryA, vertexA, geometryB, vertexB, t ) {
     const indexA = VertexIndices[ vertexA.toUpperCase() ];
+    const indexB = VertexIndices[ vertexB.toUpperCase() ];
 
-    return function lerpB( geometryA, geometryB, vertexB ) {
-      const indexB = VertexIndices[ vertexB.toUpperCase() ];
-      geometryA.vertices[ indexA ].lerp( geometryB.vertices[ indexB ], t );
-      return geometryA;
-    };
+    geometryA.vertices[ indexA ].lerp( geometryB.vertices[ indexB ], t );
+
+    return geometryA;
   };
 }());

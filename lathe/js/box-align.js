@@ -19,15 +19,14 @@ window.relativeAlignBox = (function() {
   const centroidB = new THREE.Vector3();
   const delta = new THREE.Vector3();
 
-  return function alignA( geometryA, alignmentA ) {
+  return function relativeAlign( geometryA, alignmentA, geometryB, alignmentB ) {
     const indicesA = VertexIndices[ alignmentA.toUpperCase() ];
-    computeCentroid( geometryA, indicesA, centroidA );
+    const indicesB = VertexIndices[ alignmentB.toUpperCase() ];
 
-    return function alignB( geometryB, alignmentB ) {
-      const indicesB = VertexIndices[ alignmentB.toUpperCase() ];
-      computeCentroid( geometryB, indicesB, centroidB );
-      delta.subVectors( centroidB, centroidA );
-      return geometryB.translate( -delta.x, -delta.y, -delta.z );
-    };
+    computeCentroid( geometryA, indicesA, centroidA );
+    computeCentroid( geometryB, indicesB, centroidB );
+
+    delta.subVectors( centroidB, centroidA );
+    return geometryA.translate( delta.x, delta.y, delta.z );
   };
 }());
