@@ -9,6 +9,7 @@ createTextLabel
 createBoxTextures
 alignBox
 relativeAlignBox
+lerpBoxVertex
 applyBoxVertexColors
 applyBoxFaceVertexColors
 defaultVertexColors
@@ -168,8 +169,16 @@ scaleBoxVertices
   const reargTranslateVertices = rearg( translateBoxVertices );
   const reargScaleVertices = rearg( scaleBoxVertices );
 
-  function reargRelativeAlign( geometryA, alignmentA ) {
-    return rearg( relativeAlignBox( geometryA, alignmentA ) );
+  function reargRelativeAlign( alignmentA ) {
+    return ( geometryB, alignmentB ) => {
+      return rearg( relativeAlignBox )( alignmentA, geometryB, alignmentB );
+    };
+  }
+
+  function reargLerp( vertexA, t ) {
+    return ( geometryB, vertexB ) => {
+      return rearg( lerpBoxVertex )( vertexA, geometryB, vertexB, t );
+    };
   }
 
   function onInput( event ) {
@@ -181,6 +190,7 @@ scaleBoxVertices
           '$$',
           'align',
           'relativeAlign',
+          'lerp',
           'color',
           'faceColor',
           'defaultColor',
@@ -197,6 +207,7 @@ scaleBoxVertices
           mergeGeometries,
           reargAlign,
           reargRelativeAlign,
+          reargLerp,
           reargColors,
           reargFaceColors,
           reargDefaultColors,
