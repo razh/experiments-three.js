@@ -112,7 +112,7 @@
       <dd>
         <ul>
           <li><code>align(vector: string)</code></li>
-          <li><code>relativeAlign(geometry: THREE.Geometry, vector: string)(vector: string)</code></li>
+          <li><code>relativeAlign(vector: string)(geometry: THREE.Geometry, vector: string)</code></li>
           <li><code>color(vectors: { [key: string]: color: number | string })</code></li>
           <li><code>faceColor(vectors: { [key: string]: color: number | string })</code></li>
           <li><code>defaultColor(color: number | string })</code></li>
@@ -123,6 +123,7 @@
           <li><code>scale(x: number, y: number, z: number) | s(x, y, z)</code></li>
           <li><code>$translate(vectors: { [key: string]: number }) | $t(vectors)</code></li>
           <li><code>$scale(vectors: { [key: string]: number }) | $s(vectors)</code></li>
+          <li><code>lerp(vector: string, alpha: number)(geometry: THREE.Geometry, vector: string)</code></li>
         </ul>
       </dd>
     </dl>
