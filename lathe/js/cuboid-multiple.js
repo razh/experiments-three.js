@@ -9,7 +9,7 @@ createTextLabel
 createBoxTextures
 alignBox
 relativeAlignBox
-lerpBoxVertex
+lerpBoxVertices
 applyBoxVertexColors
 applyBoxFaceVertexColors
 defaultVertexColors
@@ -175,9 +175,9 @@ scaleBoxVertices
     };
   }
 
-  function reargLerp( vertexA, t ) {
-    return ( geometryB, vertexB ) => {
-      return rearg( lerpBoxVertex )( vertexA, geometryB, vertexB, t );
+  function reargLerp( verticesA, t ) {
+    return ( geometryB, verticesB ) => {
+      return rearg( lerpBoxVertices )( verticesA, geometryB, verticesB, t );
     };
   }
 
