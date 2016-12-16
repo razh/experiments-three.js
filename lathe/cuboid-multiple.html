@@ -123,7 +123,8 @@
           <li><code>scale(x: number, y: number, z: number) | s(x, y, z)</code></li>
           <li><code>$translate(vectors: { [key: string]: number }) | $t(vectors)</code></li>
           <li><code>$scale(vectors: { [key: string]: number }) | $s(vectors)</code></li>
-          <li><code>lerp(vector: string, alpha: number)(geometry: THREE.Geometry, vector: string)</code></li>
+          <li><code>lerp(vectors: { [key: string]: number }, alpha: number)</code></li>
+          <li><code>relativeLerp(vector: string, alpha: number)(geometry: THREE.Geometry, vector: string)</code></li>
         </ul>
       </dd>
     </dl>

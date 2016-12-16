@@ -10,6 +10,7 @@ createBoxTextures
 alignBox
 relativeAlignBox
 lerpBoxVertices
+relativeLerpBoxVertices
 applyBoxVertexColors
 applyBoxFaceVertexColors
 defaultVertexColors
@@ -168,6 +169,7 @@ scaleBoxVertices
   const reargDefaultColors = rearg( defaultVertexColors );
   const reargTranslateVertices = rearg( translateBoxVertices );
   const reargScaleVertices = rearg( scaleBoxVertices );
+  const reargLerp = rearg( lerpBoxVertices );
 
   function reargRelativeAlign( alignmentA ) {
     return ( geometryB, alignmentB ) => {
@@ -175,7 +177,7 @@ scaleBoxVertices
     };
   }
 
-  function reargLerp( verticesA, t ) {
+  function reargRelativeLerp( verticesA, t ) {
     return ( geometryB, verticesB ) => {
       return rearg( lerpBoxVertices )( verticesA, geometryB, verticesB, t );
     };
@@ -191,6 +193,7 @@ scaleBoxVertices
           'align',
           'relativeAlign',
           'lerp',
+          'relativeLerp',
           'color',
           'faceColor',
           'defaultColor',
@@ -208,6 +211,7 @@ scaleBoxVertices
           reargAlign,
           reargRelativeAlign,
           reargLerp,
+          reargRelativeLerp,
           reargColors,
           reargFaceColors,
           reargDefaultColors,
