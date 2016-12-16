@@ -7,9 +7,9 @@ window.relativeLerpBoxVertices = (function() {
   const centroidB = new THREE.Vector3();
   const delta = new THREE.Vector3();
 
-  return function relativeLerp( geometryA, lerpA, geometryB, lerpB, t ) {
-    const indicesA = VertexIndices[ lerpA.toUpperCase() ];
-    const indicesB = VertexIndices[ lerpB.toUpperCase() ];
+  return function relativeLerp( geometryA, keyA, geometryB, keyB, t ) {
+    const indicesA = VertexIndices[ keyA.toUpperCase() ];
+    const indicesB = VertexIndices[ keyB.toUpperCase() ];
 
     computeCentroid( geometryA, indicesA, centroidA );
     computeCentroid( geometryB, indicesB, centroidB );
