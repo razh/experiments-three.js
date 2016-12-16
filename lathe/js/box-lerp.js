@@ -1,23 +1,5 @@
 /* eslint-env es6 */
 /* global THREE, VertexIndices, computeCentroid */
-window.lerpBoxVertices = (function() {
-  'use strict';
-
-  return function lerp( geometry, vertices, vector, t ) {
-    const indices = VertexIndices[ vertices.toUpperCase() ];
-
-    if ( Array.isArray( indices ) ) {
-      indices.forEach( index =>
-        geometry.vertices[ index ].lerp( vector, t )
-      );
-    } else {
-      geometry.vertices[ indices ].lerp( vector, t );
-    }
-
-    return geometry;
-  };
-}());
-
 window.relativeLerpBoxVertices = (function() {
   'use strict';
 
@@ -25,9 +7,9 @@ window.relativeLerpBoxVertices = (function() {
   const centroidB = new THREE.Vector3();
   const delta = new THREE.Vector3();
 
-  return function relativeLerp( geometryA, verticesA, geometryB, verticesB, t ) {
-    const indicesA = VertexIndices[ verticesA.toUpperCase() ];
-    const indicesB = VertexIndices[ verticesB.toUpperCase() ];
+  return function relativeLerp( geometryA, lerpA, geometryB, lerpB, t ) {
+    const indicesA = VertexIndices[ lerpA.toUpperCase() ];
+    const indicesB = VertexIndices[ lerpB.toUpperCase() ];
 
     computeCentroid( geometryA, indicesA, centroidA );
     computeCentroid( geometryB, indicesB, centroidB );

@@ -6,7 +6,7 @@ function transformBoxVertices( method ) {
   const vector = new THREE.Vector3();
   const zero = new THREE.Vector3();
 
-  return function transform( geometry, vectors ) {
+  return function transform( geometry, vectors, ...args ) {
     Object.keys( vectors ).forEach( key => {
       const delta = vectors[ key ];
       const indices = VertexIndices[ key.toUpperCase() ];
@@ -23,10 +23,10 @@ function transformBoxVertices( method ) {
 
       if ( Array.isArray( indices ) ) {
         indices.forEach( index =>
-          geometry.vertices[ index ][ method ]( vector )
+          geometry.vertices[ index ][ method ]( vector, ...args )
         );
       } else {
-        geometry.vertices[ indices ][ method ]( vector );
+        geometry.vertices[ indices ][ method ]( vector, ...args );
       }
     });
 
@@ -36,3 +36,4 @@ function transformBoxVertices( method ) {
 
 window.translateBoxVertices = transformBoxVertices( 'add' );
 window.scaleBoxVertices = transformBoxVertices( 'multiply' );
+window.lerpBoxVertices = transformBoxVertices( 'lerp' );
