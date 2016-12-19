@@ -16,7 +16,7 @@ function transformBoxVertices( method ) {
     } else if ( typeof delta === 'number' ) {
       vector.setScalar( delta );
     } else {
-      return;
+      return geometry;
     }
 
     if ( Array.isArray( indices ) ) {
