@@ -26,18 +26,14 @@ flatRight = _
 bentLeft = _
   ( [2, 6, 2]
   , relativeAlign('nx_ny_pz')(base, 'nx_py_pz')
-  , $t(
-      { nx_py_pz: { y: 4 } }
-    )
+  , $t('nx_py_pz', { y: 4 })
   )
 
 bentRight = _
   ( [2, 6, 2]
   , rotateY(-Math.PI / 2)
   , relativeAlign('px_ny_nz')(base, 'px_py_pz')
-  , $t(
-      { px_py_nz: { y: 4 } }
-    )
+  , $t('px_py_nz', { y: 4 })
   )
 
 return [
