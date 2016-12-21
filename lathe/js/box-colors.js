@@ -17,21 +17,31 @@ window.applyBoxVertexColors = (function() {
     }
   }
 
-  return function vertexColors( geometry, colors ) {
-    Object.keys( colors ).forEach( key => {
-      const color = new THREE.Color( colors[ key ] );
-      const indices = VertexIndices[ key.toUpperCase() ];
+  function baseVertexColors( geometry, key, color ) {
+    const indices = VertexIndices[ key.toUpperCase() ];
 
-      geometry.faces.forEach( face => {
-        if ( Array.isArray( indices ) ) {
-          indices.forEach( index =>
-            setFaceVertexColor( face, index, color )
-          );
-        } else {
-          setFaceVertexColor( face, indices, color );
-        }
-      });
+    geometry.faces.forEach( face => {
+      if ( Array.isArray( indices ) ) {
+        indices.forEach( index =>
+          setFaceVertexColor( face, index, color )
+        );
+      } else {
+        setFaceVertexColor( face, indices, color );
+      }
     });
+
+    return geometry;
+  }
+
+  return function vertexColors( geometry, colors, ...args ) {
+    if ( typeof colors === 'string' ) {
+      return baseVertexColors( geometry, colors, ...args );
+    } else if ( typeof colors === 'object' ) {
+      Object.keys( colors ).forEach( key => {
+        const color = new THREE.Color( colors[ key ] );
+        baseVertexColors( geometry, key, color );
+      });
+    }
 
     return geometry;
   };
@@ -59,13 +69,21 @@ window.defaultVertexColors = (function() {
 window.applyBoxFaceColors = (function() {
   'use strict';
 
-  return function faceColors( geometry, colors ) {
-    Object.keys( colors ).forEach( key => {
-      const color = colors[ key ];
-      const indices = FaceIndices[ key.toUpperCase() ];
+  function baseFaceColors( geometry, key, color ) {
+    const indices = FaceIndices[ key.toUpperCase() ];
+    indices.forEach( index => geometry.faces[ index ].color.set( color ) );
+    return geometry;
+  }
 
-      indices.forEach( index => geometry.faces[ index ].color.set( color ) );
-    });
+  return function faceColors( geometry, colors, ...args ) {
+    if ( typeof colors === 'string' ) {
+      return baseFaceColors( geometry, colors, ...args );
+    } else {
+      Object.keys( colors ).forEach( key => {
+        const color = colors[ key ];
+        baseFaceColors( geometry, key, color );
+      });
+    }
 
     return geometry;
   };
@@ -74,18 +92,28 @@ window.applyBoxFaceColors = (function() {
 window.applyBoxFaceVertexColors = (function() {
   'use strict';
 
-  return function faceVertexColors( geometry, colors ) {
-    Object.keys( colors ).forEach( key => {
-      const color = new THREE.Color( colors[ key ] );
-      const indices = FaceIndices[ key.toUpperCase() ];
+  function baseFaceVertexColors( geometry, key, color ) {
+    const indices = FaceIndices[ key.toUpperCase() ];
 
-      indices.forEach( index => {
-        const face = geometry.faces[ index ];
-        for ( let i = 0; i < 3; i++ ) {
-          face.vertexColors[ i ] = color;
-        }
-      });
+    indices.forEach( index => {
+      const face = geometry.faces[ index ];
+      for ( let i = 0; i < 3; i++ ) {
+        face.vertexColors[ i ] = color;
+      }
     });
+
+    return geometry;
+  }
+
+  return function faceVertexColors( geometry, colors, ...args ) {
+    if ( typeof colors === 'string' ) {
+      return baseFaceVertexColors( geometry, colors, ...args );
+    } else {
+      Object.keys( colors ).forEach( key => {
+        const color = new THREE.Color( colors[ key ] );
+        baseFaceVertexColors( geometry, key, color );
+      });
+    }
 
     return geometry;
   };
