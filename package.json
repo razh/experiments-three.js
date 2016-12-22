@@ -23,7 +23,7 @@
     "three": "0.82.1"
   },
   "devDependencies": {
-    "eslint": "^3.11.1",
-    "jest-cli": "^17.0.3"
+    "eslint": "^3.12.2",
+    "jest-cli": "^18.0.0"
   }
 }
