@@ -179,7 +179,7 @@ scaleBoxVertices
 
   function reargRelativeLerp( verticesA, t ) {
     return ( geometryB, verticesB ) => {
-      return rearg( lerpBoxVertices )( verticesA, geometryB, verticesB, t );
+      return rearg( relativeLerpBoxVertices )( verticesA, geometryB, verticesB, t );
     };
   }
 
