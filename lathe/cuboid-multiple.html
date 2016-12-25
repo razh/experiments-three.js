@@ -7,6 +7,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
+    html {
+      box-sizing: border-box;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: inherit;
+    }
+
     body {
       margin: 0;
       background-color: #000;
@@ -33,7 +43,7 @@
       height: 28em;
       background-color: rgba(0, 0, 0, 0.5);
       color: #fff;
-      font-size: 12px;
+      font-size: 14px;
       font-family: Menlo, Monaco, monospace;
     }
 
@@ -45,6 +55,8 @@
       position: absolute;
       top: 1rem;
       left: 1rem;
+      max-height: calc(100vh - 2rem);
+      overflow-y: scroll;
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
     }
 
@@ -54,6 +66,8 @@
 
     .help-content {
       display: none;
+      padding: 1rem;
+      background-color: rgba(0, 0, 0, 0.5);
     }
 
     .help-content code {
@@ -68,8 +82,8 @@
 
     .intersection {
       position: absolute;
-      bottom: 1em;
-      left: 1em;
+      bottom: 1rem;
+      left: 1rem;
       font-family: Menlo, Monaco, monospace;
     }
   </style>
@@ -110,22 +124,56 @@
 
       <dt>Transform functions</dt>
       <dd>
-        <ul>
-          <li><code>align(vector: string)</code></li>
-          <li><code>relativeAlign(vector: string)(geometry: THREE.Geometry, vector: string)</code></li>
-          <li><code>color(vectors: { [key: string]: color: number | string })</code></li>
-          <li><code>faceColor(vectors: { [key: string]: color: number | string })</code></li>
-          <li><code>defaultColor(color: number | string })</code></li>
-          <li><code>rotateX(angle: number) | rx(angle)</code></li>
-          <li><code>rotateY(angle: number) | ry(angle)</code></li>
-          <li><code>rotateZ(angle: number) | rz(angle)</code></li>
-          <li><code>translate(x: number, y: number, z: number) | t(x, y, z)</code></li>
-          <li><code>scale(x: number, y: number, z: number) | s(x, y, z)</code></li>
-          <li><code>$translate(vectors: { [key: string]: number }) | $t(vectors)</code></li>
-          <li><code>$scale(vectors: { [key: string]: number }) | $s(vectors)</code></li>
-          <li><code>lerp(vectors: { [key: string]: number }, alpha: number)</code></li>
-          <li><code>relativeLerp(vector: string, alpha: number)(geometry: THREE.Geometry, vector: string)</code></li>
-        </ul>
+        <pre>
+          <code>
+type Color = number | string | THREE.Color
+
+type Vector =
+  Array&lt;number&gt; |
+  { x?: number, y?: number, z?: number } |
+  number
+
+align(key: string)
+
+relativeAlign(keyA: string)(geometry: THREE.Geometry, keyB: string)
+
+color(key: string, color: Color)
+color(vectors: { [key: string]: Color })
+
+faceColor(key: string, color: Color)
+faceColor(vectors: { [key: string]: Color })
+
+defaultColor(color: Color)
+
+rotateX(angle: number)
+// alias: rx()
+
+rotateY(angle: number)
+// alias: ry()
+
+rotateZ(angle: number)
+// alias: rz()
+
+translate(x: number, y: number, z: number)
+// alias: t()
+
+scale(x: number, y: number, z: number)
+// alias: s()
+
+$translate(key: string, vector: Vector)
+$translate(vectors: { [key: string]: Vector })
+// alias: $t()
+
+$scale(key: string, vector: Vector)
+$scale(vectors: { [key: string]: Vector })
+// alias: $s()
+
+lerp(key: string, vector: Vector, alpha: number)
+lerp(vectors: { [key: string]: Vector }, alpha: number)
+
+relativeLerp(keyA: string, alpha: number)(geometry: THREE.Geometry, keyB: string)
+          </code>
+        </pre>
       </dd>
     </dl>
   </div>
