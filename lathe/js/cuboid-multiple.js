@@ -17,6 +17,7 @@ defaultVertexColors
 translateBoxVertices
 scaleBoxVertices
 */
+
 (function() {
   'use strict';
 
@@ -130,12 +131,8 @@ scaleBoxVertices
   }
 
   function setQueryString( key, value ) {
-    const hash = (
-      window.location.pathname +
-      '?' + [ key, value ].map( encodeURIComponent ).join( '=' )
-    );
-
-    window.history.replaceState( '', '', hash );
+    const query = `?${ [ key, value ].map( encodeURIComponent ).join( '=' ) }`;
+    window.history.replaceState( '', '', query );
   }
 
   function reargMethod( key ) {
@@ -152,7 +149,7 @@ scaleBoxVertices
     'rotateY',
     'rotateZ',
     'translate',
-    'scale'
+    'scale',
   ];
 
   const shorthandGeometryMethods = [ 'rx', 'ry', 'rz', 't', 's' ];
@@ -200,7 +197,7 @@ scaleBoxVertices
           '$translate',
           '$t',
           '$scale',
-          '$s'
+          '$s',
         ]
           .concat( geometryMethods )
           .concat( shorthandGeometryMethods ),
@@ -218,10 +215,10 @@ scaleBoxVertices
           reargTranslateVertices,
           reargTranslateVertices,
           reargScaleVertices,
-          reargScaleVertices
+          reargScaleVertices,
         ]
           .concat( reargGeometryMethods )
-          .concat( reargGeometryMethods )
+          .concat( reargGeometryMethods ),
       };
 
       const fn = new Function( args.keys, event.target.value );
@@ -290,7 +287,7 @@ scaleBoxVertices
       shading: THREE.FlatShading,
       transparent: true,
       opacity: 0.95,
-      vertexColors: THREE.VertexColors
+      vertexColors: THREE.VertexColors,
     });
 
     debugMaterial = new THREE.MultiMaterial(
@@ -301,7 +298,7 @@ scaleBoxVertices
           shading: THREE.FlatShading,
           transparent: true,
           opacity: 0.95,
-          vertexColors: THREE.VertexColors
+          vertexColors: THREE.VertexColors,
         })
       )
     );

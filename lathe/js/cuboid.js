@@ -331,9 +331,7 @@ translateBoxVertices
       .filter( Boolean )
       .join( '&' );
 
-    var hash = window.location.pathname + '?' + query;
-
-    window.history.replaceState( '', '', hash );
+    window.history.replaceState( '', '', '?' + query );
   }
 
   function init() {

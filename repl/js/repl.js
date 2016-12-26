@@ -57,7 +57,7 @@
 
         const params = new URLSearchParams( window.location.search );
         params.set( 'commands', event.target.value.trim() );
-        window.history.replaceState( '', '', `${ location.pathname }?${ params }` );
+        window.history.replaceState( '', '', `?${ params }` );
 
         if ( !event.target.validity.valid ) {
           console.info( '' );

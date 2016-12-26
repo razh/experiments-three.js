@@ -106,12 +106,7 @@
       drawCanvas( points );
 
       // Update location.
-      var hash = (
-        window.location.pathname +
-        '#' + encodeURIComponent( textarea.value )
-      );
-
-      window.history.replaceState( '', '', hash );
+      window.history.replaceState( '', '', '#' + encodeURIComponent( textarea.value ) );
     }
 
     onInput();
