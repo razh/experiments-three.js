@@ -8,8 +8,6 @@ window.applyBoxNoise = (function() {
 
     if ( Array.isArray( indices ) ) {
       indices.forEach( index => noise( geometry.vertices[ index ] ) );
-    } else {
-      noise( geometry.vertices[ indices ] );
     }
 
     return geometry;

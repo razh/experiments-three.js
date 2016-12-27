@@ -20,15 +20,13 @@ window.applyBoxVertexColors = (function() {
   function baseVertexColors( geometry, key, color ) {
     const indices = VertexIndices[ key.toUpperCase() ];
 
-    geometry.faces.forEach( face => {
-      if ( Array.isArray( indices ) ) {
+    if ( Array.isArray( indices ) ) {
+      geometry.faces.forEach( face => {
         indices.forEach( index =>
           setFaceVertexColor( face, index, color )
         );
-      } else {
-        setFaceVertexColor( face, indices, color );
-      }
-    });
+      });
+    }
 
     return geometry;
   }

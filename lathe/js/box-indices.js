@@ -4,30 +4,30 @@ window.VertexIndices = (function() {
 
   // Vertices.
   // pz-nz order is reversed for the nx side.
-  const PX_PY_PZ = 0;
-  const PX_PY_NZ = 1;
-  const PX_NY_PZ = 2;
-  const PX_NY_NZ = 3;
-  const NX_PY_NZ = 4;
-  const NX_PY_PZ = 5;
-  const NX_NY_NZ = 6;
-  const NX_NY_PZ = 7;
+  const PX_PY_PZ = [ 0 ];
+  const PX_PY_NZ = [ 1 ];
+  const PX_NY_PZ = [ 2 ];
+  const PX_NY_NZ = [ 3 ];
+  const NX_PY_NZ = [ 4 ];
+  const NX_PY_PZ = [ 5 ];
+  const NX_NY_NZ = [ 6 ];
+  const NX_NY_PZ = [ 7 ];
 
   // Edges.
-  const PX_PY = [ PX_PY_PZ, PX_PY_NZ ];
-  const PX_NY = [ PX_NY_PZ, PX_NY_NZ ];
-  const NX_PY = [ NX_PY_NZ, NX_PY_PZ ];
-  const NX_NY = [ NX_NY_NZ, NX_NY_PZ ];
+  const PX_PY = [].concat( PX_PY_PZ, PX_PY_NZ );
+  const PX_NY = [].concat( PX_NY_PZ, PX_NY_NZ );
+  const NX_PY = [].concat( NX_PY_NZ, NX_PY_PZ );
+  const NX_NY = [].concat( NX_NY_NZ, NX_NY_PZ );
 
-  const PX_PZ = [ PX_PY_PZ, PX_NY_PZ ];
-  const PX_NZ = [ PX_PY_NZ, PX_NY_NZ ];
-  const NX_NZ = [ NX_PY_NZ, NX_NY_NZ ];
-  const NX_PZ = [ NX_PY_PZ, NX_NY_PZ ];
+  const PX_PZ = [].concat( PX_PY_PZ, PX_NY_PZ );
+  const PX_NZ = [].concat( PX_PY_NZ, PX_NY_NZ );
+  const NX_NZ = [].concat( NX_PY_NZ, NX_NY_NZ );
+  const NX_PZ = [].concat( NX_PY_PZ, NX_NY_PZ );
 
-  const PY_PZ = [ PX_PY_PZ, NX_PY_PZ ];
-  const PY_NZ = [ PX_PY_NZ, NX_PY_NZ ];
-  const NY_PZ = [ PX_NY_PZ, NX_NY_PZ ];
-  const NY_NZ = [ PX_NY_NZ, NX_NY_NZ ];
+  const PY_PZ = [].concat( PX_PY_PZ, NX_PY_PZ );
+  const PY_NZ = [].concat( PX_PY_NZ, NX_PY_NZ );
+  const NY_PZ = [].concat( PX_NY_PZ, NX_NY_PZ );
+  const NY_NZ = [].concat( PX_NY_NZ, NX_NY_NZ );
 
   // Faces.
   const PX = [].concat( PX_PY, PX_NY );
@@ -42,30 +42,30 @@ window.VertexIndices = (function() {
 
   // Vertices.
   // Front-back order is reversed for the left side.
-  const RIGHT_TOP_FRONT    = 0;
-  const RIGHT_TOP_BACK     = 1;
-  const RIGHT_BOTTOM_FRONT = 2;
-  const RIGHT_BOTTOM_BACK  = 3;
-  const LEFT_TOP_BACK      = 4;
-  const LEFT_TOP_FRONT     = 5;
-  const LEFT_BOTTOM_BACK   = 6;
-  const LEFT_BOTTOM_FRONT  = 7;
+  const RIGHT_TOP_FRONT    = [ 0 ];
+  const RIGHT_TOP_BACK     = [ 1 ];
+  const RIGHT_BOTTOM_FRONT = [ 2 ];
+  const RIGHT_BOTTOM_BACK  = [ 3 ];
+  const LEFT_TOP_BACK      = [ 4 ];
+  const LEFT_TOP_FRONT     = [ 5 ];
+  const LEFT_BOTTOM_BACK   = [ 6 ];
+  const LEFT_BOTTOM_FRONT  = [ 7 ];
 
   // Edges.
-  const RIGHT_TOP    = [ RIGHT_TOP_FRONT, RIGHT_TOP_BACK ];
-  const RIGHT_BOTTOM = [ RIGHT_BOTTOM_FRONT, RIGHT_BOTTOM_BACK ];
-  const LEFT_TOP     = [ LEFT_TOP_BACK, LEFT_TOP_FRONT ];
-  const LEFT_BOTTOM  = [ LEFT_BOTTOM_BACK, LEFT_BOTTOM_FRONT ];
+  const RIGHT_TOP    = [].concat( RIGHT_TOP_FRONT, RIGHT_TOP_BACK );
+  const RIGHT_BOTTOM = [].concat( RIGHT_BOTTOM_FRONT, RIGHT_BOTTOM_BACK );
+  const LEFT_TOP     = [].concat( LEFT_TOP_BACK, LEFT_TOP_FRONT );
+  const LEFT_BOTTOM  = [].concat( LEFT_BOTTOM_BACK, LEFT_BOTTOM_FRONT );
 
-  const RIGHT_FRONT = [ RIGHT_TOP_FRONT, RIGHT_BOTTOM_FRONT ];
-  const RIGHT_BACK  = [ RIGHT_TOP_BACK, RIGHT_BOTTOM_BACK ];
-  const LEFT_FRONT  = [ LEFT_TOP_FRONT, LEFT_BOTTOM_FRONT ];
-  const LEFT_BACK   = [ LEFT_TOP_BACK, LEFT_BOTTOM_BACK ];
+  const RIGHT_FRONT = [].concat( RIGHT_TOP_FRONT, RIGHT_BOTTOM_FRONT );
+  const RIGHT_BACK  = [].concat( RIGHT_TOP_BACK, RIGHT_BOTTOM_BACK );
+  const LEFT_FRONT  = [].concat( LEFT_TOP_FRONT, LEFT_BOTTOM_FRONT );
+  const LEFT_BACK   = [].concat( LEFT_TOP_BACK, LEFT_BOTTOM_BACK );
 
-  const TOP_FRONT    = [ RIGHT_TOP_FRONT, LEFT_TOP_FRONT ];
-  const TOP_BACK     = [ RIGHT_TOP_BACK, LEFT_TOP_BACK ];
-  const BOTTOM_FRONT = [ RIGHT_BOTTOM_FRONT, LEFT_BOTTOM_FRONT ];
-  const BOTTOM_BACK  = [ RIGHT_BOTTOM_BACK, LEFT_BOTTOM_BACK ];
+  const TOP_FRONT    = [].concat( RIGHT_TOP_FRONT, LEFT_TOP_FRONT );
+  const TOP_BACK     = [].concat( RIGHT_TOP_BACK, LEFT_TOP_BACK );
+  const BOTTOM_FRONT = [].concat( RIGHT_BOTTOM_FRONT, LEFT_BOTTOM_FRONT );
+  const BOTTOM_BACK  = [].concat( RIGHT_BOTTOM_BACK, LEFT_BOTTOM_BACK );
 
   // Faces.
   const RIGHT  = [].concat( RIGHT_TOP, RIGHT_BOTTOM );

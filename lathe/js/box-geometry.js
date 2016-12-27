@@ -23,8 +23,6 @@ function transformBoxVertices( method ) {
       indices.forEach( index =>
         geometry.vertices[ index ][ method ]( vector, ...args )
       );
-    } else {
-      geometry.vertices[ indices ][ method ]( vector, ...args );
     }
 
     return geometry;

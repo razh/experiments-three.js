@@ -20,8 +20,6 @@ window.relativeLerpBoxVertices = (function() {
       indicesA.forEach( index =>
         geometryA.vertices[ index ].add( delta )
       );
-    } else {
-      geometryA.vertices[ indicesA ].add( delta );
     }
 
     return geometryA;
