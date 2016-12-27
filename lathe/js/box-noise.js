@@ -1,6 +1,7 @@
 /* eslint-env es6 */
 /* global VertexIndices */
-window.applyBoxNoise = (function() {
+
+const applyBoxNoise = (function() {
   'use strict';
 
   return function applyNoise( geometry, key, noise ) {
@@ -13,3 +14,5 @@ window.applyBoxNoise = (function() {
     return geometry;
   };
 }());
+
+window.applyBoxNoise = applyBoxNoise;

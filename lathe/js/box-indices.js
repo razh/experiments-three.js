@@ -1,5 +1,6 @@
 /* eslint-env es6 */
-window.VertexIndices = (function() {
+
+const VertexIndices = (function() {
   'use strict';
 
   // Vertices.
@@ -160,7 +161,7 @@ window.VertexIndices = (function() {
   };
 }());
 
-window.FaceIndices = (function() {
+const FaceIndices = (function() {
   'use strict';
 
   const PX = [ 0, 1 ];
@@ -193,3 +194,6 @@ window.FaceIndices = (function() {
     BACK
   };
 }());
+
+window.VertexIndices = VertexIndices;
+window.FaceIndices = FaceIndices;

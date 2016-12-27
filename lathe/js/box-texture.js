@@ -1,6 +1,7 @@
 /* eslint-env es6 */
 /* global THREE */
-window.createBoxTextures = (function() {
+
+const createBoxTextures = (function() {
   'use strict';
 
   return function textures(
@@ -30,3 +31,5 @@ window.createBoxTextures = (function() {
     });
   };
 }());
+
+window.createBoxTextures = createBoxTextures;

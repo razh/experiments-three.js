@@ -1,6 +1,7 @@
 /* eslint-env es6 */
 /* global THREE, VertexIndices, computeCentroid */
-window.alignBox = (function() {
+
+const alignBox = (function() {
   'use strict';
 
   const centroid = new THREE.Vector3();
@@ -12,7 +13,7 @@ window.alignBox = (function() {
   };
 }());
 
-window.relativeAlignBox = (function() {
+const relativeAlignBox = (function() {
   'use strict';
 
   const centroidA = new THREE.Vector3();
@@ -30,3 +31,6 @@ window.relativeAlignBox = (function() {
     return geometryA.translate( delta.x, delta.y, delta.z );
   };
 }());
+
+window.alignBox = alignBox;
+window.relativeAlignBox = relativeAlignBox;

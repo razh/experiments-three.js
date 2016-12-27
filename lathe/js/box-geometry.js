@@ -1,5 +1,6 @@
 /* eslint-env es6 */
 /* global THREE, VertexIndices */
+
 function transformBoxVertices( method ) {
   'use strict';
 

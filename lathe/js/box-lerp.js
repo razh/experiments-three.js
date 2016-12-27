@@ -1,6 +1,7 @@
 /* eslint-env es6 */
 /* global THREE, VertexIndices, computeCentroid */
-window.relativeLerpBoxVertices = (function() {
+
+const relativeLerpBoxVertices = (function() {
   'use strict';
 
   const centroidA = new THREE.Vector3();
@@ -25,3 +26,5 @@ window.relativeLerpBoxVertices = (function() {
     return geometryA;
   };
 }());
+
+window.relativeLerpBoxVertices = relativeLerpBoxVertices;

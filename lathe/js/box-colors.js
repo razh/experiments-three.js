@@ -1,6 +1,7 @@
 /* eslint-env es6 */
 /* global THREE, VertexIndices, FaceIndices */
-window.applyBoxVertexColors = (function() {
+
+const applyBoxVertexColors = (function() {
   'use strict';
 
   function setFaceVertexColor( face, index, color ) {
@@ -48,25 +49,23 @@ window.applyBoxVertexColors = (function() {
 }());
 
 // Like _.defaults, but with THREE.Face vertexColors.
-window.defaultVertexColors = (function() {
+function defaultVertexColors( geometry, defaultColor ) {
   'use strict';
 
-  return function defaults( geometry, defaultColor ) {
-    defaultColor = new THREE.Color( defaultColor );
+  defaultColor = new THREE.Color( defaultColor );
 
-    geometry.faces.forEach( face => {
-      for ( let i = 0; i < 3; i++ ) {
-        if ( face.vertexColors[ i ] === undefined ) {
-          face.vertexColors[ i ] = defaultColor;
-        }
+  geometry.faces.forEach( face => {
+    for ( let i = 0; i < 3; i++ ) {
+      if ( face.vertexColors[ i ] === undefined ) {
+        face.vertexColors[ i ] = defaultColor;
       }
-    });
+    }
+  });
 
-    return geometry;
-  };
-}());
+  return geometry;
+}
 
-window.applyBoxFaceColors = (function() {
+const applyBoxFaceColors = (function() {
   'use strict';
 
   function baseFaceColors( geometry, key, color ) {
@@ -91,7 +90,7 @@ window.applyBoxFaceColors = (function() {
   };
 }());
 
-window.applyBoxFaceVertexColors = (function() {
+const applyBoxFaceVertexColors = (function() {
   'use strict';
 
   function baseFaceVertexColors( geometry, key, color ) {
@@ -122,3 +121,8 @@ window.applyBoxFaceVertexColors = (function() {
     return geometry;
   };
 }());
+
+window.applyBoxVertexColors = applyBoxVertexColors;
+window.defaultVertexColors = defaultVertexColors;
+window.applyBoxFaceColors = applyBoxFaceColors;
+window.applyBoxFaceVertexColors = applyBoxFaceVertexColors;
