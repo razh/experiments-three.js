@@ -123,7 +123,7 @@ scaleBoxVertices
   function createBoundingBoxLabels( boundingBoxes ) {
     return boundingBoxes.map( ( boundingBox, index ) => {
       const label = getBoundingBoxLabel( index );
-      label.scale.multiplyScalar( 0.5 );
+      label.scale.setLength( 0.5 );
       label.material.depthTest = false;
       boundingBox.getCenter( label.position );
       return label;
