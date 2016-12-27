@@ -35,7 +35,9 @@ window.applyBoxVertexColors = (function() {
 
   return function vertexColors( geometry, colors, ...args ) {
     if ( typeof colors === 'string' ) {
-      return baseVertexColors( geometry, colors, ...args );
+      const key = colors;
+      const color = new THREE.Color( ...args );
+      baseVertexColors( geometry, key, color );
     } else if ( typeof colors === 'object' ) {
       Object.keys( colors ).forEach( key => {
         const color = new THREE.Color( colors[ key ] );
@@ -77,7 +79,9 @@ window.applyBoxFaceColors = (function() {
 
   return function faceColors( geometry, colors, ...args ) {
     if ( typeof colors === 'string' ) {
-      return baseFaceColors( geometry, colors, ...args );
+      const key = colors;
+      const color = args[ 0 ];
+      baseFaceColors( geometry, key, color );
     } else {
       Object.keys( colors ).forEach( key => {
         const color = colors[ key ];
@@ -107,7 +111,9 @@ window.applyBoxFaceVertexColors = (function() {
 
   return function faceVertexColors( geometry, colors, ...args ) {
     if ( typeof colors === 'string' ) {
-      return baseFaceVertexColors( geometry, colors, ...args );
+      const key = colors;
+      const color = new THREE.Color( ...args );
+      baseFaceVertexColors( geometry, key, color );
     } else {
       Object.keys( colors ).forEach( key => {
         const color = new THREE.Color( colors[ key ] );
