@@ -44,8 +44,17 @@ scaleBoxVertices
     mesh.needsUpdate = true;
   }
 
-  function createBoxGeometry( parameters, ...transforms ) {
-    const geometry = new THREE.BoxGeometry( ...parameters );
+  function createGeometryWrapper( value, ...transforms ) {
+    let geometry;
+
+    if ( value instanceof THREE.Geometry ) {
+      geometry = value;
+    } else if ( Array.isArray( value ) ) {
+      geometry = new THREE.BoxGeometry( ...value );
+    } else {
+      return new THREE.Geometry();
+    }
+
     transforms.forEach( transform => transform( geometry ) );
     return geometry;
   }
@@ -203,7 +212,7 @@ scaleBoxVertices
           .concat( shorthandGeometryMethods ),
         values: [
           THREE,
-          createBoxGeometry,
+          createGeometryWrapper,
           mergeGeometries,
           reargAlign,
           reargRelativeAlign,
