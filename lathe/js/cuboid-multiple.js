@@ -7,6 +7,10 @@ remove
 updateGeometry
 createTextLabel
 createBoxTextures
+sizeBox,
+widthBox,
+heightBox,
+depthBox,
 alignBox
 relativeAlignBox
 lerpBoxVertices
@@ -196,6 +200,10 @@ scaleBoxVertices
           'THREE',
           '_',
           '$$',
+          'size',
+          'width',
+          'height',
+          'depth',
           'align',
           'relativeAlign',
           'lerp',
@@ -214,6 +222,10 @@ scaleBoxVertices
           THREE,
           createGeometryWrapper,
           mergeGeometries,
+          sizeBox,
+          widthBox,
+          heightBox,
+          depthBox,
           reargAlign,
           reargRelativeAlign,
           reargLerp,
