@@ -136,7 +136,6 @@ scaleBoxVertices
   function createBoundingBoxLabels( boundingBoxes ) {
     return boundingBoxes.map( ( boundingBox, index ) => {
       const label = getBoundingBoxLabel( index );
-      label.scale.setLength( 0.5 );
       label.material.depthTest = false;
       boundingBox.getCenter( label.position );
       return label;
@@ -279,7 +278,7 @@ scaleBoxVertices
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight );
-    camera.position.set( 0, 0, 8 );
+    camera.position.set( 0, 0, 64 );
 
     raycaster = new THREE.Raycaster();
     mouse = new THREE.Vector2();
@@ -290,14 +289,13 @@ scaleBoxVertices
     scene.add( new THREE.AmbientLight( '#777' ) );
 
     const light = new THREE.DirectionalLight();
-    light.position.set( 0, 8, 8 );
+    light.position.set( 0, 64, 64 );
     scene.add( light );
 
-    const axisHelper = new THREE.AxisHelper();
+    const axisHelper = new THREE.AxisHelper( 16 );
     scene.add( axisHelper );
 
-    const gridHelper = new THREE.GridHelper( 4, 20 );
-    gridHelper.position.y = -2;
+    const gridHelper = new THREE.GridHelper( 32, 20 );
     gridHelper.material.opacity = 0.5;
     gridHelper.material.transparent = true;
     scene.add( gridHelper );
