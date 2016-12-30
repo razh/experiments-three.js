@@ -46,3 +46,31 @@ function transformBoxVertices( method ) {
 window.translateBoxVertices = transformBoxVertices( 'add' );
 window.scaleBoxVertices = transformBoxVertices( 'multiply' );
 window.lerpBoxVertices = transformBoxVertices( 'lerp' );
+
+function callBoxVertices( method ) {
+  'use strict';
+
+  function baseCall( geometry, key, ...args ) {
+    const indices = VertexIndices[ key.toUpperCase() ];
+
+    if ( Array.isArray( indices ) ) {
+      indices.forEach( index =>
+        geometry.vertices[ index ][ method ]( ...args )
+      );
+    }
+
+    return geometry;
+  }
+
+  return function call( geometry, vectors, ...args ) {
+    if ( typeof vectors === 'string' ) {
+      return baseCall( geometry, vectors, ...args );
+    } else if ( typeof vectors === 'object' ) {
+      Object.keys( vectors ).forEach( key => {
+        baseCall( geometry, key, ...args );
+      });
+    }
+
+    return geometry;
+  };
+}
