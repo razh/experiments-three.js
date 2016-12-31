@@ -74,3 +74,19 @@ function callBoxVertices( method ) {
     return geometry;
   };
 }
+
+function getBoxVertex( geometry, key ) {
+  'use strict';
+
+  if ( key ) {
+    const indices = VertexIndices[ key.toUpperCase() ];
+
+    if ( Array.isArray( indices ) ) {
+      return geometry.vertices[ indices[ 0 ] ];
+    }
+  }
+
+  return geometry.vertices[ 0 ];
+}
+
+window.getBoxVertex = getBoxVertex;
