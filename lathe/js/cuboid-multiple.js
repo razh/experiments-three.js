@@ -7,10 +7,16 @@ remove
 updateGeometry
 createTextLabel
 createBoxTextures
-sizeBox,
-widthBox,
-heightBox,
-depthBox,
+sizeBox
+widthBox
+heightBox
+depthBox
+getBoxVertex
+setBoxVertices
+setXBoxVertices
+setYBoxVertices
+setZBoxVertices
+copyBoxVertices
 alignBox
 relativeAlignBox
 lerpBoxVertices
@@ -172,6 +178,12 @@ scaleBoxVertices
     return ( ...args ) => geometry => fn( geometry, ...args );
   }
 
+  const reargGetVertex = rearg( getBoxVertex );
+  const reargSet = rearg( setBoxVertices );
+  const reargSetX = rearg( setXBoxVertices );
+  const reargSetY = rearg( setYBoxVertices );
+  const reargSetZ = rearg( setZBoxVertices );
+  const reargCopy = rearg( copyBoxVertices );
   const reargAlign = rearg( alignBox );
   const reargColors = rearg( applyBoxVertexColors );
   const reargFaceColors = rearg( applyBoxFaceVertexColors );
@@ -203,6 +215,12 @@ scaleBoxVertices
           'width',
           'height',
           'depth',
+          'vertex',
+          'set',
+          'setX',
+          'setY',
+          'setZ',
+          'copy',
           'align',
           'relativeAlign',
           'lerp',
@@ -225,6 +243,12 @@ scaleBoxVertices
           widthBox,
           heightBox,
           depthBox,
+          reargGetVertex,
+          reargSet,
+          reargSetX,
+          reargSetY,
+          reargSetZ,
+          reargCopy,
           reargAlign,
           reargRelativeAlign,
           reargLerp,

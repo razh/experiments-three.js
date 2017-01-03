@@ -75,6 +75,12 @@ function callBoxVertices( method ) {
   };
 }
 
+window.setBoxVertices = callBoxVertices( 'set' );
+window.setXBoxVertices = callBoxVertices( 'setX' );
+window.setYBoxVertices = callBoxVertices( 'setY' );
+window.setZBoxVertices = callBoxVertices( 'setZ' );
+window.copyBoxVertices = callBoxVertices( 'copy' );
+
 function getBoxVertex( geometry, key ) {
   'use strict';
 
