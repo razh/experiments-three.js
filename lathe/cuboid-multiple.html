@@ -136,6 +136,22 @@ type Vector =
   { x?: number, y?: number, z?: number } |
   number
 
+vertex(key: string): THREE.Vector3
+
+set(key: string, x: number, y: number, z: number)
+
+setX(key: string, x: number)
+setX(vectors: { [key: string]: number })
+
+setY(key: string, y: number)
+setY(vectors: { [key: string]: number })
+
+setZ(key: string, z: number)
+setZ(vectors: { [key: string]: number })
+
+copy(key: string, vector: THREE.Vector3)
+copy(vectors: { [key: string]: THREE.Vector3 })
+
 align(key: string)
 
 relativeAlign(keyA: string)(geometry: THREE.Geometry, keyB: string)
