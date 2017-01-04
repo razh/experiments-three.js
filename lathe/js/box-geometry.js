@@ -67,7 +67,8 @@ function callBoxVertices( method ) {
       return baseCall( geometry, vectors, ...args );
     } else if ( typeof vectors === 'object' ) {
       Object.keys( vectors ).forEach( key => {
-        baseCall( geometry, key, ...args );
+        const value = vectors[ key ];
+        baseCall( geometry, key, value, ...args );
       });
     }
 
