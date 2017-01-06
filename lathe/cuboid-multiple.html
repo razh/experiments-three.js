@@ -54,6 +54,12 @@
       outline-color: red;
     }
 
+    .validation-message {
+      font-family: Menlo, Monaco, monospace;
+      font-size: 0.875rem;
+      text-align: right;
+    }
+
     .help {
       position: absolute;
       top: 1rem;
@@ -92,14 +98,16 @@
   </style>
 </head>
 <body>
-  <div class="controls">
+  <form class="controls">
+    <div class="validation-message js-validation-message"></div>
+
     <label class="debug">
       <input type="checkbox" class="js-debug">
       Debug
     </label>
 
     <textarea class="form-control" id="textarea-commands" spellcheck="false"></textarea>
-  </div>
+  </form>
 
   <div class="help">
     <div class="help-header">Help</div>
