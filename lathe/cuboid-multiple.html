@@ -18,18 +18,21 @@
     }
 
     body {
+      --font-family-monospace: Menlo, Monaco, monospace;
+
       margin: 0;
       background-color: #000;
       color: #fff;
+      font-size: 1rem;
       font-family: Futura, "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
 
     ul {
-      padding-left: 20px;
+      padding-left: 1rem;
     }
 
     dd {
-      margin-left: 20px;
+      margin-left: 1rem;
     }
 
     .controls {
@@ -44,8 +47,8 @@
       padding: 1em;
       background-color: rgba(0, 0, 0, 0.5);
       color: #fff;
-      font-size: 14px;
-      font-family: Menlo, Monaco, monospace;
+      font-size: 1rem;
+      font-family: var(--font-family-monospace);
       border-color: rgba(255, 255, 255, 0.2);
       border-radius: 0.5em;
     }
@@ -55,7 +58,7 @@
     }
 
     .validation-message {
-      font-family: Menlo, Monaco, monospace;
+      font-family: var(--font-family-monospace);
       font-size: 0.875rem;
       text-align: right;
     }
@@ -80,8 +83,7 @@
     }
 
     .help-content code {
-      font-family: Menlo, Monaco, monospace;
-      font-size: 16px;
+      font-family: var(--font-family-monospace);
     }
 
     .debug {
@@ -93,7 +95,7 @@
       position: absolute;
       bottom: 1rem;
       left: 1rem;
-      font-family: Menlo, Monaco, monospace;
+      font-family: var(--font-family-monospace);
     }
   </style>
 </head>
