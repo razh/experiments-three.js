@@ -66,8 +66,10 @@
         event.target.setCustomValidity( '' );
       } catch ( error ) {
         console.error( error );
-        event.target.setCustomValidity( 'Invalid function' );
+        event.target.setCustomValidity( error );
       }
+
+      event.target.form.querySelector('.js-validation-message').textContent = event.target.validationMessage;
     }
 
     const textarea = document.getElementById( 'textarea-commands' );

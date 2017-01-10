@@ -7,10 +7,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
+    html {
+      box-sizing: border-box;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: inherit;
+    }
+
     body {
+      --font-family-monospace: Menlo, Monaco, monospace;
+
       margin: 0;
       background-color: #000;
       color: #fff;
+      font-size: 1rem;
+      font-family: Futura, "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
 
     .controls {
@@ -22,21 +36,34 @@
     textarea.form-control {
       width: 32em;
       height: 28em;
+      padding: 1em;
       background-color: rgba(0, 0, 0, 0.5);
       color: #fff;
-      font-size: 12px;
-      font-family: Menlo, Monaco, monospace;
+      font-size: 1rem;
+      font-family: var(--font-family-monospace);
+      border-color: rgba(255, 255, 255, 0.2);
+      border-radius: 0.5em;
     }
 
     textarea:invalid {
       outline-color: red;
     }
+
+    .validation-message {
+      font-family: var(--font-family-monospace);
+      font-size: 0.875rem;
+      text-align: right;
+    }
   </style>
 </head>
 <body>
-  <div class="controls">
+  <form class="controls">
+    <div class="validation-message js-validation-message"></div>
+
+    <br>
+
     <textarea class="form-control" id="textarea-commands" spellcheck="false"></textarea>
-  </div>
+  </form>
 
   <script src="../node_modules/three/build/three.js"></script>
   <script src="../node_modules/three/examples/js/controls/OrbitControls.js"></script>
