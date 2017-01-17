@@ -1,18 +1,18 @@
-/*global THREE*/
-/*exported createArrow*/
-var createArrow = (function() {
+/* eslint-env es6 */
+/* global THREE */
+/* exported createArrow */
+const createArrow = (function() {
   'use strict';
 
-  function lerpPathFn( path, divisions ) {
-    var geometry = path.createSpacedPointsGeometry( divisions );
+  function createrLerper(path, divisions) {
+    const geometry = path.createSpacedPointsGeometry( divisions );
 
     return {
-      geometry: geometry,
+      geometry,
 
-      lerp: function lerp( t ) {
-        var point;
-        for ( var i = 0; i < divisions; i++ ) {
-          point = path.getPoint( t * i / divisions );
+      lerp( t ) {
+        for ( let i = 0; i <= divisions; i++ ) {
+          const point = path.getPoint( t * i / divisions );
           geometry.vertices[i].set( point.x, point.y, point.z || 0 );
         }
 
@@ -20,48 +20,48 @@ var createArrow = (function() {
         return geometry;
       },
 
-      getTangent: function getTangent( t ) {
+      getTangent( t ) {
         return path.getTangent( t );
       }
     };
   }
 
-  function createArrow( path, options ) {
-    options = options || {};
+  return function createArrow( path, options = {} ) {
+    const {
+      markerWidth = 1,
+      markerLength = 1,
+      markerShear = 0,
 
-    var markerWidth = options.markerWidth || 1;
-    var markerLength = options.markerLength || 1;
-    var markerShear = options.markerShear || 0;
-
-    var color = options.color || 0;
-    var linewidth = options.linewidth || 1;
-    var divisions = options.divisions || 8;
+      color = 0,
+      linewidth = 1,
+      divisions = 8,
+    } = options;
 
     if ( divisions < 1 ) {
       throw new Error( 'Arrows require at least one division.' );
     }
 
-    var arrow = new THREE.Object3D();
+    const arrow = new THREE.Group();
 
     // Create path.
-    var lerper = lerpPathFn( path, divisions );
-    var lineGeometry = lerper.geometry;
+    const lerper = createrLerper( path, divisions );
+    const lineGeometry = lerper.geometry;
 
     // Cache endpoint vertex.
-    var endpoint = lineGeometry.vertices[ lineGeometry.vertices.length - 1 ];
+    const endpoint = lineGeometry.vertices[ lineGeometry.vertices.length - 1 ];
 
-    var lineMaterial = new THREE.LineBasicMaterial({
-      color: color,
-      linewidth: linewidth
+    const lineMaterial = new THREE.LineBasicMaterial({
+      color,
+      linewidth,
     });
 
-    var line = new THREE.Line( lineGeometry, lineMaterial );
+    const line = new THREE.Line( lineGeometry, lineMaterial );
     arrow.add( line );
 
     // Create marker.
     // Marker shape.
-    var markerShape = new THREE.Shape();
-    var halfWidth = markerWidth / 2;
+    const markerShape = new THREE.Shape();
+    const halfWidth = markerWidth / 2;
 
     markerShape.moveTo( 0, markerLength );
 
@@ -71,7 +71,7 @@ var createArrow = (function() {
       markerShape.lineTo(  halfWidth, 0 );
     } else {
       // Sheared triangle.
-      var shear = -Math.tan( markerShear ) * markerWidth;
+      const shear = -Math.tan( markerShear ) * markerWidth;
       markerShape.lineTo( -halfWidth, shear );
       markerShape.lineTo( 0, 0 );
       markerShape.lineTo( halfWidth, shear );
@@ -79,32 +79,30 @@ var createArrow = (function() {
 
     markerShape.lineTo( 0, markerLength );
 
-    var markerGeometry = new THREE.ShapeGeometry( markerShape );
+    const markerGeometry = new THREE.ShapeGeometry( markerShape );
     // Rotate to XZ plane.
     markerGeometry.rotateX( -Math.PI / 2 );
 
-    var markerMaterial = new THREE.MeshBasicMaterial({
-      color: color,
-      side: THREE.DoubleSide
+    const markerMaterial = new THREE.MeshBasicMaterial({
+      color,
+      side: THREE.DoubleSide,
     });
 
-    var markerMesh = new THREE.Mesh( markerGeometry, markerMaterial );
+    const markerMesh = new THREE.Mesh( markerGeometry, markerMaterial );
 
-    function setMarkerTransform( t ) {
-      t = t !== undefined ? t : 1;
-
+    function setMarkerTransform( t = 1 ) {
       // Translate to endpoint.
       markerMesh.position.copy( endpoint );
 
       // Rotate to tangent.
-      var tangent = lerper.getTangent( t );
+      const tangent = lerper.getTangent( t );
       markerMesh.rotation.y = -Math.atan2( tangent.x, tangent.y );
     }
 
     arrow.add( markerMesh );
 
-    arrow.lerp = function( t ) {
-      t = t || 0;
+    arrow.lerp = function( t = 0 ) {
+      t = THREE.Math.clamp( t, 0, 1 );
       // Resample line geometry.
       lerper.lerp( t );
       lineGeometry.rotateX( -Math.PI / 2 );
@@ -115,8 +113,5 @@ var createArrow = (function() {
     // Initial lerp.
     arrow.lerp( 1 );
     return arrow;
-  }
-
-  return createArrow;
-
-}) ();
+  };
+}());
