@@ -116,42 +116,43 @@ function createSmokestackGeometry() {
    *
    *   |- width -|
    *      ____      ---
-   *    /      \     |
-   *   |        |    |
-   *   |        |  length
-   *   |        |    |
-   *   |        |    |
+   *    /      \     |         ___
+   *   |        |    |          |
+   *   |        |  length  innerLength
+   *   |        |    |          |
+   *   |        |    |         _|_
    *    \ ____ /    ---
    *
    */
   const width = 0.4;
-  const length = 0.35;
+  const length = 0.75;
+  const innerLength = length - width;
 
   const halfWidth = width / 2;
-  const halfLength = length / 2;
+  const halfInnerLength = innerLength / 2;
 
   const shape = new THREE.Shape();
 
-  // Counter-clockwise starting from top-right.
+  // Counter-clockwise starting from bottom-right.
   // NOTE: Arc API is different from that of canvas.
-  shape.moveTo( halfWidth, -halfLength );
+  shape.moveTo( halfWidth, -halfInnerLength );
   shape.arc(
     -halfWidth,
-    -(halfLength - halfWidth),
+    0,
     halfWidth,
     Math.PI, 2 * Math.PI
   );
 
-  shape.lineTo( -halfWidth, halfLength );
+  shape.lineTo( halfWidth, halfInnerLength );
   shape.arc(
-    halfWidth,
-    halfLength - halfWidth,
+    -halfWidth,
+    0,
     halfWidth,
     0, Math.PI
   );
 
   // Close path.
-  shape.lineTo( halfWidth, -halfLength );
+  shape.closePath();
 
   const geometry = new THREE.ExtrudeGeometry( shape, {
     amount: 1,
