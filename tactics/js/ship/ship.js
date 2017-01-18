@@ -8,8 +8,8 @@ function createShipGeometry() {
 
   // Dreadnought-class ships have a length of 160 meters and a beam of 25
   // meters.
-  const width = 2.5;
-  const length = 16;
+  const width = 25;
+  const length = 160;
 
   const halfWidth = width / 2;
   const halfLength = length / 2;
@@ -41,7 +41,7 @@ function createShipGeometry() {
   );
 
   return new THREE.ExtrudeGeometry( shape, {
-    amount: 0.35,
+    amount: 3.5,
     curveSegments: 32,
     bevelEnabled: false
   });
@@ -52,10 +52,10 @@ function createGunGeometry() {
   'use strict';
 
   // 14 meter barrel length.
-  const gunLength = 1.4;
-  const gunOffsetX = 0.1;
-  const gunOffsetY = 0.2;
-  const gunRadius = 0.03;
+  const gunLength = 14;
+  const gunOffsetX = 1;
+  const gunOffsetY = 2;
+  const gunRadius = 0.3;
 
   const geometry = new THREE.Geometry();
 
@@ -70,8 +70,8 @@ function createGunGeometry() {
 
 /* exported createTurretGeometry */
 function createTurretGeometry() {
-  const turretRadius = 0.5;
-  const turretHeight = 0.2;
+  const turretRadius = 5;
+  const turretHeight = 2;
 
   const turretShape = new THREE.Shape();
   turretShape.moveTo( 0, turretRadius );
@@ -96,7 +96,7 @@ function createTurretGeometry() {
 
   const geometry = new THREE.ExtrudeGeometry( turretShape, {
     amount: 0,
-    bevelSize: 0.06,
+    bevelSize: 0.6,
     bevelThickness: turretHeight,
     bevelSegments: 1
   });
@@ -124,8 +124,8 @@ function createSmokestackGeometry() {
    *    \ ____ /    ---
    *
    */
-  const width = 0.4;
-  const length = 0.75;
+  const width = 4;
+  const length = 7.5;
   const innerLength = length - width;
 
   const halfWidth = width / 2;
@@ -155,7 +155,7 @@ function createSmokestackGeometry() {
   shape.closePath();
 
   const geometry = new THREE.ExtrudeGeometry( shape, {
-    amount: 1,
+    amount: 10,
     bevelEnabled: false,
     curveSegments: 4
   });
@@ -192,8 +192,8 @@ const createFrontDeckGeometry = (function() {
     const shape = new THREE.Shape();
 
     // NOTE: These values are the same as the ship geometry.
-    const width = 2.5;
-    const length = 16;
+    const width = 25;
+    const length = 160;
 
     const halfWidth = width / 2;
     const halfLength = length / 2;
@@ -241,7 +241,7 @@ const createFrontDeckGeometry = (function() {
     );
 
     const geometry = new THREE.ExtrudeGeometry( shape, {
-      amount: 0.2,
+      amount: 2,
       bevelEnabled: false
     });
 

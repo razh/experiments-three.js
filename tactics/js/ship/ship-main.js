@@ -1,12 +1,13 @@
-/*global
-THREE,
-createShipGeometry,
-createGunGeometry,
-createTurretGeometry,
-createSmokestackGeometry,
+/*
+global
+THREE
+createShipGeometry
+createGunGeometry
+createTurretGeometry
+createSmokestackGeometry
 createFrontDeckGeometry
 */
-(function( window, document, undefined ) {
+(function() {
   'use strict';
 
   var keys = [];
@@ -38,7 +39,7 @@ createFrontDeckGeometry
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight );
-    camera.position.set( 0, 3, 16 );
+    camera.position.set( 0, 32, 160 );
     scene.add( camera );
 
     controls = new THREE.OrbitControls( camera, renderer.domElement );
@@ -52,18 +53,18 @@ createFrontDeckGeometry
     shipMesh.rotation.x = -Math.PI / 2;
     scene.add( shipMesh );
 
-    var shipHeight = 0.35;
+    var shipHeight = 3.5;
 
     // (x, y) coordinates.
     var turretPositions = [
       // Aft turrets.
-      [ 0, 4 ],
-      [ 0, 1.2 ],
+      [ 0, 40 ],
+      [ 0, 12 ],
       // Wing turrets.
-      [ 0.7, -1.3 ],
-      [ -0.7, -1.3 ],
+      [ 7, -13 ],
+      [ -7, -13 ],
       // Fore turret.
-      [ 0, -4 ]
+      [ 0, -40 ]
     ];
 
     turretGeometry = createTurretGeometry();
@@ -75,7 +76,7 @@ createFrontDeckGeometry
         turretPositions[i][0],
         turretPositions[i][1],
         // shipHeight + turretHeight / 2.
-        shipHeight + 0.1
+        shipHeight + 1
       );
 
       gunMesh = new THREE.Mesh( gunGeometry, shipMaterial );
@@ -95,7 +96,7 @@ createFrontDeckGeometry
     // (y, z) coordinates.
     var smokestackPositions = [
       [ 0, shipHeight ],
-      [ -2.4, shipHeight ]
+      [ -24, shipHeight ]
     ];
 
     var smokestackGeometry = createSmokestackGeometry();
@@ -115,10 +116,11 @@ createFrontDeckGeometry
     shipMesh.add( frontDeckMesh );
 
     light = new THREE.SpotLight( 0xffffff, 1.5 );
-    light.position.set( 4, 6, 16 );
+    light.position.set( 40, 60, 160 );
     light.castShadow = true;
-    light.shadow.camera.near = 6;
-    light.shadow.camera.far = 128;
+    light.shadow.camera.near = 40;
+    light.shadow.camera.far = 1024;
+    light.shadow.mapSize.set( 2048, 2048 );
     scene.add( light );
 
     var shadowCameraHelper = new THREE.CameraHelper( light.shadow.camera );
@@ -157,5 +159,4 @@ createFrontDeckGeometry
   document.addEventListener( 'keyup', function( event ) {
     keys[ event.which ] = false;
   });
-
-}) ( window, document );
+}());
