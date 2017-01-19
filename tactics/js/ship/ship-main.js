@@ -18,13 +18,84 @@ createFrontDeckGeometry
 
   var clock = new THREE.Clock();
 
-  var shipGeometry, shipMaterial, shipMesh;
-  var gunGeometry, gunMesh;
-  var turretGeometry, turretMesh;
-
   var ambient;
   var light;
   var lightSpeed = 8;
+
+  function createShipMesh() {
+    var geometry = createShipGeometry();
+    var material = new THREE.MeshStandardMaterial({
+      color: 0xdddddd,
+      roughness: 0.8
+    });
+
+    var mesh = new THREE.Mesh( geometry, material );
+    mesh.rotation.x = -Math.PI / 2;
+
+    var shipHeight = 3.5;
+
+    // (x, y) coordinates.
+    var turretPositions = [
+      // Aft turrets.
+      [ 0, 40 ],
+      [ 0, 12 ],
+      // Wing turrets.
+      [ 7, -13 ],
+      [ -7, -13 ],
+      // Fore turret.
+      [ 0, -40 ]
+    ];
+
+    var turretGeometry = createTurretGeometry();
+    var gunGeometry = createGunGeometry();
+    for ( var i = 0; i < turretPositions.length; i++ ) {
+      var turretMesh = new THREE.Mesh( turretGeometry, material );
+      turretMesh.castShadow = true;
+      turretMesh.position.set(
+        turretPositions[i][0],
+        turretPositions[i][1],
+        // shipHeight + turretHeight / 2.
+        shipHeight + 1
+      );
+
+      var gunMesh = new THREE.Mesh( gunGeometry, material );
+      gunMesh.castShadow = true;
+      gunMesh.receiveShadow = true;
+      gunMesh.position.y = shipHeight;
+      turretMesh.add( gunMesh );
+
+      // Aft turrets.
+      if ( i > 1 ) {
+        turretMesh.rotation.z = Math.PI;
+      }
+
+      mesh.add( turretMesh );
+    }
+
+    // (y, z) coordinates.
+    var smokestackPositions = [
+      [ 0, shipHeight ],
+      [ -24, shipHeight ]
+    ];
+
+    var smokestackGeometry = createSmokestackGeometry();
+    var smokestackMesh;
+    for ( i = 0; i < smokestackPositions.length; i++ ) {
+      smokestackMesh = new THREE.Mesh( smokestackGeometry, material );
+      smokestackMesh.castShadow = true;
+      smokestackMesh.receiveShadow = true;
+      smokestackMesh.position.y = smokestackPositions[i][0];
+      smokestackMesh.position.z = smokestackPositions[i][1];
+      mesh.add( smokestackMesh );
+    }
+
+    var frontDeckGeometry = createFrontDeckGeometry();
+    var frontDeckMesh = new THREE.Mesh( frontDeckGeometry, material );
+    frontDeckMesh.position.z = shipHeight;
+    mesh.add( frontDeckMesh );
+
+    return mesh;
+  }
 
   function init() {
     container = document.createElement( 'div' );
@@ -44,76 +115,7 @@ createFrontDeckGeometry
 
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
-    shipGeometry = createShipGeometry();
-    shipMaterial = new THREE.MeshPhongMaterial({
-      color: 0xdddddd,
-      specular: 0xffffff
-    });
-    shipMesh = new THREE.Mesh( shipGeometry, shipMaterial );
-    shipMesh.rotation.x = -Math.PI / 2;
-    scene.add( shipMesh );
-
-    var shipHeight = 3.5;
-
-    // (x, y) coordinates.
-    var turretPositions = [
-      // Aft turrets.
-      [ 0, 40 ],
-      [ 0, 12 ],
-      // Wing turrets.
-      [ 7, -13 ],
-      [ -7, -13 ],
-      // Fore turret.
-      [ 0, -40 ]
-    ];
-
-    turretGeometry = createTurretGeometry();
-    gunGeometry = createGunGeometry();
-    for ( var i = 0; i < turretPositions.length; i++ ) {
-      turretMesh = new THREE.Mesh( turretGeometry, shipMaterial );
-      turretMesh.castShadow = true;
-      turretMesh.position.set(
-        turretPositions[i][0],
-        turretPositions[i][1],
-        // shipHeight + turretHeight / 2.
-        shipHeight + 1
-      );
-
-      gunMesh = new THREE.Mesh( gunGeometry, shipMaterial );
-      gunMesh.castShadow = true;
-      gunMesh.receiveShadow = true;
-      gunMesh.position.y = shipHeight;
-      turretMesh.add( gunMesh );
-
-      // Aft turrets.
-      if ( i > 1 ) {
-        turretMesh.rotation.z = Math.PI;
-      }
-
-      shipMesh.add( turretMesh );
-    }
-
-    // (y, z) coordinates.
-    var smokestackPositions = [
-      [ 0, shipHeight ],
-      [ -24, shipHeight ]
-    ];
-
-    var smokestackGeometry = createSmokestackGeometry();
-    var smokestackMesh;
-    for ( i = 0; i < smokestackPositions.length; i++ ) {
-      smokestackMesh = new THREE.Mesh( smokestackGeometry, shipMaterial );
-      smokestackMesh.castShadow = true;
-      smokestackMesh.receiveShadow = true;
-      smokestackMesh.position.y = smokestackPositions[i][0];
-      smokestackMesh.position.z = smokestackPositions[i][1];
-      shipMesh.add( smokestackMesh );
-    }
-
-    var frontDeckGeometry = createFrontDeckGeometry();
-    var frontDeckMesh = new THREE.Mesh( frontDeckGeometry, shipMaterial );
-    frontDeckMesh.position.z = shipHeight;
-    shipMesh.add( frontDeckMesh );
+    scene.add( createShipMesh() );
 
     light = new THREE.SpotLight( 0xffffff, 1.5 );
     light.position.set( 40, 60, 160 );
