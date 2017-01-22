@@ -24,7 +24,7 @@
     "three.meshline": "1.0.1"
   },
   "devDependencies": {
-    "eslint": "^3.13.0",
-    "jest-cli": "^18.1.0"
+    "eslint": "^3.14.0",
+    "jest": "^18.1.0"
   }
 }
