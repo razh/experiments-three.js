@@ -17,6 +17,7 @@ setXBoxVertices
 setYBoxVertices
 setZBoxVertices
 copyBoxVertices
+centroidBox
 alignBox
 relativeAlignBox
 lerpBoxVertices
@@ -184,6 +185,7 @@ scaleBoxVertices
   const reargSetY = rearg( setYBoxVertices );
   const reargSetZ = rearg( setZBoxVertices );
   const reargCopy = rearg( copyBoxVertices );
+  const reargCentroid = rearg( centroidBox );
   const reargAlign = rearg( alignBox );
   const reargColors = rearg( applyBoxVertexColors );
   const reargFaceColors = rearg( applyBoxFaceVertexColors );
@@ -221,6 +223,7 @@ scaleBoxVertices
           'setY',
           'setZ',
           'copy',
+          'centroid',
           'align',
           'relativeAlign',
           'lerp',
@@ -249,6 +252,7 @@ scaleBoxVertices
           reargSetY,
           reargSetZ,
           reargCopy,
+          reargCentroid,
           reargAlign,
           reargRelativeAlign,
           reargLerp,
