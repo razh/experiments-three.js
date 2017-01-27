@@ -27,6 +27,12 @@ applyBoxFaceVertexColors
 defaultVertexColors
 translateBoxVertices
 scaleBoxVertices
+translateXBoxVertices
+translateYBoxVertices
+translateZBoxVertices
+scaleXBoxVertices
+scaleYBoxVertices
+scaleZBoxVertices
 */
 
 (function() {
@@ -234,6 +240,13 @@ scaleBoxVertices
   const reargScaleVertices = rearg( scaleBoxVertices );
   const reargLerp = rearg( lerpBoxVertices );
 
+  const reargTranslateXVertices = rearg( translateXBoxVertices );
+  const reargTranslateYVertices = rearg( translateYBoxVertices );
+  const reargTranslateZVertices = rearg( translateZBoxVertices );
+  const reargScaleXVertices = rearg( scaleXBoxVertices );
+  const reargScaleYVertices = rearg( scaleYBoxVertices );
+  const reargScaleZVertices = rearg( scaleZBoxVertices );
+
   function reargRelativeAlign( alignmentA ) {
     return ( geometryB, alignmentB ) => {
       return rearg( relativeAlignBox )( alignmentA, geometryB, alignmentB );
@@ -275,6 +288,18 @@ scaleBoxVertices
           '$t',
           '$scale',
           '$s',
+          '$translateX',
+          '$tx',
+          '$translateY',
+          '$ty',
+          '$translateZ',
+          '$tz',
+          '$scaleX',
+          '$sx',
+          '$scaleY',
+          '$sy',
+          '$scaleZ',
+          '$sz',
         ]
           .concat( geometryMethods )
           .concat( shorthandGeometryMethods )
@@ -306,6 +331,18 @@ scaleBoxVertices
           reargTranslateVertices,
           reargScaleVertices,
           reargScaleVertices,
+          reargTranslateXVertices,
+          reargTranslateXVertices,
+          reargTranslateYVertices,
+          reargTranslateYVertices,
+          reargTranslateZVertices,
+          reargTranslateZVertices,
+          reargScaleXVertices,
+          reargScaleXVertices,
+          reargScaleYVertices,
+          reargScaleYVertices,
+          reargScaleZVertices,
+          reargScaleZVertices,
         ]
           .concat( reargGeometryMethods )
           .concat( reargGeometryMethods )

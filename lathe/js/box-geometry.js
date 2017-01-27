@@ -47,6 +47,65 @@ window.translateBoxVertices = transformBoxVertices( 'add' );
 window.scaleBoxVertices = transformBoxVertices( 'multiply' );
 window.lerpBoxVertices = transformBoxVertices( 'lerp' );
 
+// Per-axis THREE.BoxGeometry methods.
+const transformAxisBoxVertices = (function() {
+  'use strict';
+
+  const vector = new THREE.Vector3();
+
+  return ( method, identity = new THREE.Vector3() ) => {
+    return axis => {
+      function baseTransformAxis(
+        geometry,
+        key,
+        delta = identity.getComponent( axis ),
+        ...args
+      ) {
+        const indices = VertexIndices[ key.toUpperCase() ];
+
+        if ( Array.isArray( indices ) ) {
+          vector
+            .copy( identity )
+            .setComponent( axis, delta );
+
+          indices.forEach( index =>
+            geometry.vertices[ index ][ method ]( vector, ...args )
+          );
+        }
+
+        return geometry;
+      }
+
+      return function transformAxis( geometry, vectors, ...args ) {
+        if ( typeof vectors === 'string' ) {
+          const delta = args.shift();
+          return baseTransformAxis( geometry, vectors, delta, ...args );
+        } else if ( typeof vectors === 'object' ) {
+          Object.keys( vectors ).forEach( key => {
+            const delta = vectors[ key ];
+            baseTransformAxis( geometry, key, delta, ...args );
+          });
+        }
+
+        return geometry;
+      };
+    };
+  };
+}());
+
+const translateAxisBoxVertices = transformAxisBoxVertices( 'add' );
+
+window.translateXBoxVertices = translateAxisBoxVertices( 0 );
+window.translateYBoxVertices = translateAxisBoxVertices( 1 );
+window.translateZBoxVertices = translateAxisBoxVertices( 2 );
+
+const scaleAxisBoxVertices = transformAxisBoxVertices( 'multiply', new THREE.Vector3( 1, 1, 1 ) );
+
+window.scaleXBoxVertices = scaleAxisBoxVertices( 0 );
+window.scaleYBoxVertices = scaleAxisBoxVertices( 1 );
+window.scaleZBoxVertices = scaleAxisBoxVertices( 2 );
+
+// Call THREE.BoxGeometry methods directly.
 function callBoxVertices( method ) {
   'use strict';
 
@@ -82,6 +141,7 @@ window.setYBoxVertices = callBoxVertices( 'setY' );
 window.setZBoxVertices = callBoxVertices( 'setZ' );
 window.copyBoxVertices = callBoxVertices( 'copy' );
 
+//  Get the first matching THREE.BoxGeometry vertex.
 function getBoxVertex( geometry, key ) {
   'use strict';
 
