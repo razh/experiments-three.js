@@ -154,10 +154,10 @@ scaleBoxVertices
     window.history.replaceState( '', '', query );
   }
 
-  function reargMethod( key ) {
+  function reargMethod( method ) {
     return ( ...args ) => {
       return geometry => {
-        geometry[ key ]( ...args );
+        geometry[ method ]( ...args );
         return geometry;
       };
     };
@@ -174,6 +174,46 @@ scaleBoxVertices
   const shorthandGeometryMethods = [ 'rx', 'ry', 'rz', 't', 's' ];
 
   const reargGeometryMethods = geometryMethods.map( reargMethod );
+
+  function reargAxisMethod( method, identity = new THREE.Vector3() ) {
+    const vector = new THREE.Vector3();
+
+    return axis => {
+      return ( value = identity.getComponent( axis ) ) => {
+        vector
+          .copy( identity )
+          .setComponent( axis, value );
+
+        return geometry => {
+          geometry[ method ]( ...vector.toArray() );
+          return geometry;
+        };
+      };
+    };
+  }
+
+  const geometryAxisMethods = [
+    'translateX',
+    'translateY',
+    'translateZ',
+    'scaleX',
+    'scaleY',
+    'scaleZ',
+  ];
+
+  const shorthandGeometryAxisMethods = [ 'tx', 'ty', 'tz', 'sx', 'sy', 'sz' ];
+
+  const translateGeometryAxis = reargAxisMethod( 'translate' );
+  const scaleGeometryAxis = reargAxisMethod( 'scale', new THREE.Vector3( 1, 1, 1 ) );
+
+  const reargGeometryAxisMethods = [
+    translateGeometryAxis( 0 ),
+    translateGeometryAxis( 1 ),
+    translateGeometryAxis( 2 ),
+    scaleGeometryAxis( 0 ),
+    scaleGeometryAxis( 1 ),
+    scaleGeometryAxis( 2 ),
+  ];
 
   function rearg( fn ) {
     return ( ...args ) => geometry => fn( geometry, ...args );
@@ -237,7 +277,9 @@ scaleBoxVertices
           '$s',
         ]
           .concat( geometryMethods )
-          .concat( shorthandGeometryMethods ),
+          .concat( shorthandGeometryMethods )
+          .concat( geometryAxisMethods )
+          .concat( shorthandGeometryAxisMethods ),
         values: [
           THREE,
           createGeometryWrapper,
@@ -266,7 +308,9 @@ scaleBoxVertices
           reargScaleVertices,
         ]
           .concat( reargGeometryMethods )
-          .concat( reargGeometryMethods ),
+          .concat( reargGeometryMethods )
+          .concat( reargGeometryAxisMethods )
+          .concat( reargGeometryAxisMethods ),
       };
 
       const fn = new Function( args.keys, event.target.value );
