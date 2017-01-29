@@ -8,10 +8,10 @@ frame = (size = 8, thickness = 1) => {
     corner: [thickness, thickness, thickness],
   }
 
-  const top = _(dimensions.y, t(0, radius, 0))
-  const right = _(dimensions.x, t(radius, 0, 0))
-  const bottom = _(dimensions.y, t(0, -radius, 0))
-  const left = _(dimensions.x, t(-radius, 0, 0))
+  const top = _(dimensions.y, ty(radius))
+  const right = _(dimensions.x, tx(radius))
+  const bottom = _(dimensions.y, ty(-radius))
+  const left = _(dimensions.x, tx(-radius))
 
   const topRight = _(dimensions.corner, t(radius, radius, 0))
   const bottomRight = _(dimensions.corner, t(radius, -radius, 0))
@@ -38,24 +38,24 @@ frameMiter = (size = 8, thickness = 1) => {
     y: [size, thickness, thickness],
   }
 
-  const top = _(dimensions.y, t(0, radius, 0), $t({
-    px_ny: { x: -thickness },
-    nx_ny: { x: thickness },
+  const top = _(dimensions.y, ty(radius), $tx({
+    px_ny: -thickness,
+    nx_ny: thickness,
   }))
 
-  const right = _(dimensions.x, t(radius, 0, 0), $t({
-    nx_py: { y: -thickness },
-    nx_ny: { y: thickness },
+  const right = _(dimensions.x, tx(radius), $ty({
+    nx_py: -thickness,
+    nx_ny: thickness,
   }))
 
-  const bottom = _(dimensions.y, t(0, -radius, 0), $t({
-    px_py: { x: -thickness },
-    nx_py: { x: thickness },
+  const bottom = _(dimensions.y, ty(-radius), $tx({
+    px_py: -thickness,
+    nx_py: thickness,
   }))
 
-  const left = _(dimensions.x, t(-radius, 0, 0), $t({
-    px_py: { y: -thickness },
-    px_ny: { y: thickness },
+  const left = _(dimensions.x, tx(-radius), $ty({
+    px_py: -thickness,
+    px_ny: thickness,
   }))
 
   return [
@@ -67,6 +67,6 @@ frameMiter = (size = 8, thickness = 1) => {
 }
 
 return [
-  ...frame().map(t(0, 0, 4)),
-  ...frameMiter().map(t(0, 0, -4)),
+  ...frame().map(tz(4)),
+  ...frameMiter().map(tz(-4)),
 ]

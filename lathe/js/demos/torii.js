@@ -5,12 +5,12 @@ nemaki = _ (
 
 leftNemaki = _(
   nemaki.clone()
-  , t(-6, 0, 0)
+  , tx(-6)
 )
 
 rightNemaki = _(
   nemaki.clone()
-  , t(6, 0, 0)
+  , tx(6)
 )
 
 hashira = _(
@@ -22,22 +22,22 @@ hashira = _(
 
 leftHashira = _(
   hashira.clone()
-  , t(-6, 0, 0)
+  , tx(-6)
 )
 
 rightHashira = _(
   hashira.clone()
-  , t(6, 0, 0)
+  , tx(6)
 )
 
 nuki = _(
   [18, 0.6, 0.5]
   , defaultColor('tomato')
   , relativeAlign('py')(hashira, 'py')
-  , t(0, -2, 0)
-  , $t({
-    px_ny: { x: -0.3 },
-    nx_ny: { x: 0.3 },
+  , ty(-2)
+  , $tx({
+    px_ny: -0.3,
+    nx_ny: 0.3,
   })
 )
 
@@ -51,22 +51,22 @@ shimaki = _(
   [18, 0.6, 1]
   , defaultColor('tomato')
   , relativeAlign('ny')(gakuzuka, 'py')
-  , $t({
-    px_ny: { x: -0.5 },
-    nx_ny: { x: 0.5 },
+  , $tx({
+    px_ny: -0.5,
+    nx_ny: 0.5,
   })
-  , $s({ ny: [1, 1, 0.9] })
+  , $sz('ny', 0.9)
 )
 
 kasagi = _(
   [24, 1.4, 2]
   , defaultColor('tomato')
   , relativeAlign('ny')(shimaki, 'py')
-  , $t({
-    px_ny: { x: -1 },
-    nx_ny: { x: 1 },
+  , $tx({
+    px_ny: -1,
+    nx_ny: 1,
   })
-  , $s({ ny: [1, 1, 0.8] })
+  , $sz('ny', 0.8)
 )
 
 torii = [

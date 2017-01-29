@@ -11,37 +11,37 @@ footRight = _(foot.clone(), translate(-4, 0, 1.2))
 lowerLeg = _(
   [1.8, 14, 1.8]
   , relativeAlign('ny')(foot, 'py')
-  , translate(0, spacer, 0)
+  , translateY(spacer)
   )
 
-lowerLegLeft = _(lowerLeg.clone(), translate(4, 0, 0))
-lowerLegRight = _(lowerLeg.clone(), translate(-4, 0, 0))
+lowerLegLeft = _(lowerLeg.clone(), translateX(4))
+lowerLegRight = _(lowerLeg.clone(), translateX(-4))
 
 upperLeg = _(
   [2, 14, 2]
   , relativeAlign('ny')(lowerLeg, 'py')
-  , translate(0, spacer, 0)
+  , translateY(spacer)
   )
 
-upperLegLeft = _(upperLeg.clone(), translate(4, 0, 0))
-upperLegRight = _(upperLeg.clone(), translate(-4, 0, 0))
+upperLegLeft = _(upperLeg.clone(), translateX(4))
+upperLegRight = _(upperLeg.clone(), translateX(-4))
 
 hips = _(
   [8, 4.8, 3.2]
   , relativeAlign('ny')(upperLeg, 'py')
-  , translate(0, spacer, 0)
+  , translateY(spacer)
   )
 
 chest = _(
   [11, 16, 4]
   , relativeAlign('ny')(hips, 'py')
-  , translate(0, spacer, 0)
+  , translateY(spacer)
   )
 
 head = _(
   [4, 6, 4]
   , relativeAlign('ny')(chest, 'py')
-  , translate(0, spacer, 0)
+  , translateY(spacer)
   )
 
 upperArm = _(
@@ -51,13 +51,13 @@ upperArm = _(
 upperArmLeft = _(
   upperArm.clone()
   , relativeAlign('px')(chest, 'nx')
-  , translate(-spacer, 0, 0)
+  , translateX(-spacer)
   )
 
 upperArmRight = _(
   upperArm.clone()
   , relativeAlign('nx')(chest, 'px')
-  , translate(spacer, 0, 0)
+  , translateX(spacer)
   )
 
 lowerArm = _(
@@ -67,13 +67,13 @@ lowerArm = _(
 lowerArmLeft = _(
   lowerArm.clone()
   , relativeAlign('py')(upperArmLeft, 'ny')
-  , translate(0, -spacer, 0)
+  , translateY(-spacer)
   )
 
 lowerArmRight = _(
   lowerArm.clone()
   , relativeAlign('py')(upperArmRight, 'ny')
-  , translate(0, -spacer, 0)
+  , translateY(-spacer)
   )
 
 hand = _(
@@ -83,13 +83,13 @@ hand = _(
 handLeft = _(
   hand.clone()
   , relativeAlign('py')(lowerArmLeft, 'ny')
-  , translate(0, -spacer, 0)
+  , translateY(-spacer)
   )
 
 handRight = _(
   hand.clone()
   , relativeAlign('py')(lowerArmRight, 'ny')
-  , translate(0, -spacer, 0)
+  , translateY(-spacer)
   )
 
 body = [
