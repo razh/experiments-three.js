@@ -203,6 +203,30 @@ lerp(key: string, vector: Vector, alpha: number)
 lerp(vectors: { [key: string]: Vector }, alpha: number)
 
 relativeLerp(keyA: string, alpha: number)(geometry: THREE.Geometry, keyB: string)
+
+$translateX(key: string, x: number)
+$translateX(vectors: { [key: string]: number })
+// alias $tx()
+
+$translateY(key: string, y: number)
+$translateY(vectors: { [key: string]: number })
+// alias $ty()
+
+$translateZ(key: string, z: number)
+$translateZ(vectors: { [key: string]: number })
+// alias $tz()
+
+$scaleX(key: string, x: number)
+$scaleX(vectors: { [key: string]: number })
+// alias $sx()
+
+$scaleY(key: string, y: number)
+$scaleY(vectors: { [key: string]: number })
+// alias $sy()
+
+$scaleZ(key: string, z: number)
+$scaleZ(vectors: { [key: string]: number })
+// alias $sz()
           </code>
         </pre>
       </dd>
