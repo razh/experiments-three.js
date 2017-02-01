@@ -97,6 +97,11 @@
       left: 1rem;
       font-family: var(--font-family-monospace);
     }
+
+    /* Base16 Ocean Dark functions */
+    t-fn {
+      color: #8fa1b3;
+    }
   </style>
 </head>
 <body>
@@ -114,7 +119,7 @@
   <div class="help">
     <div class="help-header">Help</div>
     <dl class="help-content">
-      <dt>_(dimensions, ...transforms)</dt>
+      <dt><t-fn>_</t-fn>(dimensions, ...transforms)</dt>
       <dd>
         Box geometry wrapper
         <dl>
@@ -126,7 +131,7 @@
         </dl>
       </dd>
 
-      <dt>$$(geometries)</dt>
+      <dt><t-fn>$$</t-fn>(geometries)</dt>
       <dd>
         Merge geometries
         <dl>
@@ -146,87 +151,87 @@ type Vector =
   { x?: number, y?: number, z?: number } |
   number
 
-vertex(key: string): THREE.Vector3
+<t-fn>vertex</t-fn>(key: string): THREE.Vector3
 
-set(key: string, x: number, y: number, z: number)
+<t-fn>set</t-fn>(key: string, x: number, y: number, z: number)
 
-setX(key: string, x: number)
-setX(vectors: { [key: string]: number })
+<t-fn>setX</t-fn>(key: string, x: number)
+<t-fn>setX</t-fn>(vectors: { [key: string]: number })
 
-setY(key: string, y: number)
-setY(vectors: { [key: string]: number })
+<t-fn>setY</t-fn>(key: string, y: number)
+<t-fn>setY</t-fn>(vectors: { [key: string]: number })
 
-setZ(key: string, z: number)
-setZ(vectors: { [key: string]: number })
+<t-fn>setZ</t-fn>(key: string, z: number)
+<t-fn>setZ</t-fn>(vectors: { [key: string]: number })
 
-copy(key: string, vector: THREE.Vector3)
-copy(vectors: { [key: string]: THREE.Vector3 })
+<t-fn>copy</t-fn>(key: string, vector: THREE.Vector3)
+<t-fn>copy</t-fn>(vectors: { [key: string]: THREE.Vector3 })
 
-centroid(key: string): THREE.Vector3
+<t-fn>centroid</t-fn>(key: string): THREE.Vector3
 
-align(key: string)
+<t-fn>align</t-fn>(key: string)
 
-relativeAlign(keyA: string)(geometry: THREE.Geometry, keyB: string)
+<t-fn>relativeAlign</t-fn>(keyA: string)(geometry: THREE.Geometry, keyB: string)
 
-color(key: string, color: Color)
-color(vectors: { [key: string]: Color })
+<t-fn>color</t-fn>(key: string, color: Color)
+<t-fn>color</t-fn>(vectors: { [key: string]: Color })
 
-faceColor(key: string, color: Color)
-faceColor(vectors: { [key: string]: Color })
+<t-fn>faceColor</t-fn>(key: string, color: Color)
+<t-fn>faceColor</t-fn>(vectors: { [key: string]: Color })
 
-defaultColor(color: Color)
+<t-fn>defaultColor</t-fn>(color: Color)
 
-rotateX(angle: number)
-// alias: rx()
+<t-fn>rotateX</t-fn>(angle: number)
+// alias: <t-fn>rx</t-fn>()
 
-rotateY(angle: number)
-// alias: ry()
+<t-fn>rotateY</t-fn>(angle: number)
+// alias: <t-fn>ry</t-fn>()
 
-rotateZ(angle: number)
-// alias: rz()
+<t-fn>rotateZ</t-fn>(angle: number)
+// alias: <t-fn>rz</t-fn>()
 
-translate(x: number, y: number, z: number)
-// alias: t()
+<t-fn>translate</t-fn>(x: number, y: number, z: number)
+// alias: <t-fn>t</t-fn>()
 
-scale(x: number, y: number, z: number)
-// alias: s()
+<t-fn>scale</t-fn>(x: number, y: number, z: number)
+// alias: <t-fn>s</t-fn>()
 
-$translate(key: string, vector: Vector)
-$translate(vectors: { [key: string]: Vector })
-// alias: $t()
+<t-fn>$translate</t-fn>(key: string, vector: Vector)
+<t-fn>$translate</t-fn>(vectors: { [key: string]: Vector })
+// alias: <t-fn>$t</t-fn>()
 
-$scale(key: string, vector: Vector)
-$scale(vectors: { [key: string]: Vector })
-// alias: $s()
+<t-fn>$scale</t-fn>(key: string, vector: Vector)
+<t-fn>$scale</t-fn>(vectors: { [key: string]: Vector })
+// alias: <t-fn>$s</t-fn>()
 
-lerp(key: string, vector: Vector, alpha: number)
-lerp(vectors: { [key: string]: Vector }, alpha: number)
+<t-fn>lerp</t-fn>(key: string, vector: Vector, alpha: number)
+<t-fn>lerp</t-fn>(vectors: { [key: string]: Vector }, alpha: number)
 
-relativeLerp(keyA: string, alpha: number)(geometry: THREE.Geometry, keyB: string)
+<t-fn>relativeLerp</t-fn>(keyA: string, alpha: number)(geometry: THREE.Geometry, keyB: string)
 
-$translateX(key: string, x: number)
-$translateX(vectors: { [key: string]: number })
-// alias $tx()
+<t-fn>$translateX</t-fn>(key: string, x: number)
+<t-fn>$translateX</t-fn>(vectors: { [key: string]: number })
+// alias <t-fn>$tx</t-fn>()
 
-$translateY(key: string, y: number)
-$translateY(vectors: { [key: string]: number })
-// alias $ty()
+<t-fn>$translateY</t-fn>(key: string, y: number)
+<t-fn>$translateY</t-fn>(vectors: { [key: string]: number })
+// alias <t-fn>$ty</t-fn>()
 
-$translateZ(key: string, z: number)
-$translateZ(vectors: { [key: string]: number })
-// alias $tz()
+<t-fn>$translateZ</t-fn>(key: string, z: number)
+<t-fn>$translateZ</t-fn>(vectors: { [key: string]: number })
+// alias <t-fn>$tz</t-fn>()
 
-$scaleX(key: string, x: number)
-$scaleX(vectors: { [key: string]: number })
-// alias $sx()
+<t-fn>$scaleX</t-fn>(key: string, x: number)
+<t-fn>$scaleX</t-fn>(vectors: { [key: string]: number })
+// alias <t-fn>$sx</t-fn>()
 
-$scaleY(key: string, y: number)
-$scaleY(vectors: { [key: string]: number })
-// alias $sy()
+<t-fn>$scaleY</t-fn>(key: string, y: number)
+<t-fn>$scaleY</t-fn>(vectors: { [key: string]: number })
+// alias <t-fn>$sy</t-fn>()
 
-$scaleZ(key: string, z: number)
-$scaleZ(vectors: { [key: string]: number })
-// alias $sz()
+<t-fn>$scaleZ</t-fn>(key: string, z: number)
+<t-fn>$scaleZ</t-fn>(vectors: { [key: string]: number })
+// alias <t-fn>$sz</t-fn>()
           </code>
         </pre>
       </dd>
