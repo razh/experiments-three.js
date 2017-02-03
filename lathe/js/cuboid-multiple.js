@@ -186,11 +186,11 @@ scaleZBoxVertices
 
     return axis => {
       return ( value = identity.getComponent( axis ) ) => {
-        vector
-          .copy( identity )
-          .setComponent( axis, value );
-
         return geometry => {
+          vector
+            .copy( identity )
+            .setComponent( axis, value );
+
           geometry[ method ]( ...vector.toArray() );
           return geometry;
         };
