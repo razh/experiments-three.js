@@ -45,11 +45,22 @@ _rotateY = _(d, rotateY(Math.PI / 4))
 _rotateZ = _(d, rotateZ(Math.PI / 4))
 
 // Translate
-_translate = _(d, translate(2, 2, 2))
+_translate = $$([
+  _(d),
+  _(d, translate(2, 2, 2)),
+])
 
 // Scale
-_scale = _(d, scale(1.5, 1.5, 1.5))
+_scale = _(d, scale(2, 2, 2))
 
+// Vertex transforms
+_$translateVertex = _(d, $translate('px_py_pz', { x: 4 }))
+_$translateEdge = _(d, $translate('px_py', { x: 4 }))
+_$translateFace = _(d, $translate('px', { x: 4 }))
+
+_$scaleVertex = _(d, $translate('nx_py_pz', { x: 2 }))
+_$scaleEdge = _(d, $translate('nx_py', { x: 2 }))
+_$scaleFace = _(d, $translate('nx', { x: 2 }))
 
 return [
   _set,
@@ -64,6 +75,32 @@ return [
   _rotateZ,
   _translate,
   _scale,
-].map((geometry, index, array) =>
-  _(geometry, tz(-16 * (index - ((array.length - 1) / 2))))
-)
+  _$translateVertex,
+  _$translateEdge,
+  _$translateFace,
+  _$scaleVertex,
+  _$scaleEdge,
+  _$scaleFace,
+].map((geometry, index, array) => {
+  var sqrt = Math.ceil(Math.sqrt(array.length))
+  var x = Math.floor(index / sqrt)
+  var z = index % sqrt
+
+  var separation = 24
+
+  // Quadrant
+  var circumference = 4 * array.length * separation
+  var radius = circumference / (2 * Math.PI)
+  var angle = (2 * Math.PI) * (index / (4 * array.length))
+  var x = radius * Math.cos(angle)
+  var z = radius * Math.sin(angle)
+
+  x = (-x + radius ) / 2
+  z = -z + 48
+
+  return _
+    ( geometry
+    , tx(x)
+    , tz(z)
+    )
+})
