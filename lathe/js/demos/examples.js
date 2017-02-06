@@ -58,9 +58,9 @@ _$translateVertex = _(d, $translate('px_py_pz', { x: 4 }))
 _$translateEdge = _(d, $translate('px_py', { x: 4 }))
 _$translateFace = _(d, $translate('px', { x: 4 }))
 
-_$scaleVertex = _(d, $translate('nx_py_pz', { x: 2 }))
-_$scaleEdge = _(d, $translate('nx_py', { x: 2 }))
-_$scaleFace = _(d, $translate('nx', { x: 2 }))
+_$scaleVertex = _(d, $scale('nx_py_pz', { x: 2 }))
+_$scaleEdge = _(d, $scale('nx_py', { x: 2 }))
+_$scaleFace = _(d, $scale('nx', { x: 2 }))
 
 return [
   _set,
@@ -84,23 +84,13 @@ return [
 ].map((geometry, index, array) => {
   var sqrt = Math.ceil(Math.sqrt(array.length))
   var x = Math.floor(index / sqrt)
-  var z = index % sqrt
+  var y = index % sqrt
 
-  var separation = 24
-
-  // Quadrant
-  var circumference = 4 * array.length * separation
-  var radius = circumference / (2 * Math.PI)
-  var angle = (2 * Math.PI) * (index / (4 * array.length))
-  var x = radius * Math.cos(angle)
-  var z = radius * Math.sin(angle)
-
-  x = (-x + radius ) / 2
-  z = -z + 48
+  x *= 24
+  y *= -24
 
   return _
     ( geometry
-    , tx(x)
-    , tz(z)
+    , t(x, y, -8)
     )
 })
