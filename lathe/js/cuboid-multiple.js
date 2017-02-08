@@ -414,23 +414,23 @@ scaleZBoxVertices
 
     geometry = new THREE.BoxGeometry( 1, 1, 1 );
 
-    material = new THREE.MeshStandardMaterial({
+    const materialParameters = {
       shading: THREE.FlatShading,
       transparent: true,
       opacity: 0.95,
       vertexColors: THREE.VertexColors,
-    });
+    };
+
+    material = new THREE.MeshStandardMaterial( materialParameters );
 
     debugMaterial = new THREE.MultiMaterial(
      createBoxTextures().map( texture =>
-        new THREE.MeshStandardMaterial({
-          emissive: '#777',
-          emissiveMap: texture,
-          shading: THREE.FlatShading,
-          transparent: true,
-          opacity: 0.95,
-          vertexColors: THREE.VertexColors,
-        })
+        new THREE.MeshStandardMaterial(
+          Object.assign({
+            emissive: '#777',
+            emissiveMap: texture,
+          }, materialParameters
+        ))
       )
     );
 
