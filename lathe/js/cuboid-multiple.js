@@ -61,6 +61,11 @@ scaleZBoxVertices
     mesh.needsUpdate = true;
   }
 
+  function applyTransforms( geometry, ...transforms ) {
+    transforms.forEach( transform => transform( geometry ) );
+    return geometry;
+  }
+
   function createGeometryWrapper( value, ...transforms ) {
     let geometry;
 
@@ -72,8 +77,7 @@ scaleZBoxVertices
       return new THREE.Geometry();
     }
 
-    transforms.forEach( transform => transform( geometry ) );
-    return geometry;
+    return applyTransforms( geometry, ...transforms );
   }
 
   function createGeometryLabels( geometries ) {
@@ -110,15 +114,17 @@ scaleZBoxVertices
     return geometries.map( geometry => defaultVertexColors( geometry ) );
   }
 
-  function mergeGeometries( geometries ) {
+  function mergeGeometries( geometries, ...transforms ) {
     if ( !Array.isArray( geometries ) ) {
-      return geometries;
+      return applyTransform( geometries, ...tranforrms );
     }
 
-    return geometries.reduce( ( a, b ) => {
-      a.merge( b );
-      return a;
-    });
+    return geometries
+      .map( geometry => applyTransforms( geometry, ...transforms ) )
+      .reduce( ( a, b ) => {
+        a.merge( b );
+        return a;
+      });
   }
 
   function computeBoundingBoxes( geometries ) {
