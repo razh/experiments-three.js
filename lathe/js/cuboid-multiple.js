@@ -116,7 +116,7 @@ scaleZBoxVertices
 
   function mergeGeometries( geometries, ...transforms ) {
     if ( !Array.isArray( geometries ) ) {
-      return applyTransform( geometries, ...tranforrms );
+      return applyTransforms( geometries, ...transforms );
     }
 
     return geometries
