@@ -1,5 +1,3 @@
-/* eslint-env es6 */
-
 frame = (size = 8, thickness = 1) => {
   length = size - (2 * thickness)
   radius = (size - thickness) / 2
