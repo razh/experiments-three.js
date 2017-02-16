@@ -7,6 +7,6 @@ return _([10, 120, 11],
     front_left: { x: 2 },
     left_top_front: { z: -3 },
     left_top_back: [1, -2, 3],
-    px_py_pz: [-1, 4, -2]
+    px_py_pz: [-1, 4, -2],
   })
 )
