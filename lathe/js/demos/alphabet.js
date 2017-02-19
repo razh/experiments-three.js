@@ -257,7 +257,7 @@ nine = a([
   [1, 5, 2],
 ])
 
-return [
+chars = {
   A,
   B,
   C,
@@ -284,16 +284,28 @@ return [
   X,
   Y,
   Z,
-  zero,
-  one,
-  two,
-  three,
-  four,
-  five,
-  six,
-  seven,
-  eight,
-  nine,
-].map((geometry, index, array) =>
-  _(geometry, tx(_4 * (index - array.length / 2)))
-)
+  0: zero,
+  1: one,
+  2: two,
+  3: three,
+  4: four,
+  5: five,
+  6: six,
+  7: seven,
+  8: eight,
+  9: nine,
+}
+
+log = string =>
+  string
+    .split('')
+    .map(key => key.toUpperCase())
+    .reduce((array, key, index) => {
+      if (chars[key]) {
+        array.push(_(chars[key].clone(), tx(_4 * (index - string.length / 2))))
+      }
+
+      return array;
+    }, [])
+
+return log('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
