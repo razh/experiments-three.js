@@ -257,6 +257,79 @@ nine = a([
   [1, 5, 2],
 ])
 
+EXCLAMATION_MARK = a([
+  [1, 3, 1],
+  [1, 1, 1, 4],
+])
+
+QUOTATION_MARK = a([
+  [1, 2],
+  [1, 2, 2],
+])
+
+NUMBER_SIGN = a([
+  [1, 5],
+  [1, 1, 1, 1],
+  [1, 1, 1, 3],
+  [1, 5, 2],
+])
+
+APOSTROPHE = a([
+  [1, 1, 0, 1],
+  [1, 1, 1],
+])
+
+LEFT_PARENTHESIS = a([
+  [1, 1, 1],
+  [1, 3, 0, 1],
+  [1, 1, 1, 4],
+])
+
+RIGHT_PARENTHESIS = a([
+  [1, 1, 1],
+  [1, 3, 2, 1],
+  [1, 1, 1, 4],
+])
+
+COMMA = a([
+  [1, 1, 0, 4],
+  [1, 1, 1, 3],
+])
+
+FULL_STOP = a([
+  [1, 1, 1, 4],
+])
+
+COLON = a([
+  [1, 1, 1, 1],
+  [1, 1, 1, 3],
+])
+
+SEMICOLON = a([
+  [1, 1, 1, 1],
+  [1, 1, 1, 3],
+  [1, 1, 0, 4],
+])
+
+QUESTION_MARK = a([
+  [3, 1],
+  [1, 2, 2, 1],
+  [1, 1, 1, 2],
+  [1, 1, 1, 4],
+])
+
+LEFT_SQUARE_BRACKET = a([
+  [1, 5],
+  [1, 1, 1],
+  [1, 1, 1, 4],
+])
+
+RIGHT_SQUARE_BRACKET = a([
+  [1, 1, 1],
+  [1, 1, 1, 4],
+  [1, 5, 2],
+])
+
 chars = {
   A,
   B,
@@ -294,6 +367,19 @@ chars = {
   7: seven,
   8: eight,
   9: nine,
+  '!': EXCLAMATION_MARK,
+  '"': QUOTATION_MARK,
+  '#': NUMBER_SIGN,
+  "'": APOSTROPHE,
+  '(': LEFT_PARENTHESIS,
+  ')': RIGHT_PARENTHESIS,
+  ',': COMMA,
+  '.': FULL_STOP,
+  ':': COLON,
+  ';': SEMICOLON,
+  '?': QUESTION_MARK,
+  '[': LEFT_SQUARE_BRACKET,
+  ']': RIGHT_SQUARE_BRACKET,
 }
 
 log = string =>
