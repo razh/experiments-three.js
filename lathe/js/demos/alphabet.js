@@ -291,9 +291,19 @@ RIGHT_PARENTHESIS = a([
   [1, 1, 1, 4],
 ])
 
+PLUS_SIGN = a([
+  [3, 1, 0, 2],
+  [1, 1, 1, 1],
+  [1, 1, 1, 3],
+])
+
 COMMA = a([
   [1, 1, 0, 4],
   [1, 1, 1, 3],
+])
+
+HYPHEN_MINUS = a([
+  [3, 1, 0, 2],
 ])
 
 FULL_STOP = a([
@@ -307,6 +317,27 @@ COLON = a([
 
 SEMICOLON = a([
   [1, 1, 1, 1],
+  [1, 1, 1, 3],
+  [1, 1, 0, 4],
+])
+
+LESS_THAN_SIGN = a([
+  [1, 1, 2],
+  [1, 1, 1, 1],
+  [1, 1, 0, 2],
+  [1, 1, 1, 3],
+  [1, 1, 2, 4],
+])
+
+EQUALS_SIGN = a([
+  [3, 1, 0, 1],
+  [3, 1, 0, 3],
+])
+
+GREATER_THAN_SIGN = a([
+  [1, 1],
+  [1, 1, 1, 1],
+  [1, 1, 2, 2],
   [1, 1, 1, 3],
   [1, 1, 0, 4],
 ])
@@ -328,6 +359,20 @@ RIGHT_SQUARE_BRACKET = a([
   [1, 1, 1],
   [1, 1, 1, 4],
   [1, 5, 2],
+])
+
+LEFT_CURLY_BRACKET = a([
+  [1, 1, 0, 2],
+  [1, 5, 1],
+  [1, 1, 2],
+  [1, 1, 2, 4],
+])
+
+RIGHT_CURLY_BRACKET = a([
+  [1, 1],
+  [1, 1, 0, 4],
+  [1, 5, 1],
+  [1, 1, 2, 2],
 ])
 
 chars = {
@@ -373,13 +418,20 @@ chars = {
   "'": APOSTROPHE,
   '(': LEFT_PARENTHESIS,
   ')': RIGHT_PARENTHESIS,
+  '+': PLUS_SIGN,
   ',': COMMA,
+  '-': HYPHEN_MINUS,
   '.': FULL_STOP,
   ':': COLON,
   ';': SEMICOLON,
+  '<': LESS_THAN_SIGN,
+  '=': EQUALS_SIGN,
+  '>': GREATER_THAN_SIGN,
   '?': QUESTION_MARK,
   '[': LEFT_SQUARE_BRACKET,
   ']': RIGHT_SQUARE_BRACKET,
+  '{': LEFT_CURLY_BRACKET,
+  '}': RIGHT_CURLY_BRACKET,
 }
 
 log = string =>
