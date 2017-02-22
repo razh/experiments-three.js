@@ -3,6 +3,7 @@ _2 = 2 * _1
 _3 = 3 * _1
 _4 = 4 * _1
 _5 = 5 * _1
+_6 = 6 * _1
 _z = _1
 
 a = parameters => $$(parameters.map(
@@ -436,14 +437,28 @@ chars = {
 
 log = string =>
   string
-    .split('')
-    .map(key => key.toUpperCase())
-    .reduce((array, key, index) => {
-      if (chars[key]) {
-        array.push(_(chars[key].clone(), tx(_4 * (index - string.length / 2))))
-      }
+    .trim()
+    .split('\n')
+    .reduce((array, line, lineIndex) =>
+      array.concat(
+        line
+          .trim()
+          .split('')
+          .map(key => key.toUpperCase())
+          .reduce((charArray, key, charIndex) => {
+            if (chars[key]) {
+              charArray.push(
+                _(
+                  chars[key].clone(),
+                  tx(_4 * (charIndex - line.length / 2)),
+                  ty(-_6 * lineIndex)
+                )
+              )
+            }
 
-      return array;
-    }, [])
+            return charArray;
+          }, [])
+      )
+    , [])
 
 return log('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
