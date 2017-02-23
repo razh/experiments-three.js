@@ -1,10 +1,11 @@
-/*global THREE*/
+/* eslint-env es6 */
+/* global THREE */
 (function() {
   'use strict';
 
   var container;
 
-  var scene, camera, controls, renderer;
+  var scene, camera, renderer;
   var geometry, material, mesh;
 
   var skeletonHelper;
@@ -24,7 +25,7 @@
     camera.position.set( 0, 0, 2 );
     scene.add( camera );
 
-    controls = new THREE.OrbitControls( camera, renderer.domElement );
+    new THREE.OrbitControls( camera, renderer.domElement );
 
     var matrix = new THREE.Matrix4();
     var vector = new THREE.Vector3();
@@ -34,76 +35,75 @@
 
     var angle = Math.PI / 6;
 
-    function Box() {
-      THREE.Object3D.call( this );
+    class Box extends THREE.Object3D {
+      constructor() {
+        super();
 
-      this.position.set( 0, 1, 0 );
+        this.position.set( 0, 1, 0 );
 
-      this.index = 0;
-      this.left  = undefined;
-      this.right = undefined;
-    }
+        this.index = 0;
+        this.left = undefined;
+        this.right = undefined;
+      }
 
-    Box.prototype = Object.create( THREE.Object3D.prototype );
-    Box.prototype.constructor = Box;
+      add( object, direction ) {
+        super.add( object );
 
-    Box.prototype.add = function( object, direction ) {
-      THREE.Object3D.prototype.add.call( this, object );
+        if ( direction === 'left' ) { this.left = object; }
+        if ( direction === 'right' ) { this.right = object; }
+      }
 
-      if ( direction === 'left'  ) { this.left  = object; }
-      if ( direction === 'right' ) { this.right = object; }
-    };
+      createGeometry() {
+        var geometry = boxGeometry.clone();
+        var parent = this.parent;
+        if ( !parent ) {
+          return geometry;
+        }
 
-    Box.prototype.createGeometry = function() {
-      var geometry = boxGeometry.clone();
-      var parent = this.parent;
-      if ( !parent ) {
+        if ( this === parent.left ) { parent.transformLeft(); }
+        if ( this === parent.right ) { parent.transformRight(); }
+
+        geometry.applyMatrix( parent.matrixWorld );
         return geometry;
       }
 
-      if ( this === parent.left  ) { parent.transformLeft();  }
-      if ( this === parent.right ) { parent.transformRight(); }
+      createBone( geometry ) {
+        vector.set( 0, 1, 0 );
 
-      geometry.applyMatrix( parent.matrixWorld );
-      return geometry;
-    };
+        var parent = this.parent;
+        if ( parent ) {
+          if ( this === parent.left ) { parent.transformLeft(); }
+          if ( this === parent.right ) { parent.transformRight(); }
 
-    Box.prototype.createBone = function( geometry ) {
-      vector.set( 0, 1, 0 );
+          vector.applyMatrix4( matrix.extractRotation( parent.matrixWorld ) );
+        }
 
-      var parent = this.parent;
-      if ( parent ) {
-        if ( this === parent.left  ) { parent.transformLeft();  }
-        if ( this === parent.right ) { parent.transformRight(); }
+        var parentIndex = parent && parent.index || 0;
 
-        vector.applyMatrix4( matrix.extractRotation( parent.matrixWorld ) );
+        var index = geometry.bones.push({
+          parent: parentIndex,
+          pos: vector.toArray(),
+          rotq: [ 0, 0, 0, 1 ]
+        }) - 1;
+
+        this.index = index;
+
+        for ( var i = 0, il = boxGeometry.vertices.length; i < il; i++ ) {
+          geometry.skinIndices.push( new THREE.Vector4( parentIndex, 0, 0, 0 ) );
+          geometry.skinWeights.push( new THREE.Vector4( 1, 0, 0, 0 ) );
+        }
       }
 
-      var parentIndex = parent && parent.index || 0;
-
-      var index = geometry.bones.push({
-        parent: parentIndex,
-        pos: vector.toArray(),
-        rotq: [ 0, 0, 0, 1 ]
-      }) - 1;
-
-      this.index = index;
-
-      for ( var i = 0, il = boxGeometry.vertices.length; i < il; i++ ) {
-        geometry.skinIndices.push( new THREE.Vector4( parentIndex, 0, 0, 0 ) );
-        geometry.skinWeights.push( new THREE.Vector4( 1, 0, 0, 0 ) );
+      transformLeft() {
+        this.rotation.z = angle;
+        this.updateMatrixWorld();
       }
-    };
 
-    Box.prototype.transformLeft = function() {
-      this.rotation.z = angle;
-      this.updateMatrixWorld();
-    };
-
-    Box.prototype.transformRight = function() {
-      this.rotation.z = -angle;
-      this.updateMatrixWorld();
-    };
+      transformRight() {
+        this.rotation.z = -angle;
+        this.updateMatrixWorld();
+      }
+    }
 
     var tree = new Box();
     tree.add( new Box(), 'left' );
@@ -175,5 +175,4 @@
 
     renderer.setSize( window.innerWidth, window.innerHeight );
   });
-
-})();
+}());
