@@ -1,28 +1,29 @@
-/*globals THREE*/
-(function( window, document, undefined ) {
+/* eslint-env es6 */
+/* global THREE */
+(function() {
   'use strict';
 
-  var container;
+  let container;
 
-  var scene, camera, renderer;
+  let scene, camera, renderer;
 
-  var planeGeometry, planeMaterial, plane;
-  var sphereGeometry, sphereMaterial, sphere;
+  let planeGeometry, planeMaterial, plane;
+  let sphereGeometry, sphereMaterial, sphere;
 
-  var ikGeometry, ikMaterial, ik;
-  var ikLengths = [ 80, 30, 50, 70, 40 ];
-  var ikLengthsInput = document.querySelector( '#ik-lengths' );
+  let ikGeometry, ikMaterial, ik;
+  let ikLengths = [ 80, 30, 50, 70, 40 ];
+  const ikLengthsInput = document.querySelector( '#ik-lengths' );
   ikLengthsInput.value = ikLengths;
 
-  var EPSILON = 1e-2;
-  var MAX_ITERATIONS = 32;
+  const EPSILON = 1e-2;
+  const MAX_ITERATIONS = 32;
 
   function ikGeometryFromArray( lengths ) {
-    var geometry = new THREE.Geometry();
+    const geometry = new THREE.Geometry();
 
     // Creates a vertical line pointing up from its local origin.
-    geometry.vertices.push( new THREE.Vector3( 0, 0, 0 ) );
-    lengths.reduce(function( z, length ) {
+    geometry.vertices.push( new THREE.Vector3() );
+    lengths.reduce(( z, length ) => {
       z -= length;
       geometry.vertices.push( new THREE.Vector3( 0, 0, z ) );
       return z;
@@ -31,42 +32,36 @@
     return geometry;
   }
 
-  function ikSet( point, line, lengths ) {
-    point = new THREE.Vector3().copy( point );
+  function ikSet( target, line, lengths ) {
+    const point = new THREE.Vector3().copy( point );
 
-    var geometry = line.geometry;
-    var distance = line.position.distanceTo( point );
+    const geometry = line.geometry;
+    const distance = line.position.distanceTo( point );
 
-    var totalLength = lengths.reduce(function( sum, length ) {
-      return sum + length;
-    });
+    const totalLength = lengths.reduce(( sum, length ) => sum + length);
 
     // Enter line coordinate space.
     point.sub( line.position );
 
-    var vertices = geometry.vertices;
-    var count = vertices.length;
-    var iterations = 0;
-    var vi, vj, vf;
-    var di, dj, df;
-    var t;
-    var i, il;
+    const vertices = geometry.vertices;
+    const count = vertices.length;
+    let iterations = 0;
     // Not reachable.
     if ( distance > totalLength ) {
-      for ( i = 0, il = count - 1; i < il; i++ ) {
-        vi = vertices[i];
-        vj = vertices[ i + 1 ];
+      for ( let i = 0; i < count - 1; i++ ) {
+        const vi = vertices[i];
+        const vj = vertices[ i + 1 ];
 
-        di = vi.distanceTo( point );
-        t = lengths[i] / di;
+        const di = vi.distanceTo( point );
+        const t = lengths[i] / di;
 
         vj.lerpVectors( vi, point, t );
       }
     }
     // Reachable.
     else {
-      vf = vertices[ count - 1 ];
-      df = vf.distanceTo( point );
+      const vf = vertices[ count - 1 ];
+      let df = vf.distanceTo( point );
 
       while ( df > EPSILON && iterations < MAX_ITERATIONS ) {
         iterations++;
@@ -75,12 +70,12 @@
         vf.copy( point );
 
         // Stage 1: Forward reaching.
-        for ( i = count - 2; i >= 0; i-- ) {
-          vi = vertices[i];
-          vj = vertices[ i + 1 ];
+        for ( let i = count - 2; i >= 0; i-- ) {
+          const vi = vertices[i];
+          const vj = vertices[ i + 1 ];
 
-          dj = vi.distanceTo( vj );
-          t = lengths[i] / dj;
+          const dj = vi.distanceTo( vj );
+          const t = lengths[i] / dj;
 
           vi.lerpVectors( vj, vi, t );
         }
@@ -89,12 +84,12 @@
         vertices[0].set( 0, 0, 0 );
 
         // Stage 2: Backward reaching.
-        for ( i = 0; i < count - 1; i++ ) {
-          vi = vertices[i];
-          vj = vertices[ i + 1 ];
+        for ( let i = 0; i < count - 1; i++ ) {
+          const vi = vertices[i];
+          const vj = vertices[ i + 1 ];
 
-          dj = vi.distanceTo( vj );
-          t = lengths[i] / dj;
+          const dj = vi.distanceTo( vj );
+          const t = lengths[i] / dj;
 
           vj.lerpVectors( vi, vj, t );
         }
@@ -164,7 +159,7 @@
 
   function onMove( x, y ) {
     // Calculate intersection.
-    var vector = new THREE.Vector3(
+    const vector = new THREE.Vector3(
       ( x / window.innerWidth ) * 2 - 1,
       -( y / window.innerHeight ) * 2 + 1,
       0
@@ -172,12 +167,12 @@
 
     vector.unproject( camera );
 
-    var raycaster = new THREE.Raycaster(
+    const raycaster = new THREE.Raycaster(
       camera.position,
       vector.sub( camera.position ).normalize()
     );
 
-    var intersections = raycaster.intersectObject( plane );
+    const intersections = raycaster.intersectObject( plane );
     if ( intersections[0] ) {
       sphere.position.copy( intersections[0].point );
       ikSet( sphere.position, ik, ikLengths );
@@ -186,16 +181,16 @@
     requestAnimationFrame( animate );
   }
 
-  window.addEventListener( 'mousemove', function( event ) {
+  window.addEventListener( 'mousemove', event => {
     onMove( event.pageX, event.pageY );
   });
 
-  window.addEventListener( 'touchmove', function( event ) {
+  window.addEventListener( 'touchmove', event => {
     event.preventDefault();
     onMove( event.touches[0].pageX, event.touches[0].pageY );
   });
 
-  window.addEventListener( 'wheel', function( event ) {
+  window.addEventListener( 'wheel', event => {
     if ( !event.deltaY ) {
       return;
     }
@@ -208,7 +203,7 @@
     requestAnimationFrame( animate );
   });
 
-  window.addEventListener( 'resize', function() {
+  window.addEventListener( 'resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 
@@ -217,13 +212,11 @@
     requestAnimationFrame( animate );
   });
 
-  ikLengthsInput.addEventListener( 'input', function() {
-    var lengths = ikLengthsInput.value
+  ikLengthsInput.addEventListener( 'input', () => {
+    const lengths = ikLengthsInput.value
       .split( ',' )
       .map( parseFloat )
-      .filter(function( value ) {
-        return value && isFinite( value );
-      });
+      .filter( value => value && isFinite( value ) );
 
     if ( !lengths.length ) {
       return;
@@ -239,5 +232,4 @@
     scene.add( ik );
     requestAnimationFrame( animate );
   });
-
-}) ( window, document );
+}());
