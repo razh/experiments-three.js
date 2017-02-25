@@ -292,6 +292,16 @@ RIGHT_PARENTHESIS = a([
   [1, 1, 1, 4],
 ])
 
+ASTERISK = a([
+  [1, 1],
+  [1, 1, 0, 4],
+  [3, 1, 0, 2],
+  [1, 1, 1, 1],
+  [1, 1, 1, 3],
+  [1, 1, 2],
+  [1, 1, 2, 4],
+])
+
 PLUS_SIGN = a([
   [3, 1, 0, 2],
   [1, 1, 1, 1],
@@ -309,6 +319,12 @@ HYPHEN_MINUS = a([
 
 FULL_STOP = a([
   [1, 1, 1, 4],
+])
+
+SLASH = a([
+  [1, 1, 0, 4],
+  [1, 3, 1, 1],
+  [1, 1, 2],
 ])
 
 COLON = a([
@@ -356,10 +372,31 @@ LEFT_SQUARE_BRACKET = a([
   [1, 1, 1, 4],
 ])
 
+BACKSLASH = a([
+  [1, 1],
+  [1, 3, 1, 1],
+  [1, 1, 2, 4],
+])
+
 RIGHT_SQUARE_BRACKET = a([
   [1, 1, 1],
   [1, 1, 1, 4],
   [1, 5, 2],
+])
+
+CARET = a([
+  [1, 1, 0, 1],
+  [1, 1, 1],
+  [1, 1, 2, 1],
+])
+
+UNDERSCORE = a([
+  [3, 1, 0, 4],
+])
+
+GRAVE_ACCENT = a([
+  [1, 1],
+  [1, 1, 1, 1],
 ])
 
 LEFT_CURLY_BRACKET = a([
@@ -367,6 +404,10 @@ LEFT_CURLY_BRACKET = a([
   [1, 5, 1],
   [1, 1, 2],
   [1, 1, 2, 4],
+])
+
+VERTICAL_BAR = a([
+  [1, 5, 1],
 ])
 
 RIGHT_CURLY_BRACKET = a([
@@ -419,10 +460,12 @@ chars = {
   "'": APOSTROPHE,
   '(': LEFT_PARENTHESIS,
   ')': RIGHT_PARENTHESIS,
+  '*': ASTERISK,
   '+': PLUS_SIGN,
   ',': COMMA,
   '-': HYPHEN_MINUS,
   '.': FULL_STOP,
+  '/': SLASH,
   ':': COLON,
   ';': SEMICOLON,
   '<': LESS_THAN_SIGN,
@@ -430,8 +473,13 @@ chars = {
   '>': GREATER_THAN_SIGN,
   '?': QUESTION_MARK,
   '[': LEFT_SQUARE_BRACKET,
+  '\\': BACKSLASH,
   ']': RIGHT_SQUARE_BRACKET,
+  '^': CARET,
+  '_': UNDERSCORE,
+  '`': GRAVE_ACCENT,
   '{': LEFT_CURLY_BRACKET,
+  '|': VERTICAL_BAR,
   '}': RIGHT_CURLY_BRACKET,
 }
 
