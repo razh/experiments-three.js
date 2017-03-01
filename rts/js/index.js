@@ -10,14 +10,18 @@
   let controls;
   let renderer;
 
-  class RTSControls {
-    constructor(object) {
+  class RTSControls extends THREE.Object3D {
+    constructor(object, domElement = document) {
+      super();
+
       this.object = object;
+      this.domElement = domElement;
 
       this.keys = {};
 
       this.speed = 128;
       this.direction = new THREE.Vector3();
+      this.offset = new THREE.Vector3();
 
       this.onKeyDown = this.onKeyDown.bind(this);
       this.onKeyUp = this.onKeyUp.bind(this);
@@ -64,7 +68,9 @@
         .setY(0)
         .normalize();
 
-      this.object.position.addScaledVector(this.direction, this.speed * dt);
+      this.position.addScaledVector(this.direction, this.speed * dt);
+      this.object.position.addVectors(this.position, this.offset);
+      this.object.lookAt(this.position);
     }
   }
 
@@ -82,7 +88,8 @@
     camera.position.set(64, 64, 64);
     camera.lookAt(new THREE.Vector3());
 
-    controls = new RTSControls(camera);
+    controls = new RTSControls(camera, renderer.domElement);
+    controls.offset.copy(camera.position);
 
     scene.add(new THREE.AmbientLight('#777'));
 
