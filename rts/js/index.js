@@ -93,12 +93,23 @@
 
     scene.add(new THREE.AmbientLight('#777'));
 
-    const planeGeometry = new THREE.PlaneBufferGeometry(256, 256);
-    const planeMaterial = new THREE.MeshStandardMaterial();
-    const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    const plane = new THREE.Mesh(
+      new THREE.PlaneBufferGeometry(256, 256),
+      new THREE.MeshStandardMaterial()
+    );
     plane.rotateX(-Math.PI / 2);
-
     scene.add(plane);
+
+    const box = new THREE.Mesh(
+      new THREE.BoxBufferGeometry(16, 16, 16),
+      new THREE.MeshStandardMaterial()
+    );
+    box.translateY(8).rotateY(Math.PI / 2);
+    scene.add(box);
+
+    const light = new THREE.DirectionalLight();
+    light.position.set(128, 48, 0);
+    scene.add(light);
   }
 
   const update = (function() {
