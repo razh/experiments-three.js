@@ -26,6 +26,12 @@
       this.onKeyDown = this.onKeyDown.bind(this);
       this.onKeyUp = this.onKeyUp.bind(this);
 
+      this.onMouseDown = this.onMouseDown.bind(this);
+      this.onMouseMove = this.onMouseMove.bind(this);
+      this.onMouseUp = this.onMouseUp.bind(this);
+      this.onContextMenu = this.onContextMenu.bind(this);
+      this.onWheel = this.onWheel.bind(this);
+
       this.addEventListeners();
     }
 
@@ -37,14 +43,47 @@
       this.keys[event.code] = false;
     }
 
+    onMouseDown(event) {
+      console.log(event);
+    }
+
+    onMouseMove(event) {
+      // console.log(event);
+    }
+
+    onMouseUp(event) {
+      console.log(event);
+    }
+
+    onContextMenu(event) {
+      event.preventDefault();
+      console.log(event);
+    }
+
+    onWheel() {
+      console.log(event);
+    }
+
     addEventListeners() {
       document.addEventListener('keydown', this.onKeyDown);
       document.addEventListener('keyup', this.onKeyUp);
+
+      this.domElement.addEventListener('mousedown', this.onMouseDown);
+      this.domElement.addEventListener('mousemove', this.onMouseMove);
+      this.domElement.addEventListener('mouseup', this.onMouseUp);
+      this.domElement.addEventListener('contextmenu', this.onContextMenu);
+      this.domElement.addEventListener('wheel', this.onWheel);
     }
 
     removeEventListeners() {
       document.removeEventListener('keydown', this.onKeyDown);
       document.removeEventListener('keyup', this.onKeyUp);
+
+      this.domElement.removeEventListener('mousedown', this.onMouseDown);
+      this.domElement.removeEventListener('mousemove', this.onMouseMove);
+      this.domElement.removeEventListener('mouseup', this.onMouseUp);
+      this.domElement.removeEventListener('contextmenu', this.onContextMenu);
+      this.domElement.removeEventListener('wheel', this.onWheel);
     }
 
     update(dt) {
