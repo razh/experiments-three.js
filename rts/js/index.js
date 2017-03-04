@@ -10,6 +10,8 @@
   let controls;
   let renderer;
 
+  let hud;
+
   class RTSControls extends THREE.Object3D {
     constructor(object, domElement = document) {
       super();
@@ -113,6 +115,60 @@
     }
   }
 
+  class Selection extends THREE.Group {
+    constructor() {
+      super();
+
+      this.fill = new THREE.Mesh(
+        new THREE.PlaneBufferGeometry(1, 1)
+          .rotateY(Math.PI)
+          .translate(0.5, 0.5, 0),
+        new THREE.MeshBasicMaterial({
+          color: '#fff',
+          opacity: 0.1,
+          transparent: true,
+        })
+      );
+
+      this.stroke = new THREE.LineSegments(
+        new THREE.EdgesGeometry(this.fill.geometry),
+        new THREE.LineBasicMaterial({ color: '#fff' })
+      );
+
+      this.add(this.fill);
+      this.add(this.stroke);
+    }
+
+    rect(x = 0, y = 0, width = 0, height = 0) {
+      this.visible = width && height;
+
+      this.position.setX(x);
+      this.position.setY(y);
+      this.scale.setX(width);
+      this.scale.setY(height);
+    }
+  }
+
+  class HUD {
+    constructor(width, height) {
+      this.camera = new THREE.OrthographicCamera(0, width, 0, height, 0, 1);
+      this.scene = new THREE.Scene();
+    }
+
+    setSize(width, height) {
+      this.camera.right = width;
+      this.camera.bottom = height;
+      this.camera.updateProjectionMatrix();
+    }
+
+    render(renderer) {
+      const { autoClear } = renderer;
+      renderer.autoClear = false;
+      renderer.render(this.scene, this.camera);
+      renderer.autoClear = autoClear;
+    }
+  }
+
   function init() {
     container = document.createElement('div');
     document.body.appendChild(container);
@@ -149,6 +205,13 @@
     const light = new THREE.DirectionalLight();
     light.position.set(128, 48, 0);
     scene.add(light);
+
+    hud = new HUD(window.innerWidth, window.innerHeight);
+
+    const selection = new Selection();
+    selection.rect(0, 0, 128, 128);
+
+    hud.scene.add(selection);
   }
 
   const update = (function() {
@@ -183,6 +246,7 @@
   function render() {
     update();
     renderer.render(scene, camera);
+    hud.render(renderer);
     requestAnimationFrame(render);
   }
 
@@ -194,6 +258,7 @@
     camera.updateProjectionMatrix();
 
     renderer.setSize(window.innerWidth, window.innerHeight);
+    hud.setSize(window.innerWidth, window.innerHeight);
     render();
   });
 })();
