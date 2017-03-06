@@ -11,6 +11,21 @@
   let renderer;
 
   let hud;
+  let selection;
+
+  const state = {
+    isMouseDown: false,
+    mouse: {
+      start: {
+        x: 0,
+        y: 0,
+      },
+      end: {
+        x: 0,
+        y: 0,
+      },
+    },
+  };
 
   class RTSControls extends THREE.Object3D {
     constructor(object, domElement = document) {
@@ -21,7 +36,7 @@
 
       this.keys = {};
 
-      this.speed = 128;
+      this.speed = 256;
       this.direction = new THREE.Vector3();
       this.offset = new THREE.Vector3();
 
@@ -47,14 +62,28 @@
 
     onMouseDown(event) {
       console.log(event);
+      state.isMouseDown = true;
+      state.mouse.start.x = event.clientX;
+      state.mouse.start.y = event.clientY;
+      state.mouse.end.x = event.clientX;
+      state.mouse.end.y = event.clientY;
     }
 
     onMouseMove(event) {
       // console.log(event);
+      if (state.isMouseDown) {
+        state.mouse.end.x = event.clientX;
+        state.mouse.end.y = event.clientY;
+      }
     }
 
     onMouseUp(event) {
       console.log(event);
+      state.isMouseDown = false;
+      state.mouse.start.x = 0;
+      state.mouse.start.y = 0;
+      state.mouse.end.x = 0;
+      state.mouse.end.y = 0;
     }
 
     onContextMenu(event) {
@@ -124,7 +153,6 @@
           .rotateY(Math.PI)
           .translate(0.5, 0.5, 0),
         new THREE.MeshBasicMaterial({
-          color: '#fff',
           opacity: 0.1,
           transparent: true,
         })
@@ -132,7 +160,7 @@
 
       this.stroke = new THREE.LineSegments(
         new THREE.EdgesGeometry(this.fill.geometry),
-        new THREE.LineBasicMaterial({ color: '#fff' })
+        new THREE.LineBasicMaterial()
       );
 
       this.add(this.fill);
@@ -144,8 +172,8 @@
 
       this.position.setX(x);
       this.position.setY(y);
-      this.scale.setX(width);
-      this.scale.setY(height);
+      this.scale.setX(width || 1);
+      this.scale.setY(height || 1);
     }
   }
 
@@ -208,7 +236,7 @@
 
     hud = new HUD(window.innerWidth, window.innerHeight);
 
-    const selection = new Selection();
+    selection = new Selection();
     selection.rect(0, 0, 128, 128);
 
     hud.scene.add(selection);
@@ -228,6 +256,15 @@
       const frameTime = Math.min(time - previousTime, 0.1);
       accumulatedTime += frameTime;
       previousTime = time;
+
+      const { mouse } = state;
+
+      selection.rect(
+        mouse.start.x,
+        mouse.start.y,
+        mouse.end.x - mouse.start.x,
+        mouse.end.y - mouse.start.y
+      );
 
       while (accumulatedTime >= dt) {
         controls.update(dt);
