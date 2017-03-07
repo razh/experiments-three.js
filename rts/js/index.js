@@ -12,6 +12,7 @@
 
   let hud;
   let selection;
+  let selectableGroup;
 
   const state = {
     isMouseDown: false,
@@ -26,6 +27,13 @@
       },
     },
   };
+
+  function toClipSpace(vector) {
+    return vector.set(
+      (vector.x / renderer.domElement.width) * 2 - 1,
+      -(vector.y / renderer.domElement.height) * 2 + 1
+    );
+  }
 
   class RTSControls extends THREE.Object3D {
     constructor(object, domElement = document) {
@@ -175,6 +183,52 @@
       this.scale.setX(width || 1);
       this.scale.setY(height || 1);
     }
+
+    contains(scene, camera) {
+      const objects = [];
+
+      camera.updateMatrixWorld();
+      camera.matrixWorldInverse.getInverse(camera.matrixWorld);
+
+      const viewProjectionMatrix = new THREE.Matrix4().multiplyMatrices(
+        camera.projectionMatrix,
+        camera.matrixWorldInverse
+      );
+
+      const selectionBox = new THREE.Box2().setFromPoints(
+        [
+          new THREE.Vector2().copy(state.mouse.start),
+          new THREE.Vector2().copy(state.mouse.end)
+        ].map(toClipSpace)
+      );
+
+      const frustum = new THREE.Frustum().setFromMatrix(viewProjectionMatrix);
+      const boundingBox = new THREE.Box3();
+
+      scene.traverseVisible(object => {
+        if (!object.isMesh) {
+          return;
+        }
+
+        object.material.color.set('#fff');
+
+        // Skip objects outside of frustum.
+        if (!frustum.intersectsObject(object)) {
+          return;
+        }
+
+        boundingBox
+          .setFromObject(object)
+          .applyMatrix4(viewProjectionMatrix);
+
+        if (selectionBox.intersectsBox(boundingBox)) {
+          objects.push(object);
+          object.material.color.set('#0f0');
+        }
+      });
+
+      return objects;
+    }
   }
 
   class HUD {
@@ -223,12 +277,31 @@
     plane.rotateX(-Math.PI / 2);
     scene.add(plane);
 
+    selectableGroup = new THREE.Group;
+    scene.add(selectableGroup);
+
     const box = new THREE.Mesh(
       new THREE.BoxBufferGeometry(16, 16, 16),
       new THREE.MeshStandardMaterial()
     );
     box.translateY(8).rotateY(Math.PI / 2);
-    scene.add(box);
+    selectableGroup.add(box);
+
+    const boxCount = 32;
+    for (var i = 0; i < boxCount; i++) {
+      for (var j = 0; j < boxCount; j++) {
+        const box = new THREE.Mesh(
+          new THREE.BoxBufferGeometry(2, 2, 2),
+          new THREE.MeshStandardMaterial()
+        )
+          .translateY(8)
+          .rotateY(Math.PI / 2)
+          .translateX(4 * (i - (boxCount / 2)))
+          .translateZ(4 * (j - (boxCount / 2)));
+
+        selectableGroup.add(box);
+      }
+    }
 
     const light = new THREE.DirectionalLight();
     light.position.set(128, 48, 0);
@@ -265,6 +338,10 @@
         mouse.end.x - mouse.start.x,
         mouse.end.y - mouse.start.y
       );
+
+      if (state.isMouseDown) {
+        console.log(selection.contains(selectableGroup, camera));
+      }
 
       while (accumulatedTime >= dt) {
         controls.update(dt);
