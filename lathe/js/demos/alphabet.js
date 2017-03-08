@@ -275,6 +275,29 @@ NUMBER_SIGN = a([
   [1, 5, 2],
 ])
 
+DOLLAR_SIGN = a([
+  [1, 2],
+  [1, 1, 0, 3],
+  [1, 5, 1],
+  [1, 1, 2],
+  [1, 2, 2, 2],
+])
+
+PERCENT_SIGN = a([
+  [1, 1],
+  [1, 2, 0, 3],
+  [1, 1, 1, 2],
+  [1, 2, 2],
+  [1, 1, 2, 4],
+])
+
+AMPERSAND = a([
+  [1, 5],
+  [1, 3, 1],
+  [1, 1, 1, 4],
+  [1, 2, 2, 3],
+])
+
 APOSTROPHE = a([
   [1, 1, 0, 1],
   [1, 1, 1],
@@ -364,6 +387,13 @@ QUESTION_MARK = a([
   [1, 2, 2, 1],
   [1, 1, 1, 2],
   [1, 1, 1, 4],
+])
+
+AT_SIGN = a([
+  [1, 3, 0, 1],
+  [1, 1, 1],
+  [2, 1, 1, 4],
+  [1, 2, 2, 1],
 ])
 
 LEFT_SQUARE_BRACKET = a([
@@ -457,6 +487,9 @@ chars = {
   '!': EXCLAMATION_MARK,
   '"': QUOTATION_MARK,
   '#': NUMBER_SIGN,
+  '$': DOLLAR_SIGN,
+  '%': PERCENT_SIGN,
+  '&': AMPERSAND,
   "'": APOSTROPHE,
   '(': LEFT_PARENTHESIS,
   ')': RIGHT_PARENTHESIS,
@@ -472,6 +505,7 @@ chars = {
   '=': EQUALS_SIGN,
   '>': GREATER_THAN_SIGN,
   '?': QUESTION_MARK,
+  '@': AT_SIGN,
   '[': LEFT_SQUARE_BRACKET,
   '\\': BACKSLASH,
   ']': RIGHT_SQUARE_BRACKET,
