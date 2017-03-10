@@ -256,7 +256,7 @@ geometryArguments
       const path = params.get( 'path' );
       if ( path ) {
         // Save path before replaceState.
-        window.history.pushState( '', '', window.location.href );
+        window.history.pushState( '', '', window.location.search );
         return fetch( path ).then( res => res.text() );
       }
 
@@ -266,6 +266,11 @@ geometryArguments
       .then( value => {
         textarea.value = value;
         textarea.dispatchEvent( new Event( 'input' ) );
+
+        // Go back if fetched from file-path.
+        if ( params.get( 'path' ) ) {
+          window.history.back();
+        }
       });
   }
 
