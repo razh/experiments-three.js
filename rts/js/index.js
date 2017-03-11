@@ -287,11 +287,12 @@
     box.translateY(8).rotateY(Math.PI / 2);
     selectableGroup.add(box);
 
+    const boxGeometry = new THREE.BoxBufferGeometry(2, 2, 2);
     const boxCount = 32;
     for (var i = 0; i < boxCount; i++) {
       for (var j = 0; j < boxCount; j++) {
         const box = new THREE.Mesh(
-          new THREE.BoxBufferGeometry(2, 2, 2),
+          boxGeometry,
           new THREE.MeshStandardMaterial()
         )
           .translateY(8)
