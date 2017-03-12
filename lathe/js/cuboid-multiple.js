@@ -138,8 +138,9 @@ geometryArguments
   }
 
   function setQueryString( key, value ) {
-    const query = `?${ [ key, value ].map( encodeURIComponent ).join( '=' ) }`;
-    window.history.replaceState( '', '', query );
+    const params = new URLSearchParams();
+    params.set( key, value );
+    window.history.replaceState( '', '', `?${params.toString()}` );
   }
 
   function onInput( event ) {
