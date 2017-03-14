@@ -75,12 +75,32 @@
     const textarea = document.getElementById( 'textarea-commands' );
     createNumericInput( textarea );
     textarea.addEventListener( 'input', onInput );
-    // Disable OrbitControls while textarea is focused.
+    // Disable OrbitControls when focused on textarea.
     textarea.addEventListener( 'keydown', event => event.stopPropagation() );
 
     const params = new URLSearchParams( window.location.search );
-    textarea.value = params.get( 'commands' );
-    textarea.dispatchEvent( new Event( 'input' ) );
+
+    // Get default value.
+    (function() {
+      // Fetch from file-path if it exists.
+      const path = params.get( 'path' );
+      if ( path ) {
+        // Save path before replaceState.
+        window.history.pushState( '', '', window.location.search );
+        return fetch( path ).then( res => res.text() );
+      }
+
+      return Promise.resolve( params.get( 'commands' ) );
+    }())
+      .then( value => {
+        textarea.value = value;
+        textarea.dispatchEvent( new Event( 'input' ) );
+
+        // Go back if fetched from file-path.
+        if ( params.get( 'path' ) ) {
+          window.history.back();
+        }
+      });
   }
 
   function render() {
