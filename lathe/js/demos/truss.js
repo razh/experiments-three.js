@@ -9,30 +9,42 @@ const dimensions = {
   y: [thickness, innerHeight, thickness],
 }
 
-const top = _(dimensions.x, ty((outerHeight - thickness) / 2))
-const bottom = _(dimensions.x, ty(-(outerHeight - thickness) / 2))
+const horizontalY = (outerHeight - thickness) / 2
+const diagonalX = ((innerWidth - thickness) / 2) - thickness
+const verticalX = (innerWidth + thickness) / 2
+
+const top = _(
+  dimensions.x,
+  ty(horizontalY)
+)
+
+const bottom = _(
+  dimensions.x,
+  ty(-horizontalY)
+)
+
 const vertical = _(dimensions.y)
 
 const leftDiagonal = _(
   dimensions.y,
   tx(-thickness),
-  $tx('py', -(((innerWidth - thickness) / 2) - thickness))
+  $tx('py', -diagonalX)
 )
 
 const rightDiagonal = _(
   dimensions.y,
   tx(thickness),
-  $tx('py', ((innerWidth - thickness) / 2) - thickness)
+  $tx('py', diagonalX)
 )
 
 const leftVertical = _(
   dimensions.y,
-  tx((innerWidth + thickness) / 2)
+  tx(-verticalX)
 )
 
 const rightVertical = _(
   dimensions.y,
-  tx(-(innerWidth + thickness) / 2)
+  tx(verticalX)
 )
 
 return [
