@@ -16,7 +16,9 @@ class BallTurret extends THREE.Mesh {
       barrelRadius,
       barrelRadius,
       barrelHeight
-    ).translate(0, barrelHeight / 2, 0);
+    )
+      .translate(0, -barrelHeight / 2, 0)
+      .rotateX(-Math.PI / 2);
 
     const leftBarrelGeometry = barrelGeometry
       .clone()
