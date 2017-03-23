@@ -447,6 +447,12 @@ RIGHT_CURLY_BRACKET = a([
   [1, 1, 2, 2],
 ])
 
+TILDE = a([
+  [1, 2, 0, 1],
+  [1, 1, 1, 1],
+  [1, 2, 2],
+])
+
 chars = {
   A,
   B,
@@ -515,6 +521,7 @@ chars = {
   '{': LEFT_CURLY_BRACKET,
   '|': VERTICAL_BAR,
   '}': RIGHT_CURLY_BRACKET,
+  '~': TILDE,
 }
 
 log = string =>
