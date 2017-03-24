@@ -550,4 +550,10 @@ log = string =>
       )
     , [])
 
-return log('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+return log([
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+  '0123456789',
+  '!"#$%&\'()*+,-./',
+  ':;<=>?@',
+  '[\\]^_`{|}~',
+].join('\n'));
