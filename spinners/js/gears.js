@@ -1,4 +1,3 @@
-/* eslint-env es6 */
 /* global THREE */
 /* exported drawGear */
 const drawGear = (function() {

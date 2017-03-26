@@ -1,4 +1,3 @@
-/* eslint-env es6 */
 /* exported createNumericInput */
 const createNumericInput = (() => {
   'use strict';

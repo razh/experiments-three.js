@@ -1,5 +1,4 @@
-/* eslint-env es6 */
-/*global THREE*/
+/* global THREE */
 /* exported createShipGeometry */
 function createShipGeometry() {
   'use strict';

@@ -1,4 +1,3 @@
-/* eslint-env es6 */
 /* eslint no-unused-vars: ["error", { "vars": "local" }] */
 
 /*

@@ -1,4 +1,3 @@
-/* eslint-env es6 */
 /* global THREE, VertexIndices, computeCentroid */
 
 const relativeLerpBoxVertices = (function() {

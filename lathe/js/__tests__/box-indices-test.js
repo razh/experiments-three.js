@@ -1,4 +1,4 @@
-/* eslint-env es6, jest */
+/* eslint-env jest */
 
 'use strict';
 

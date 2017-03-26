@@ -1,4 +1,3 @@
-/* eslint-env es6 */
 /* exported Complex */
 var Complex = (function() {
   'use strict';

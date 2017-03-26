@@ -1,4 +1,3 @@
-/* eslint-env es6 */
 /* global THREE, VertexIndices, FaceIndices */
 
 const applyBoxVertexColors = (function() {

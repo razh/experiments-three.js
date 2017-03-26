@@ -1,4 +1,3 @@
-/* eslint-env es6 */
 /* global THREE, Collision, BODY_STATIC, BODY_DYNAMIC */
 
 (function() {

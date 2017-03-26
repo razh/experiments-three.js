@@ -1,4 +1,3 @@
-/* eslint-env es6 */
 /* global THREE */
 
 const createBoxTextures = (function() {

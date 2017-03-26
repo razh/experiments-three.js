@@ -5,9 +5,6 @@ module.exports = {
       globalReturn: true,
     },
   },
-  env: {
-    es6: true,
-  },
   rules: {
     'comma-dangle': ['error', 'always-multiline'],
     'no-undef': 'off',
