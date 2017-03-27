@@ -14,6 +14,8 @@
   let selection;
   let selectableGroup;
 
+  const clock = new THREE.Clock();
+
   const state = {
     isMouseDown: false,
     mouse: {
@@ -319,17 +321,10 @@
   const update = (function() {
     const dt = 1 / 60;
     let accumulatedTime = 0;
-    let previousTime;
 
     return () => {
-      const time = (performance.now() || 0) * 1e-3;
-      if (!previousTime) {
-        previousTime = time;
-      }
-
-      const frameTime = Math.min(time - previousTime, 0.1);
+      const frameTime = Math.min(clock.getDelta(), 0.1);
       accumulatedTime += frameTime;
-      previousTime = time;
 
       const { mouse } = state;
 
