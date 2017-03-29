@@ -15,6 +15,7 @@
   let selectableGroup;
 
   const clock = new THREE.Clock();
+  let running = true;
 
   const state = {
     isMouseDown: false,
@@ -357,11 +358,24 @@
     update();
     renderer.render(scene, camera);
     hud.render(renderer);
-    requestAnimationFrame(render);
+
+    if (running) {
+      requestAnimationFrame(render);
+    }
   }
 
   init();
   render();
+
+  document.addEventListener( 'keydown', event => {
+    // Pause/play.
+    if (event.code === 'KeyP') {
+      running = !running;
+      if (running) {
+        render();
+      }
+    }
+  });
 
   window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
