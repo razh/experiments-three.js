@@ -1,4 +1,4 @@
-/* global THREE */
+/* global THREE, Destroy */
 
 (function() {
   'use strict';
@@ -351,6 +351,8 @@
 
         accumulatedTime -= dt;
       }
+
+      Destroy.update();
     };
   }());
 

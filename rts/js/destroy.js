@@ -11,15 +11,16 @@ const Destroy = (() => {
     }
   }
 
-  return {
-    remove,
+  function destroy(object) {
+    objects.push(object);
+  }
 
-    destroy(object) {
-      objects.push(object);
-    },
+  return Object.assign(destroy, {
+    remove,
 
     update() {
       objects.forEach(remove);
-    },
-  };
+      objects = [];
+    }
+  });
 })();
