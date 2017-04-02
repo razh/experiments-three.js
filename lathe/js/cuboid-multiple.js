@@ -6,7 +6,9 @@ remove
 updateGeometry
 createTextLabel
 createBoxTextures
-defaultVertexColors
+createGeometryWrapper
+mergeGeometries
+applyDefaultVertexColors
 geometryArguments
 */
 
@@ -36,25 +38,6 @@ geometryArguments
     mesh.needsUpdate = true;
   }
 
-  function applyTransforms( geometry, ...transforms ) {
-    transforms.forEach( transform => transform( geometry ) );
-    return geometry;
-  }
-
-  function createGeometryWrapper( value, ...transforms ) {
-    let geometry;
-
-    if ( value instanceof THREE.Geometry ) {
-      geometry = value;
-    } else if ( Array.isArray( value ) ) {
-      geometry = new THREE.BoxGeometry( ...value );
-    } else {
-      return new THREE.Geometry();
-    }
-
-    return applyTransforms( geometry, ...transforms );
-  }
-
   function createGeometryLabels( geometries ) {
     const visible = geometryLabels ? geometryLabels.visible : true;
     remove( geometryLabels );
@@ -79,27 +62,6 @@ geometryArguments
     wireframe.visible = visible;
 
     scene.add( wireframe );
-  }
-
-  function applyDefaultVertexColors( geometries ) {
-    if ( !Array.isArray( geometries ) ) {
-      return defaultVertexColors( geometry );
-    }
-
-    return geometries.map( geometry => defaultVertexColors( geometry ) );
-  }
-
-  function mergeGeometries( geometries, ...transforms ) {
-    if ( !Array.isArray( geometries ) ) {
-      return applyTransforms( geometries, ...transforms );
-    }
-
-    return geometries
-      .map( geometry => applyTransforms( geometry, ...transforms ) )
-      .reduce( ( a, b ) => {
-        a.merge( b );
-        return a;
-      });
   }
 
   function computeBoundingBoxes( geometries ) {
