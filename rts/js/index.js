@@ -356,25 +356,29 @@
     };
   }());
 
-  function render() {
+  function animate() {
     update();
-    renderer.render(scene, camera);
-    hud.render(renderer);
+    render();
 
     if (running) {
-      requestAnimationFrame(render);
+      requestAnimationFrame(animate);
     }
   }
 
+  function render() {
+    renderer.render(scene, camera);
+    hud.render(renderer);
+  }
+
   init();
-  render();
+  animate();
 
   document.addEventListener( 'keydown', event => {
     // Pause/play.
     if (event.code === 'KeyP') {
       running = !running;
       if (running) {
-        render();
+        animate();
       }
     }
   });
@@ -385,6 +389,7 @@
 
     renderer.setSize(window.innerWidth, window.innerHeight);
     hud.setSize(window.innerWidth, window.innerHeight);
+
     render();
   });
 })();
