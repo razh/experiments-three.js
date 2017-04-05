@@ -1,7 +1,7 @@
-/* global THREE */
+/* global THREE, Entity */
 /* exported BallTurret */
 
-class BallTurret extends THREE.Mesh {
+class BallTurret extends Entity {
   constructor() {
     const geometry = new THREE.Geometry();
 
