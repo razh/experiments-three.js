@@ -1,6 +1,8 @@
 /* global THREE */
 /* exported createBoxCurvePath */
 
+'use strict';
+
 function createBoxCurvePath(...args) {
   const curvePath = new THREE.CurvePath();
 
