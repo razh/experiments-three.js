@@ -16,13 +16,13 @@
   <script>
     'use strict';
 
-    var grid = Grid.checkerboard({
+    const grid = Grid.checkerboard({
       size: 1024,
       segments: 16,
-      colors: [ '#222', '#555' ]
+      colors: [ '#222', '#555' ],
     });
 
-    var image = new Image();
+    const image = new Image();
     image.src = grid.toDataURL();
     document.body.appendChild( image );
   </script>

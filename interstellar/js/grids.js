@@ -1,34 +1,38 @@
-/*exported Grid*/
-var Grid = (function() {
+/* eslint comma-dangle: ["error", "always-multiline"] */
+/* exported Grid */
+
+const Grid = (function() {
   'use strict';
 
-  function create( options, callback ) {
-    options = options || {};
+  function create( options = {}, callback ) {
+    const {
+      size = 512,
+      width = size,
+      height = size,
 
-    var size = options.size || 512;
-    var width = options.width || size;
-    var height = options.height || size;
+      segments = 2,
+      widthSegments = segments,
+      heightSegments = segments,
 
-    var segments = options.segments || 2;
-    var widthSegments = options.widthSegments || segments;
-    var heightSegments = options.heightSegments || segments;
+      canvas = document.createElement( 'canvas' ),
+    } = options;
 
-    var segmentWidth = width / widthSegments;
-    var segmentHeight = height / heightSegments;
+    const segmentWidth = width / widthSegments;
+    const segmentHeight = height / heightSegments;
 
-    var canvas = options.canvas || document.createElement( 'canvas' );
-    var ctx = canvas.getContext( '2d' );
+    const ctx = canvas.getContext( '2d' );
 
     canvas.width = width;
     canvas.height = height;
 
-    var x, y;
-    for ( y = 0; y < heightSegments; y++ ) {
-      for ( x = 0; x < widthSegments; x++ ) {
+    for ( let y = 0; y < heightSegments; y++ ) {
+      for ( let x = 0; x < widthSegments; x++ ) {
         ctx.fillStyle = callback( x, y );
         ctx.fillRect(
-          x * segmentWidth, y * segmentHeight,
-          segmentWidth, segmentHeight
+          x * segmentWidth,
+          y * segmentHeight,
+          segmentWidth,
+          segmentHeight
         );
       }
     }
@@ -36,17 +40,17 @@ var Grid = (function() {
     return canvas;
   }
 
-  function checkerboard( options ) {
-    var colors = options.colors || [];
-    return create( options, function( x, y ) {
-      var index = ( x + y ) % colors.length;
+  function checkerboard( options = {} ) {
+    const { colors = [] } = options;
+
+    return create( options, ( x, y ) => {
+      const index = ( x + y ) % colors.length;
       return colors[ index ];
     });
   }
 
   return {
-    create: create,
-    checkerboard: checkerboard
+    create,
+    checkerboard,
   };
-
-}) ();
+}());
