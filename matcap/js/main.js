@@ -44,7 +44,7 @@
     });
 
     mesh = new THREE.Mesh(
-      new THREE.TorusGeometry( 1, 0.4, 64, 48 ),
+      new THREE.TorusBufferGeometry( 1, 0.4, 64, 48 ),
       material
     );
 

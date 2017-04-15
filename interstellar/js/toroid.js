@@ -16,7 +16,7 @@
  *
  * Note the missing outer-half.
  */
-class Toroid extends THREE.Geometry {
+class Toroid extends THREE.BufferGeometry {
   constructor(
     outerRadius = 160,
     innerRadius = 100,
@@ -36,19 +36,21 @@ class Toroid extends THREE.Geometry {
       arc,
     };
 
-    const center = new THREE.Vector3();
-    const uvs = [];
+    const indices = [];
+    const vertices = [];
     const normals = [];
+    const uvs = [];
+
+    const vertex = new THREE.Vector3();
+    const center = new THREE.Vector3();
+    const normal = new THREE.Vector3();
 
     for ( let j = 0; j <= radialSegments; j++ ) {
       for ( let i = 0; i <= tubularSegments; i++ ) {
         const u = i / tubularSegments * arc;
         const v = j / radialSegments * Math.PI + ( 1 / 2 * Math.PI );
 
-        center.x = innerRadius * Math.cos( u );
-        center.y = innerRadius * Math.sin( u );
-
-        const vertex = new THREE.Vector3();
+        // Vertex.
         vertex.x = ( innerRadius + tube * Math.cos( v ) ) * Math.cos( u );
         vertex.y = ( innerRadius + tube * Math.cos( v ) ) * Math.sin( u );
         vertex.z = tube * Math.sin( v );
@@ -58,15 +60,20 @@ class Toroid extends THREE.Geometry {
           vertex.y = ( outerRadius + tube * Math.cos( v ) ) * Math.sin( u );
         }
 
-        this.vertices.push( vertex );
+        vertices.push( vertex.x, vertex.y, vertex.z );
 
-        uvs.push( new THREE.Vector2( i / tubularSegments, j / radialSegments ) );
-
+        // Normal.
         if ( !j ) {
-          normals.push( new THREE.Vector3( 0, 0, 1 ) );
+          normals.push( 0, 0, 1 );
         } else {
-          normals.push( vertex.clone().sub( center ).normalize() );
+          center.x = innerRadius * Math.cos( u );
+          center.y = innerRadius * Math.sin( u );
+
+          normal.subVectors( vertex, center ).normalize();
+          normals.push( normal.x, normal.y, normal.z );
         }
+
+        uvs.push( i / tubularSegments, j / radialSegments );
       }
     }
 
@@ -77,16 +84,14 @@ class Toroid extends THREE.Geometry {
         const c = ( tubularSegments + 1 ) * ( j - 1 ) + i;
         const d = ( tubularSegments + 1 ) * j + i;
 
-        let face = new THREE.Face3( a, b, d, [ normals[ a ].clone(), normals[ b ].clone(), normals[ d ].clone() ] );
-        this.faces.push( face );
-        this.faceVertexUvs[ 0 ].push( [ uvs[ a ].clone(), uvs[ b ].clone(), uvs[ d ].clone() ] );
-
-        face = new THREE.Face3( b, c, d, [ normals[ b ].clone(), normals[ c ].clone(), normals[ d ].clone() ] );
-        this.faces.push( face );
-        this.faceVertexUvs[ 0 ].push( [ uvs[ b ].clone(), uvs[ c ].clone(), uvs[ d ].clone() ] );
+        indices.push( a, b, d );
+        indices.push( b, c, d );
       }
     }
 
-    this.computeFaceNormals();
+    this.setIndex( indices );
+    this.addAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+    this.addAttribute( 'normal', new THREE.Float32BufferAttribute( normals, 3 ) );
+    this.addAttribute( 'uv', new THREE.Float32BufferAttribute( uvs, 2 ) );
   }
 }
