@@ -1,17 +1,19 @@
-/*global THREE, fetch, dat, Toroid*/
+/* eslint comma-dangle: ["error", "always-mutiline"] */
+/* global THREE, fetch, dat, Toroid */
+
 (function() {
   'use strict';
 
-  var container;
-  var scene, camera, controls, renderer;
-  var mesh, texture, material;
-  var toroidMesh;
-  var shaders = {};
+  let container;
+  let scene, camera, renderer;
+  let mesh, texture, material;
+  let toroidMesh;
+  const shaders = {};
 
-  var image = new Image();
+  const image = new Image();
 
-  var config = {
-    toroid: false
+  const config = {
+    toroid: false,
   };
 
   function init() {
@@ -29,18 +31,16 @@
     camera.position.set( 0, 0, 8 );
     scene.add( camera );
 
-    controls = new THREE.OrbitControls( camera, renderer.domElement );
+    new THREE.OrbitControls( camera, renderer.domElement );
 
     texture = new THREE.Texture( image );
     texture.anisotropy = renderer.getMaxAnisotropy();
-    image.onload = function() {
-      texture.needsUpdate = true;
-    };
+    image.addEventListener( 'load', () => { texture.needsUpdate = true; } );
 
     material = new THREE.ShaderMaterial({
       uniforms: { tMatCap: { type: 't', value: texture } },
       vertexShader: shaders.vertex,
-      fragmentShader: shaders.fragment
+      fragmentShader: shaders.fragment,
     });
 
     mesh = new THREE.Mesh(
@@ -59,10 +59,10 @@
     scene.add( toroidMesh );
 
     // Add GUI to toggle between torus and toroid meshes.
-    var gui = new dat.GUI();
+    const gui = new dat.GUI();
 
     gui.add( config, 'toroid' )
-      .onChange(function( toroidVisible ) {
+      .onChange( toroidVisible => {
         mesh.visible = !toroidVisible;
         toroidMesh.visible = toroidVisible;
       });
@@ -75,14 +75,11 @@
 
   Promise.all([
     './shaders/matcap-phong.vert',
-    './shaders/matcap-phong.frag'
-  ].map(function( url ) {
-    return fetch( url ).then(function( response ) {
-      return response.text();
-    });
-  })).then(function( responses ) {
-    shaders.vertex = responses[0];
-    shaders.fragment = responses[1];
+    './shaders/matcap-phong.frag',
+  ].map( url => {
+    return fetch( url ).then( response => response.text() );
+  })).then( responses => {
+    [ shaders.vertex, shaders.fragment ] = responses;
 
     // Use default texture.
     image.src = createDefaultTexture().toDataURL();
@@ -92,13 +89,13 @@
   });
 
   function getURL( event ) {
-    var files = event.dataTransfer.files;
-    var file = files[0];
+    const { files } = event.dataTransfer;
+    const [ file ] = files;
     if ( file ) {
       return URL.createObjectURL( file );
     }
 
-    var url = event.dataTransfer.getData( 'url' );
+    const url = event.dataTransfer.getData( 'url' );
     if ( url ) {
       return url;
     }
@@ -106,38 +103,38 @@
     return;
   }
 
-  document.addEventListener( 'drop', function( event ) {
+  document.addEventListener( 'drop', event => {
     event.stopPropagation();
     event.preventDefault();
 
-    var url = getURL( event );
+    const url = getURL( event );
     if ( url ) {
       image.crossOrigin = '';
       image.src = url;
     }
   });
 
-  document.addEventListener( 'dragover', function( event ) {
+  document.addEventListener( 'dragover', event => {
     event.stopPropagation();
     event.preventDefault();
   });
 
-  window.addEventListener( 'resize', function() {
+  window.addEventListener( 'resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
   });
 
-
   function createDefaultTexture() {
-    var canvas = document.createElement( 'canvas' );
-    var ctx = canvas.getContext( '2d' );
+    const canvas = document.createElement( 'canvas' );
+    const ctx = canvas.getContext( '2d' );
 
-    var size = 256;
-    var radius = size / 2;
+    const size = 256;
+    const radius = size / 2;
 
-    canvas.width = canvas.height = size;
+    canvas.width = size;
+    canvas.height = size;
 
     ctx.fillStyle = '#000';
     ctx.fillRect( 0, 0, size, size );
@@ -147,7 +144,7 @@
     ctx.fillStyle = '#222';
     ctx.fill();
 
-    var gradient = ctx.createRadialGradient(
+    const gradient = ctx.createRadialGradient(
       radius, 0.5 * radius, 0.25 * radius,
       radius, radius, radius
     );
@@ -160,5 +157,4 @@
 
     return canvas;
   }
-
-}) ();
+}());
