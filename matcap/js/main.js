@@ -5,7 +5,7 @@
   'use strict';
 
   let container;
-  let scene, camera, renderer;
+  let scene, camera, controls, renderer;
   let mesh, texture, material;
   let toroidMesh;
   const shaders = {};
@@ -31,11 +31,15 @@
     camera.position.set( 0, 0, 8 );
     scene.add( camera );
 
-    new THREE.OrbitControls( camera, renderer.domElement );
+    controls = new THREE.OrbitControls( camera, renderer.domElement );
+    controls.addEventListener( 'change', render );
 
     texture = new THREE.Texture( image );
     texture.anisotropy = renderer.getMaxAnisotropy();
-    image.addEventListener( 'load', () => { texture.needsUpdate = true; } );
+    image.addEventListener( 'load', () => {
+      texture.needsUpdate = true;
+      render();
+    });
 
     material = new THREE.ShaderMaterial({
       uniforms: { tMatCap: { type: 't', value: texture } },
@@ -65,12 +69,12 @@
       .onChange( toroidVisible => {
         mesh.visible = !toroidVisible;
         toroidMesh.visible = toroidVisible;
+        render();
       });
   }
 
-  function animate() {
+  function render() {
     renderer.render( scene, camera );
-    requestAnimationFrame( animate );
   }
 
   Promise.all([
@@ -85,7 +89,7 @@
     image.src = createDefaultTexture().toDataURL();
 
     init();
-    animate();
+    render();
   });
 
   function getURL( event ) {
@@ -124,6 +128,7 @@
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
+    render();
   });
 
   function createDefaultTexture() {
