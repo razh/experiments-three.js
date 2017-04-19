@@ -1,19 +1,21 @@
+/* eslint comma-dangle: ["error", "always-multiline"] */
 /* global THREE, createPoints, modifiers, createNumericInput */
+
 (function() {
   'use strict';
 
-  var container;
+  let container;
 
-  var scene, camera, controls, renderer;
+  let scene, camera, controls, renderer;
 
-  var geometry, material, mesh;
-  var wireframe;
+  let geometry, material, mesh;
+  let wireframe;
 
-  var textarea = document.getElementById( 'points' );
-  var segmentsInput = document.getElementById( 'segments' );
-  var shadingInput = document.getElementById( 'shading' );
-  var wireframeInput = document.getElementById( 'wireframe' );
-  var toArrayButton = document.getElementById( 'to-array' );
+  const textarea = document.getElementById( 'points' );
+  const segmentsInput = document.getElementById( 'segments' );
+  const shadingInput = document.getElementById( 'shading' );
+  const wireframeInput = document.getElementById( 'wireframe' );
+  const toArrayButton = document.getElementById( 'to-array' );
 
   function init() {
     container = document.createElement( 'div' );
@@ -31,36 +33,36 @@
     controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.addEventListener( 'change', render );
 
-    var ambientLight = new THREE.AmbientLight( 0x333333 );
+    const ambientLight = new THREE.AmbientLight( 0x333333 );
     scene.add( ambientLight );
 
-    var light = new THREE.DirectionalLight();
+    const light = new THREE.DirectionalLight();
     scene.add( light );
 
-    var backLight = new THREE.DirectionalLight( '#eef' );
+    const backLight = new THREE.DirectionalLight( '#eef' );
     scene.add( backLight );
 
     material = new THREE.MeshPhongMaterial({
       shading: THREE.FlatShading,
-      side: THREE.DoubleSide
+      side: THREE.DoubleSide,
     });
 
     mesh = new THREE.Mesh( new THREE.Geometry(), material );
     scene.add( mesh );
 
     // Set from window.location.hash.
-    var hash = decodeURIComponent( window.location.hash ).slice( 1 );
+    const hash = decodeURIComponent( window.location.hash ).slice( 1 );
 
     textarea.value = hash || [
       0,
       1,
-      '0 2'
+      '0 2',
     ].join( '\n' );
 
     segmentsInput.value = 4;
 
     function createWireframe( mesh ) {
-      var visible = true;
+      let visible = true;
 
       if ( wireframe ) {
         // Store previous visible state.
@@ -82,7 +84,7 @@
 
     function onInput() {
       // Build geometry.
-      var points = createPoints( textarea.value );
+      const points = createPoints( textarea.value );
 
       geometry = new THREE.LatheGeometry( points, segmentsInput.value );
       mesh.geometry = geometry;
@@ -106,7 +108,7 @@
       drawCanvas( points );
 
       // Update location.
-      window.history.replaceState( '', '', '#' + encodeURIComponent( textarea.value ) );
+      window.history.replaceState( '', '', `#${  encodeURIComponent( textarea.value ) }` );
     }
 
     onInput();
@@ -114,27 +116,22 @@
     textarea.addEventListener( 'input', onInput );
     segmentsInput.addEventListener( 'input', onInput );
 
-    textarea.addEventListener( 'keydown', function( event ) {
-      event.stopPropagation();
-    });
+    textarea.addEventListener( 'keydown', event => event.stopPropagation() );
 
-    shadingInput.addEventListener( 'change', function( event ) {
+    shadingInput.addEventListener( 'change', event => {
       material.shading = THREE[event.target.value];
       material.needsUpdate = true;
       render();
     });
 
-    wireframeInput.addEventListener( 'change', function( event ) {
+    wireframeInput.addEventListener( 'change', event => {
       wireframe.visible = event.target.checked;
       render();
     });
 
-    toArrayButton.addEventListener( 'click', function() {
-      var points = createPoints( textarea.value );
-      var json = points.map(function( point ) {
-        return point.toArray();
-      });
-
+    toArrayButton.addEventListener( 'click', () => {
+      const points = createPoints( textarea.value );
+      const json = points.map( point => point.toArray() );
       console.log( JSON.stringify( json ) );
     });
   }
@@ -143,15 +140,15 @@
     renderer.render( scene, camera );
   }
 
-  var drawCanvas = (function() {
-    var canvas = document.getElementById( 'canvas' );
-    var ctx = canvas.getContext( '2d' );
+  const drawCanvas = (function() {
+    const canvas = document.getElementById( 'canvas' );
+    const ctx = canvas.getContext( '2d' );
 
-    var scale = 32;
-    var radius = 4;
-    var diameter = 2 * radius;
+    const scale = 32;
+    const radius = 4;
+    const diameter = 2 * radius;
 
-    var box = new THREE.Box2();
+    const box = new THREE.Box2();
 
     function transformLeft( ctx ) {
       ctx.translate( canvas.width / 2, canvas.height - radius );
@@ -180,36 +177,36 @@
       y += box.min.y;
 
       return {
-        x: x,
-        y: y
+        x,
+        y,
       };
     }
 
     function drawLine( ctx, points ) {
       ctx.beginPath();
       ctx.moveTo( points[0].x, points[0].y );
-      for ( var i = 1; i < points.length; i++ ) {
+      for ( let i = 1; i < points.length; i++ ) {
         ctx.lineTo( points[i].x, points[i].y );
       }
     }
 
     function drawPoints( ctx, points ) {
       ctx.beginPath();
-      points.forEach(function( point ) {
+      points.forEach( point => {
         ctx.moveTo( point.x, point.y );
         ctx.arc( point.x, point.y, radius / scale, 0, 2 * Math.PI );
       });
     }
 
     canvas.addEventListener( 'mousemove', (function() {
-      var pointerCanvas = document.getElementById( 'pointer-canvas' );
-      var pointerCtx = pointerCanvas.getContext( '2d' );
+      const pointerCanvas = document.getElementById( 'pointer-canvas' );
+      const pointerCtx = pointerCanvas.getContext( '2d' );
 
-      return function( event ) {
-        var rect = canvas.getBoundingClientRect();
-        var x = event.clientX - rect.left;
-        var y = event.clientY - rect.top;
-        var points = [ inverseTransform( x, y ) ];
+      return event => {
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        const points = [ inverseTransform( x, y ) ];
 
         pointerCanvas.width = canvas.width;
         pointerCanvas.height = canvas.height;
@@ -239,8 +236,8 @@
 
       box.setFromPoints( points );
 
-      var width = box.max.x - box.min.x;
-      var height = box.max.y - box.min.y;
+      const width = box.max.x - box.min.x;
+      const height = box.max.y - box.min.y;
 
       canvas.width = 2 * scale * width + diameter;
       canvas.height = scale * height + diameter;
@@ -281,12 +278,11 @@
   init();
   render();
 
-  window.addEventListener( 'resize', function() {
+  window.addEventListener( 'resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
     render();
   });
-
 })();
