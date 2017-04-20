@@ -1,20 +1,21 @@
 /* global THREE, remove, updateGeometry, createBoxTextures */
+
 (function() {
   'use strict';
 
-  var container;
+  let container;
 
-  var scene, camera, renderer;
+  let scene, camera, renderer;
 
-  var geometry, material, mesh;
-  var wireframe;
+  let geometry, material, mesh;
+  let wireframe;
 
-  var vertexObject;
-  var transformControls;
+  let vertexObject;
+  let transformControls;
 
-  var state = {
+  const state = {
     nearestVertex: null,
-    isTransforming: false
+    isTransforming: false,
   };
 
   function createWireframe() {
@@ -62,19 +63,19 @@
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight );
     camera.position.set( 0, 0, 8 );
 
-    var controls = new THREE.OrbitControls( camera, renderer.domElement );
+    const controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.addEventListener( 'change', render );
 
     scene.add( new THREE.AmbientLight( '#333' ) );
 
-    var light = new THREE.DirectionalLight();
+    const light = new THREE.DirectionalLight();
     light.position.set( 0, 8, 8 );
     scene.add( light );
 
-    var axisHelper = new THREE.AxisHelper();
+    const axisHelper = new THREE.AxisHelper();
     scene.add( axisHelper );
 
-    var gridHelper = new THREE.GridHelper( 2, 20 );
+    const gridHelper = new THREE.GridHelper( 2, 20 );
     gridHelper.position.y = -1;
     gridHelper.material.opacity = 0.5;
     gridHelper.material.transparent = true;
@@ -82,15 +83,15 @@
 
     geometry = new THREE.BoxGeometry( 1, 1, 1 );
     material = new THREE.MultiMaterial(
-      createBoxTextures().map(function( texture ) {
-        return new THREE.MeshStandardMaterial({
+      createBoxTextures().map( texture =>
+        new THREE.MeshStandardMaterial({
           emissive: '#333',
           emissiveMap: texture,
           shading: THREE.FlatShading,
           transparent: true,
-          opacity: 0.8
-        });
-      })
+          opacity: 0.8,
+        })
+      )
     );
 
     mesh = new THREE.Mesh( geometry, material );
@@ -102,15 +103,10 @@
     scene.add( vertexObject );
     scene.add( transformControls );
 
-    transformControls.addEventListener( 'mousedown', function() {
-      state.isTransforming = true;
-    });
+    transformControls.addEventListener( 'mousedown', () => state.isTransforming = true );
+    transformControls.addEventListener( 'mouseup', () => state.isTransforming = false );
 
-    transformControls.addEventListener( 'mouseup', function() {
-      state.isTransforming = false;
-    });
-
-    transformControls.addEventListener( 'change', function() {
+    transformControls.addEventListener( 'change', () => {
       if ( state.nearestVertex ) {
         state.nearestVertex.copy( vertexObject.position );
         forceGeometryUpdate();
@@ -125,8 +121,8 @@
   init();
   render();
 
-  var mouse = new THREE.Vector2();
-  var vector = new THREE.Vector3();
+  const mouse = new THREE.Vector2();
+  const vector = new THREE.Vector3();
 
   function onMouseMove( event ) {
     if ( state.isTransforming ) {
@@ -135,10 +131,10 @@
 
     mouse.set( event.clientX, event.clientY );
 
-    var minDistanceToSquared = Infinity;
-    var minVertex;
+    let minDistanceToSquared = Infinity;
+    let minVertex;
 
-    geometry.vertices.forEach(function( vertex ) {
+    geometry.vertices.forEach( vertex => {
       vector.copy( vertex ).project( camera );
 
       vector.set(
@@ -146,7 +142,7 @@
         window.innerHeight * ( 1 - vector.y ) / 2
       );
 
-      var distanceToSquared = mouse.distanceToSquared( vector );
+      const distanceToSquared = mouse.distanceToSquared( vector );
       if ( distanceToSquared < minDistanceToSquared ) {
         minDistanceToSquared = distanceToSquared;
         minVertex = vertex;
@@ -159,12 +155,11 @@
 
   document.addEventListener( 'mousemove', onMouseMove );
 
-  window.addEventListener( 'resize', function() {
+  window.addEventListener( 'resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
     render();
   });
-
-})();
+}());

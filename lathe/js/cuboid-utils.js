@@ -7,6 +7,8 @@ createVertexHelper
 updateGeometry
 createTextLabel
 */
+'use strict';
+
 function remove( object ) {
   if ( object && object.parent ) {
     object.parent.remove( object );
@@ -14,13 +16,11 @@ function remove( object ) {
 }
 
 function round( precision ) {
-  return function( number ) {
-    return Number( number.toFixed( precision ) );
-  };
+  return number => Number( number.toFixed( precision ) );
 }
 
 function createVertexHelper( vertex, size ) {
-  var vertexHelper = new THREE.Mesh(
+  const vertexHelper = new THREE.Mesh(
     new THREE.BoxBufferGeometry( size, size, size ),
     new THREE.MeshBasicMaterial()
   );
@@ -40,11 +40,9 @@ function updateGeometry( geometry ) {
   geometry.computeBoundingSphere();
 }
 
-function createTextLabel( text, size ) {
-  size = size || 512;
-
-  var canvas = document.createElement( 'canvas' );
-  var ctx = canvas.getContext( '2d' );
+function createTextLabel( text, size = 512 ) {
+  const canvas = document.createElement( 'canvas' );
+  const ctx = canvas.getContext( '2d' );
 
   canvas.width = size;
   canvas.height = size;
@@ -53,10 +51,10 @@ function createTextLabel( text, size ) {
   ctx.textBaseline = 'middle';
 
   ctx.fillStyle = '#fff';
-  ctx.font = canvas.width + 'px Menlo, Monaco, monospace';
+  ctx.font = `${ canvas.width }px Menlo, Monaco, monospace`;
   ctx.fillText( text, canvas.width / 2, canvas.height / 2 );
 
-  var texture = new THREE.Texture( canvas );
+  const texture = new THREE.Texture( canvas );
   texture.needsUpdate = true;
 
   return new THREE.Sprite(
