@@ -1,5 +1,6 @@
-/*globals THREE, dat*/
-(function( window, document, undefined ) {
+/* global THREE, dat */
+
+(function() {
   'use strict';
 
   /**
@@ -9,22 +10,22 @@
    * curves. Notices of the Amer. Math. Soc., 41(9):1156-1163,
    * November/December 1994.
    */
-  var TAU = 2 * Math.PI;
+  const TAU = 2 * Math.PI;
 
-  var container;
+  let container;
 
-  var scene, camera, controls, renderer;
+  let scene, camera, controls, renderer;
 
-  var geometry, mesh;
-  var axisHelper;
+  let geometry, mesh;
+  let axisHelper;
 
   // Hyperbolic trigonometric functions.
   // Cached Math.exp(x) is significantly less accurate.
-  var cosh = Math.cosh || function cosh( x ) {
+  const cosh = Math.cosh || function cosh( x ) {
     return ( Math.exp( x ) + Math.exp( -x ) ) / 2;
   };
 
-  var sinh = Math.sinh || function sinh( x ){
+  const sinh = Math.sinh || function sinh( x ){
     return ( Math.exp( x ) - Math.exp( -x ) ) / 2;
   };
 
@@ -32,14 +33,14 @@
   function sini( real, imag ) {
     return {
       real: Math.sin( real ) * cosh( imag ),
-      imag: Math.cos( real ) * sinh( imag )
+      imag: Math.cos( real ) * sinh( imag ),
     };
   }
 
   function cosi( real, imag ) {
     return {
       real:  Math.cos( real ) * cosh( imag ),
-      imag: -Math.sin( real ) * sinh( imag )
+      imag: -Math.sin( real ) * sinh( imag ),
     };
   }
 
@@ -56,11 +57,11 @@
    * 0 <= k <= n - 1.
    */
   function phaseFactor( k, n ) {
-    var x = ( TAU * k ) / n;
+    const x = ( TAU * k ) / n;
 
     return {
       real: Math.cos( x ),
-      imag: Math.sin( x )
+      imag: Math.sin( x ),
     };
   }
 
@@ -77,14 +78,14 @@
   function muli( r0, i0, r1, i1 ) {
     return {
       real: r0 * r1 - i0 * i1,
-      imag: r0 * i1 + i0 * r1
+      imag: r0 * i1 + i0 * r1,
     };
   }
 
   function polari( real, imag ) {
     return {
       radius: Math.sqrt( real * real + imag * imag ),
-      angle: Math.atan2( imag, real )
+      angle: Math.atan2( imag, real ),
     };
   }
 
@@ -98,22 +99,20 @@
    *
    * For k in [0, n - 1].
    */
-  function powi( real, imag, n, k ) {
-    k = k || 0;
+  function powi( real, imag, n, k = 0 ) {
+    const polar = polari( real, imag );
 
-    var polar = polari( real, imag );
-
-    var radius = Math.pow( polar.radius, n );
-    var angle = ( polar.angle + TAU * k ) * n;
+    const radius = Math.pow( polar.radius, n );
+    const angle = ( polar.angle + TAU * k ) * n;
 
     return {
       real: radius * Math.cos( angle ),
-      imag: radius * Math.sin( angle )
+      imag: radius * Math.sin( angle ),
     };
   }
 
   function expi( real, imag ) {
-    var exp = Math.exp( real );
+    const exp = Math.exp( real );
 
     return {
       real: exp * Math.cos( imag ),
@@ -122,8 +121,8 @@
   }
 
   function u0( real, imag ) {
-    var a = expi( real, imag );
-    var b = expi( -real, -imag );
+    const a = expi( real, imag );
+    const b = expi( -real, -imag );
 
     a.real = 0.5 * ( a.real + b.real );
     a.imag = 0.5 * ( a.imag + b.imag );
@@ -132,8 +131,8 @@
   }
 
   function u1( real, imag ) {
-    var a = expi( real, imag );
-    var b = expi( -real, -imag );
+    const a = expi( real, imag );
+    const b = expi( -real, -imag );
 
     a.real = 0.5 * ( a.real - b.real );
     a.imag = 0.5 * ( a.imag - b.imag );
@@ -152,48 +151,44 @@
    *   z1k(a, b, n, k) = exp(2PIik / n) * sini(a, b)^(2 / n)
    */
   function z0k( r, i, n, k ) {
-    var phase = phaseFactor( k, n );
+    const phase = phaseFactor( k, n );
 
-    var cos = u0( r, i );
-    var powcos = powi( cos.real, cos.imag, 2 / n );
+    const cos = u0( r, i );
+    const powcos = powi( cos.real, cos.imag, 2 / n );
 
     return muli( phase.real, phase.imag, powcos.real, powcos.imag );
   }
 
   function z1k( r, i, n, k ) {
-    var phase = phaseFactor( k, n );
+    const phase = phaseFactor( k, n );
 
-    var sin = u1( r, i );
-    var powsin = powi( sin.real, sin.imag, 2 / n );
+    const sin = u1( r, i );
+    const powsin = powi( sin.real, sin.imag, 2 / n );
 
     return muli( phase.real, phase.imag, powsin.real, powsin.imag );
   }
 
   function calabi( n, alpha, count, rmin, rmax ) {
-    var cos = Math.cos( alpha );
-    var sin = Math.sin( alpha );
+    const cos = Math.cos( alpha );
+    const sin = Math.sin( alpha );
 
-    var dr = ( rmax - rmin ) / ( count - 1 );
-    var di = ( 0.5 * Math.PI ) / ( count - 1 );
+    const dr = ( rmax - rmin ) / ( count - 1 );
+    const di = ( 0.5 * Math.PI ) / ( count - 1 );
 
-    var data = new Float32Array( 3 * n * n * count * count );
-    var k0, k1;
-    // Real and imaginary values.
-    var r, i;
-    // Real and imaginary indices.
-    var ir, ii;
-    var z0, z1;
-    var index = 0;
-    for ( k0 = 0; k0 < n; k0++ ) {
-      for ( k1 = 0; k1 < n; k1++ ) {
-        for ( ir = 0; ir < count; ir++ ) {
-          r = rmin + ir * dr;
+    const data = new Float32Array( 3 * n * n * count * count );
+    let index = 0;
+    for ( let k0 = 0; k0 < n; k0++ ) {
+      for ( let k1 = 0; k1 < n; k1++ ) {
+        // Real and imaginary indices.
+        for ( let ir = 0; ir < count; ir++ ) {
+          // Real and imaginary values.
+          const r = rmin + ir * dr;
 
-          for ( ii = 0; ii < count; ii++ ) {
-            i = ii * di;
+          for ( let ii = 0; ii < count; ii++ ) {
+            const i = ii * di;
 
-            z0 = z0k( r, i, n, k0 );
-            z1 = z1k( r, i, n, k1 );
+            const z0 = z0k( r, i, n, k0 );
+            const z1 = z1k( r, i, n, k1 );
 
             data[ index++ ] = z0.real;
             data[ index++ ] = z1.real;
@@ -208,11 +203,11 @@
 
   function calabiGeometry( n, angle, vertexCount ) {
     console.time( 'calabi' );
-    var vertices = calabi( n, angle, vertexCount, -1, 1 );
+    const vertices = calabi( n, angle, vertexCount, -1, 1 );
     console.timeEnd( 'calabi' );
 
-    var geometry = new THREE.Geometry();
-    for ( var i = 0, il = vertices.length; i < il; i += 3 ) {
+    const geometry = new THREE.Geometry();
+    for ( let i = 0, il = vertices.length; i < il; i += 3 ) {
       geometry.vertices.push(
         new THREE.Vector3( vertices[i], vertices[ i + 1 ], vertices[ i + 2 ] )
       );
@@ -225,20 +220,17 @@
     // The geometry is composed of n^2 patches, each with m^2 vertices.
     // m is represented by vertexCount. subdivs represents the number of
     // subdivisions along an axis in a patch.
-    var patchVertexCount = vertexCount * vertexCount;
-    var subdivs = vertexCount - 1;
-    var offset;
-    var x, y;
-    var v0, v1, v2, v3;
-    for ( var i = 0, il = n * n; i < il; i++ ) {
-      offset = i * patchVertexCount;
+    const patchVertexCount = vertexCount * vertexCount;
+    const subdivs = vertexCount - 1;
+    for ( let i = 0, il = n * n; i < il; i++ ) {
+      const offset = i * patchVertexCount;
 
-      for ( y = 0; y < subdivs; y++ ) {
-        for ( x = 0; x < subdivs; x++ ) {
-          v0 = y * vertexCount + x;
-          v1 = y * vertexCount + ( x + 1 );
-          v2 = ( y + 1 ) * vertexCount + x;
-          v3 = ( y + 1 ) * vertexCount + ( x + 1 );
+      for ( let y = 0; y < subdivs; y++ ) {
+        for ( let x = 0; x < subdivs; x++ ) {
+          let v0 = y * vertexCount + x;
+          let v1 = y * vertexCount + ( x + 1 );
+          let v2 = ( y + 1 ) * vertexCount + x;
+          let v3 = ( y + 1 ) * vertexCount + ( x + 1 );
 
           v0 += offset;
           v1 += offset;
@@ -261,20 +253,20 @@
     return geometry;
   }
 
-  var types = [ 'line', 'point', 'mesh' ];
+  const types = [ 'line', 'point', 'mesh' ];
 
-  var config = {
+  const config = {
     n: 5,
     vertexCount: 11,
     angle: Math.PI / 4,
     animateAngle: false,
-    type: 'mesh'
+    type: 'mesh',
   };
 
   function updateCalabiVertices() {
-    var vertices = calabi( config.n, config.angle, config.vertexCount, -1, 1 );
+    const vertices = calabi( config.n, config.angle, config.vertexCount, -1, 1 );
 
-    for ( var i = 0, il = vertices.length / 3; i < il; i++ ) {
+    for ( let i = 0, il = vertices.length / 3; i < il; i++ ) {
       geometry.vertices[i].set(
         vertices[ 3 * i ],
         vertices[ 3 * i + 1 ],
@@ -286,7 +278,7 @@
   }
 
   function createCalabiGeometry() {
-    var geometry = calabiGeometry( config.n, config.angle, config.vertexCount );
+    const geometry = calabiGeometry( config.n, config.angle, config.vertexCount );
     return calabiFaces( geometry, config.n, config.vertexCount );
   }
 
@@ -312,29 +304,29 @@
 
     scene.add( camera );
 
-    var constructors = {
+    const constructors = {
       line: THREE.Line,
       point: THREE.Points,
-      mesh: THREE.Mesh
+      mesh: THREE.Mesh,
     };
 
-    var materials = {
+    const materials = {
       line: new THREE.LineBasicMaterial({
         transparent: true,
-        opacity: 0.1
+        opacity: 0.1,
       }),
 
       point: new THREE.PointsMaterial({
         fog: true,
         size: 0.02,
         transparent: true,
-        opacity: 0.2
+        opacity: 0.2,
       }),
 
       mesh: new THREE.MeshBasicMaterial({
         wireframe: true,
         transparent: true,
-        opacity: 0.2
+        opacity: 0.2,
       })
     };
 
@@ -351,7 +343,7 @@
       scene.add( mesh );
     }
 
-    var gui = new dat.GUI();
+    const gui = new dat.GUI();
 
     gui.add( config, 'angle', 0, TAU )
       .step( Math.PI / 180 )
@@ -375,12 +367,12 @@
       .onChange( createMesh );
   }
 
-  var prevTime = Date.now();
-  var currTime;
+  let prevTime = Date.now();
+  let currTime;
 
   function animate() {
     currTime = Date.now();
-    var dt = currTime - prevTime;
+    let dt = currTime - prevTime;
     prevTime = currTime;
 
     if ( dt > 1e2 ) {
@@ -403,11 +395,10 @@
   init();
   animate();
 
-  window.addEventListener( 'resize', function() {
+  window.addEventListener( 'resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
   });
-
-}) ( window, document );
+}());
