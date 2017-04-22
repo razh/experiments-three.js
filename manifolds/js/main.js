@@ -116,7 +116,7 @@
 
     return {
       real: exp * Math.cos( imag ),
-      imag: exp * Math.sin( imag )
+      imag: exp * Math.sin( imag ),
     };
   }
 
@@ -175,8 +175,7 @@
     const dr = ( rmax - rmin ) / ( count - 1 );
     const di = ( 0.5 * Math.PI ) / ( count - 1 );
 
-    const data = new Float32Array( 3 * n * n * count * count );
-    let index = 0;
+    const vertices = [];
     for ( let k0 = 0; k0 < n; k0++ ) {
       for ( let k1 = 0; k1 < n; k1++ ) {
         // Real and imaginary indices.
@@ -190,15 +189,17 @@
             const z0 = z0k( r, i, n, k0 );
             const z1 = z1k( r, i, n, k1 );
 
-            data[ index++ ] = z0.real;
-            data[ index++ ] = z1.real;
-            data[ index++ ] = cos * z0.imag + sin * z1.imag;
+            vertices.push(
+              z0.real,
+              z1.real,
+              (cos * z0.imag) + (sin * z1.imag)
+            );
           }
         }
       }
     }
 
-    return data;
+    return vertices;
   }
 
   function calabiGeometry( n, angle, vertexCount ) {
@@ -206,13 +207,8 @@
     const vertices = calabi( n, angle, vertexCount, -1, 1 );
     console.timeEnd( 'calabi' );
 
-    const geometry = new THREE.Geometry();
-    for ( let i = 0, il = vertices.length; i < il; i += 3 ) {
-      geometry.vertices.push(
-        new THREE.Vector3( vertices[i], vertices[ i + 1 ], vertices[ i + 2 ] )
-      );
-    }
-
+    const geometry = new THREE.BufferGeometry();
+    geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
     return geometry;
   }
 
@@ -220,6 +216,8 @@
     // The geometry is composed of n^2 patches, each with m^2 vertices.
     // m is represented by vertexCount. subdivs represents the number of
     // subdivisions along an axis in a patch.
+    const indices = [];
+
     const patchVertexCount = vertexCount * vertexCount;
     const subdivs = vertexCount - 1;
     for ( let i = 0, il = n * n; i < il; i++ ) {
@@ -244,16 +242,15 @@
            *    o---o
            *   2     3
            */
-          geometry.faces.push( new THREE.Face3( v0, v2, v3 ) );
-          geometry.faces.push( new THREE.Face3( v0, v3, v1 ) );
+          indices.push( v0, v2, v3 );
+          indices.push( v0, v3, v1 );
         }
       }
     }
 
+    geometry.setIndex( indices );
     return geometry;
   }
-
-  const types = [ 'line', 'point', 'mesh' ];
 
   const config = {
     n: 5,
@@ -265,16 +262,8 @@
 
   function updateCalabiVertices() {
     const vertices = calabi( config.n, config.angle, config.vertexCount, -1, 1 );
-
-    for ( let i = 0, il = vertices.length / 3; i < il; i++ ) {
-      geometry.vertices[i].set(
-        vertices[ 3 * i ],
-        vertices[ 3 * i + 1 ],
-        vertices[ 3 * i + 2 ]
-      );
-    }
-
-    geometry.verticesNeedUpdate = true;
+    geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+    geometry.attributes.position.needsUpdate = true;
   }
 
   function createCalabiGeometry() {
@@ -327,7 +316,7 @@
         wireframe: true,
         transparent: true,
         opacity: 0.2,
-      })
+      }),
     };
 
     mesh = new constructors[ config.type ]( geometry, materials[ config.type ] );
@@ -362,7 +351,7 @@
       .listen()
       .onChange( createMesh );
 
-    gui.add( config, 'type', types )
+    gui.add( config, 'type', Object.keys( materials ) )
       .listen()
       .onChange( createMesh );
   }
