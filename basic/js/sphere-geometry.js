@@ -1,48 +1,40 @@
-/*global THREE*/
-/*exported createAnimatedSphereGeometry*/
+/* global THREE */
+/* exported createAnimatedSphereGeometry */
+
+'use strict';
+
 function createAnimatedSphereGeometry(
-  radius,
-  widthSegments,
-  heightSegments,
-  phiStart,
-  phiLength,
-  thetaStart,
-  thetaLength
+  radius = 50,
+  widthSegments = 8,
+  heightSegments = 6,
+  phiStart = 0,
+  phiLength = Math.PI * 2,
+  thetaStart = 0,
+  thetaLength = Math.PI
 ) {
-  'use strict';
+  widthSegments = Math.max( 3, Math.floor( widthSegments ) );
+  heightSegments = Math.max( 2, Math.floor( heightSegments ) );
 
-  radius = radius || 50;
-
-  widthSegments = Math.max( 3, Math.floor( widthSegments ) || 8 );
-  heightSegments = Math.max( 2, Math.floor( heightSegments ) || 6 );
-
-  phiStart = phiStart !== undefined ? phiStart : 0;
-  phiLength = phiLength !== undefined ? phiLength : Math.PI * 2;
-
-  thetaStart = thetaStart !== undefined ? thetaStart : 0;
-  thetaLength = thetaLength !== undefined ? thetaLength : Math.PI;
-
-  return function( wt, ht ) {
+  return ( wt, ht ) => {
     wt = THREE.Math.clamp( wt, 0, 1 );
     ht = THREE.Math.clamp( ht, 0, 1 );
 
-    var geometry = new THREE.Geometry();
+    const geometry = new THREE.Geometry();
     geometry.boundingSphere = new THREE.Sphere( new THREE.Vector3(), radius );
 
-    var currentWidthSegments = Math.round( wt * widthSegments );
-    var currentHeightSegments = Math.round( ht * heightSegments );
+    const currentWidthSegments = Math.round( wt * widthSegments );
+    const currentHeightSegments = Math.round( ht * heightSegments );
 
-    var x, y;
-    var vertices = [];
+    const vertices = [];
 
-    for ( y = 0; y <= currentHeightSegments; y++ ) {
-      var verticesRow = [];
+    for ( let y = 0; y <= currentHeightSegments; y++ ) {
+      const verticesRow = [];
 
-      for ( x = 0; x <= currentWidthSegments; x++ ) {
-        var u = x / widthSegments;
-        var v = y / heightSegments;
+      for ( let x = 0; x <= currentWidthSegments; x++ ) {
+        const u = x / widthSegments;
+        const v = y / heightSegments;
 
-        var vertex = new THREE.Vector3();
+        const vertex = new THREE.Vector3();
         vertex.x = -radius * Math.cos( phiStart + u * phiLength ) * Math.sin( thetaStart + v * thetaLength );
         vertex.y = radius * Math.cos( thetaStart + v * thetaLength );
         vertex.z = radius * Math.sin( phiStart + u * phiLength ) * Math.sin( thetaStart + v * thetaLength );
@@ -55,17 +47,17 @@ function createAnimatedSphereGeometry(
       vertices.push( verticesRow );
     }
 
-    for ( y = 0; y < currentHeightSegments; y++ ) {
-      for ( x = 0; x < currentWidthSegments; x++ ) {
-        var v1 = vertices[ y ][ x + 1 ];
-        var v2 = vertices[ y ][ x ];
-        var v3 = vertices[ y + 1 ][ x ];
-        var v4 = vertices[ y + 1 ][ x + 1 ];
+    for ( let y = 0; y < currentHeightSegments; y++ ) {
+      for ( let x = 0; x < currentWidthSegments; x++ ) {
+        const v1 = vertices[ y ][ x + 1 ];
+        const v2 = vertices[ y ][ x ];
+        const v3 = vertices[ y + 1 ][ x ];
+        const v4 = vertices[ y + 1 ][ x + 1 ];
 
-        var n1 = geometry.vertices[ v1 ].clone().normalize();
-        var n2 = geometry.vertices[ v2 ].clone().normalize();
-        var n3 = geometry.vertices[ v3 ].clone().normalize();
-        var n4 = geometry.vertices[ v4 ].clone().normalize();
+        const n1 = geometry.vertices[ v1 ].clone().normalize();
+        const n2 = geometry.vertices[ v2 ].clone().normalize();
+        const n3 = geometry.vertices[ v3 ].clone().normalize();
+        const n4 = geometry.vertices[ v4 ].clone().normalize();
 
         if ( Math.abs( geometry.vertices[ v1 ].y ) === radius ) {
           geometry.faces.push( new THREE.Face3( v1, v3, v4, [ n1, n3, n4 ] ) );

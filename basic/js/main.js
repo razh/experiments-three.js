@@ -1,42 +1,43 @@
-/*global THREE, dat, createAnimatedSphereGeometry*/
+/* global THREE, dat, createAnimatedSphereGeometry */
+
 (function() {
   'use strict';
 
-  var container;
+  let container;
 
-  var scene, camera, controls, renderer;
+  let scene, camera, renderer;
 
-  var animateGeometry, geometry, mesh;
-  var light;
+  let animateGeometry, geometry, mesh;
+  let light;
 
-  var clock;
+  let clock;
 
-  var types = [ 'point', 'wireframe', 'mesh' ];
+  const types = [ 'point', 'wireframe', 'mesh' ];
 
-  var constructors = {
+  const constructors = {
     point: THREE.Points,
     wireframe: THREE.Mesh,
     mesh: THREE.Mesh
   };
 
-  var materials = {
+  const materials = {
     point: new THREE.PointsMaterial({
-      size: 0.01
+      size: 0.01,
     }),
 
     wireframe: new THREE.MeshPhongMaterial({
-      wireframe: true
+      wireframe: true,
     }),
 
     mesh: new THREE.MeshPhongMaterial({
       shading: THREE.FlatShading,
-      side: THREE.DoubleSide
-    })
+      side: THREE.DoubleSide,
+    }),
   };
 
-  var config = {
+  const config = {
     count: 24,
-    type: 'point'
+    type: 'point',
   };
 
   function createMesh() {
@@ -58,7 +59,7 @@
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight );
     camera.position.set( 0, 0, 2 );
 
-    controls = new THREE.OrbitControls( camera, renderer.domElement );
+    new THREE.OrbitControls( camera, renderer.domElement );
 
     light = new THREE.HemisphereLight( '#fff', '#111' );
     light.position.set( 8, 8, 0 );
@@ -71,12 +72,12 @@
 
     createMesh();
 
-    var gui = new dat.GUI();
+    const gui = new dat.GUI();
 
     gui.add( config, 'count', 3, 48 )
       .step( 1 )
       .listen()
-      .onChange(function() {
+      .onChange(() => {
         animateGeometry = createAnimatedSphereGeometry( 1, config.count, config.count );
       });
 
@@ -86,13 +87,13 @@
   }
 
   function animate() {
-    var time = clock.getElapsedTime();
-    var min = 1 / config.count;
+    const time = clock.getElapsedTime();
+    const min = 1 / config.count;
 
-    var duration = 4;
-    var halfDuration = duration / 2;
+    const duration = 4;
+    const halfDuration = duration / 2;
 
-    var t = time % duration;
+    const t = time % duration;
     geometry = animateGeometry(
       Math.max( t / halfDuration, min ),
       Math.max( t / halfDuration, 1 ) - 1 + min
@@ -107,11 +108,10 @@
   init();
   animate();
 
-  window.addEventListener( 'resize', function() {
+  window.addEventListener( 'resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
   });
-
-})();
+}());
