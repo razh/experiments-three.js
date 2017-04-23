@@ -10,47 +10,48 @@ updateGeometry
 createTextLabel
 translateBoxVertices
 */
+
 (function() {
   'use strict';
 
-  var container;
+  let container;
 
-  var scene, camera, renderer;
+  let scene, camera, renderer;
 
-  var geometry, material, mesh;
-  var baseGeometry;
-  var wireframe;
-  var vertexHelpers;
-  var vertexLabels;
+  let geometry, material, mesh;
+  let baseGeometry;
+  let wireframe;
+  let vertexHelpers;
+  let vertexLabels;
 
-  var transformControls;
-  var vertexObject;
+  let transformControls;
+  let vertexObject;
 
-  var dispatcher = new THREE.EventDispatcher();
+  const dispatcher = new THREE.EventDispatcher();
 
-  var config = {
+  const config = {
     width: 1,
     height: 1,
-    depth: 1
+    depth: 1,
   };
 
-  var state = {
+  const state = {
     selectedVertices: [],
     selectedVertex: null,
-    transform: function( vertices ) { return vertices; }
+    transform: vertices => vertices,
   };
 
-  var textareas = {
+  const textareas = {
     commands: document.getElementById( 'textarea-commands' ),
     delta: document.getElementById( 'textarea-delta' ),
     xyz: document.getElementById( 'textarea-xyz' ),
     xy: document.getElementById( 'textarea-xy' ),
     yz: document.getElementById( 'textarea-yz' ),
-    xz: document.getElementById( 'textarea-xz' )
+    xz: document.getElementById( 'textarea-xz' ),
   };
 
   //  0.001
-  var PRECISION = 3;
+  const PRECISION = 3;
 
   function createBaseGeometry( options ) {
     return new THREE.BoxGeometry(
@@ -85,8 +86,7 @@ translateBoxVertices
     }
   }
 
-  function setSelectedVertices( vertices ) {
-    vertices = vertices || [];
+  function setSelectedVertices( vertices = [] ) {
     state.selectedVertices = vertices;
     createVertexHelpers( vertices );
     setSelectedVertex( vertices[0] );
@@ -97,22 +97,22 @@ translateBoxVertices
       vertexHelpers.forEach( remove );
     }
 
-    vertexHelpers = vertices.map(function( vertex ) {
-      var vertexHelper = createVertexHelper( vertex, 0.15 );
+    vertexHelpers = vertices.map( vertex => {
+      const vertexHelper = createVertexHelper( vertex, 0.15 );
       scene.add( vertexHelper );
       return vertexHelper;
     });
   }
 
   function updateVertexHelpers( vertices ) {
-    vertices.map(function( vertex, index ) {
+    vertices.map(( vertex, index ) => {
       vertexHelpers[ index ].position.copy( vertex );
     });
   }
 
   function createVertexLabels( vertices ) {
-    vertexLabels = vertices.map(function( vertex, index ) {
-      var sprite = createTextLabel( index );
+    vertexLabels = vertices.map(( vertex, index ) => {
+      const sprite = createTextLabel( index );
       sprite.scale.multiplyScalar( 0.5 );
       scene.add( sprite );
       return sprite;
@@ -120,7 +120,7 @@ translateBoxVertices
   }
 
   function updateVertexLabels( vertices ) {
-    vertices.map(function( vertex, index ) {
+    vertices.map(( vertex, index ) => {
       vertexLabels[ index ].position.copy( vertex );
     });
   }
@@ -141,21 +141,21 @@ translateBoxVertices
   }
 
   function fromInput( lines ) {
-    return lines.split( '\n' ).map(function( line ) {
-      return line.split( ' ' ).map( parseFloat );
-    });
+    return lines
+      .split( '\n' )
+      .map( line => line.split( ' ' ).map( parseFloat ) );
   }
 
   function toInput( vertices ) {
-    return vertices.map(function( vertex ) {
+    return vertices.map( vertex => {
       return vertex.toArray().map( round( PRECISION ) ).join( ' ' );
     }).join( '\n' );
   }
 
   function onInput( event ) {
-    var arrays = fromInput( event.target.value );
+    const arrays = fromInput( event.target.value );
 
-    arrays.forEach(function( array, index ) {
+    arrays.forEach(( array, index ) => {
       geometry.vertices[ index ].fromArray( array );
     });
 
@@ -163,13 +163,13 @@ translateBoxVertices
   }
 
   function createVertexMap( vertices, componentKeys ) {
-    var vertexMap = {};
+    const vertexMap = {};
 
-    var precisionPoints = 4;
-    var precision = Math.pow( 10, precisionPoints );
+    const precisionPoints = 4;
+    const precision = Math.pow( 10, precisionPoints );
 
-    vertices.forEach(function( vertex ) {
-      var key = componentKeys.map(function( componentKey ) {
+    vertices.forEach( vertex => {
+      const key = componentKeys.map( componentKey => {
         return Math.round( vertex[ componentKey ] * precision );
       }).join( '_' );
 
@@ -184,48 +184,46 @@ translateBoxVertices
   }
 
   // Events that might affect cursor position.
-  var cursorEventTypes = [ 'click', 'focus', 'keydown', 'select' ];
+  const cursorEventTypes = [ 'click', 'focus', 'keydown', 'select' ];
 
   function getSelectionLineRange( event ) {
-    var target = event.target;
+    const { target } = event;
 
     return [
-      target.value.substr( 0, target.selectionStart ).split( '\n' ).length - 1,
-      target.value.substr( 0, target.selectionEnd ).split( '\n' ).length - 1
+      target.value.slice( 0, target.selectionStart ).split( '\n' ).length - 1,
+      target.value.slice( 0, target.selectionEnd ).split( '\n' ).length - 1,
     ];
   }
 
   function createComponentInput( textarea, components ) {
-    var keys = components.split( '' );
+    const keys = components.split( '' );
 
-    var vertexMap;
-    var vertexKeys;
+    let vertexMap;
+    let vertexKeys;
 
     function toComponentInput( vertices ) {
       vertexMap = createVertexMap( vertices, keys );
       vertexKeys = Object.keys( vertexMap );
 
-      return vertexKeys.map(function( vertexKey ) {
-        var vertex = vertexMap[ vertexKey ][0];
+      return vertexKeys.map( vertexKey => {
+        const vertex = vertexMap[ vertexKey ][0];
 
         return keys
-          .map(function( key ) {
-            return vertex[ key ];
-          })
+          .map( key => vertex[ key ] )
           .map( round( PRECISION ) )
           .join( ' ' );
       }).join( '\n' );
     }
 
     function onComponentInput( event ) {
-      var arrays = fromInput( event.target.value );
+      const arrays = fromInput( event.target.value );
 
-      arrays.forEach(function( array, index ) {
-        var vertexKey = vertexKeys[ index ];
-        var vertices = vertexMap[ vertexKey ];
+      arrays.forEach(( array, index ) => {
+        const vertexKey = vertexKeys[ index ];
+        const vertices = vertexMap[ vertexKey ];
 
-        keys.forEach(function( key, keyIndex ) {
-          vertices.forEach(function( vertex ) {
+        keys.forEach(( key, keyIndex ) => {
+          vertices.forEach( vertex => {
             vertex[ key ] = array[ keyIndex ];
           });
         });
@@ -240,24 +238,22 @@ translateBoxVertices
 
     setValue();
     textarea.addEventListener( 'input', onComponentInput );
-    dispatcher.addEventListener( 'change', function() {
+    dispatcher.addEventListener( 'change', () => {
       if ( textarea !== document.activeElement ) {
         setValue();
       }
     });
 
     function onComponentSelectionChange( event ) {
-      var selectionLineRange = getSelectionLineRange( event );
-      var selectedVertices = [];
+      const selectionLineRange = getSelectionLineRange( event );
+      const selectedVertices = [];
 
-      for ( var i = selectionLineRange[0]; i <= selectionLineRange[1]; i++ ) {
-        var vertexKey = vertexKeys[i];
-        var vertices = vertexMap[ vertexKey ];
+      for ( let i = selectionLineRange[0]; i <= selectionLineRange[1]; i++ ) {
+        const vertexKey = vertexKeys[i];
+        const vertices = vertexMap[ vertexKey ];
 
         if ( vertices ) {
-          vertices.forEach(function( vertex ) {
-            selectedVertices.push( vertex );
-          });
+          selectedVertices.push( ...vertices );
         }
       }
 
@@ -265,23 +261,23 @@ translateBoxVertices
       render();
     }
 
-    cursorEventTypes.forEach(function( eventType ) {
+    cursorEventTypes.forEach( eventType => {
       textarea.addEventListener( eventType, onComponentSelectionChange );
     });
   }
 
   function translateBoxVerticesHelper( vertices, vectors ) {
     // translateBoxVertices() expects an instance of THREE.Geometry.
-    return translateBoxVertices({ vertices: vertices }, vectors );
+    return translateBoxVertices({ vertices }, vectors );
   }
 
   function onCommandsInput( event ) {
     try {
       // Partial application of translateBoxVertices() as `t`.
-      var fn = new Function( [ 't', 'vertices' ], event.target.value )
+      const fn = new Function( [ 't', 'vertices' ], event.target.value )
         .bind( undefined, translateBoxVerticesHelper );
 
-      var _geometry = new THREE.Geometry().copy( baseGeometry );
+      const _geometry = new THREE.Geometry().copy( baseGeometry );
       fn( _geometry.vertices );
 
       setGeometry( _geometry );
@@ -298,10 +294,10 @@ translateBoxVertices
   }
 
   function computeDeltaString( precision ) {
-    var vector = new THREE.Vector3();
+    const vector = new THREE.Vector3();
 
-    return baseGeometry.vertices.map(function( a, i ) {
-      var b = geometry.vertices[i];
+    return baseGeometry.vertices.map(( a, i ) => {
+      const b = geometry.vertices[i];
 
       return vector
         .subVectors( a, b )
@@ -312,18 +308,18 @@ translateBoxVertices
   }
 
   function setQueryString() {
-    var _round = round( PRECISION );
+    const _round = round( PRECISION );
 
-    var params = {
+    const params = {
       width: _round(config.width ),
       height: _round( config.height ),
       depth: _round( config.depth ),
-      commands: textareas.commands.value.trim()
+      commands: textareas.commands.value.trim(),
     };
 
-    var query = Object.keys( params )
-      .map(function( key ) {
-        var value = params[ key ];
+    const query = Object.keys( params )
+      .map( key => {
+        const value = params[ key ];
         if ( value ) {
           return [ key, value ].map( encodeURIComponent ).join( '=' );
         }
@@ -331,7 +327,7 @@ translateBoxVertices
       .filter( Boolean )
       .join( '&' );
 
-    window.history.replaceState( '', '', '?' + query );
+    window.history.replaceState( '', '', `?${ query }` );
   }
 
   function init() {
@@ -347,39 +343,32 @@ translateBoxVertices
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight );
     camera.position.set( 0, 0, 8 );
 
-    var controls = new THREE.OrbitControls( camera, renderer.domElement );
+    const controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.addEventListener( 'change', render );
 
     scene.add( new THREE.AmbientLight( '#333' ) );
 
-    var light = new THREE.DirectionalLight();
+    const light = new THREE.DirectionalLight();
     light.position.set( 0, 8, 8 );
     scene.add( light );
 
-    var axisHelper = new THREE.AxisHelper();
+    const axisHelper = new THREE.AxisHelper();
     scene.add( axisHelper );
 
-    var gridHelper = new THREE.GridHelper( 4, 20 );
+    const gridHelper = new THREE.GridHelper( 4, 20 );
     gridHelper.position.y = -2;
     gridHelper.material.opacity = 0.5;
     gridHelper.material.transparent = true;
     scene.add( gridHelper );
 
     // Parse query string.
-    var params = window.location.search
-      .slice( 1 )
-      .split( '&' )
-      .reduce(function( object, pair ) {
-        pair = pair.split( '=' ).map( decodeURIComponent );
-        object[ pair[0] ] = pair[1];
-        return object;
-      }, {} );
+    const params = new URLSearchParams( window.location.search );
 
     // Set default values.
-    config.width = parseFloat( params.width ) || config.width;
-    config.height = parseFloat( params.height ) || config.height;
-    config.depth = parseFloat( params.depth ) || config.depth;
-    textareas.commands.value = params.commands || '';
+    config.width = parseFloat( params.get( 'width' ) ) || config.width;
+    config.height = parseFloat( params.get( 'height' ) ) || config.height;
+    config.depth = parseFloat( params.get( 'depth' ) ) || config.depth;
+    textareas.commands.value = params.get( 'commands' ) || '';
 
     // Build mesh.
     baseGeometry = createBaseGeometry( config );
@@ -387,7 +376,7 @@ translateBoxVertices
     material = new THREE.MeshStandardMaterial({
       shading: THREE.FlatShading,
       transparent: true,
-      opacity: 0.95
+      opacity: 0.95,
     });
     mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
@@ -399,22 +388,20 @@ translateBoxVertices
     scene.add( vertexObject );
     scene.add( transformControls );
 
-    transformControls.addEventListener( 'change', function() {
+    transformControls.addEventListener( 'change', () => {
       if ( state.selectedVertex ) {
         state.selectedVertex.copy( vertexObject.position );
         forceGeometryUpdate();
       }
     });
 
-    Object.keys( textareas ).forEach(function( key ) {
-      var textarea = textareas[ key ];
+    Object.keys( textareas ).forEach( key => {
+      const textarea = textareas[ key ];
 
       createNumericInput( textarea );
 
       // Disable OrbitControls while in textarea.
-      textarea.addEventListener( 'keydown', function( event ) {
-        event.stopPropagation();
-      });
+      textarea.addEventListener( 'keydown', event => event.stopPropagation() );
     });
 
     // 3D.
@@ -424,17 +411,17 @@ translateBoxVertices
 
     setValue();
     textareas.xyz.addEventListener( 'input', onInput );
-    dispatcher.addEventListener( 'change', function() {
+    dispatcher.addEventListener( 'change', () => {
       if ( textareas.xyz !== document.activeElement ) {
         setValue();
       }
     });
 
     function onSelectionChange( event ) {
-      var selectionLineRange = getSelectionLineRange( event );
-      var selectedVertices = [];
+      const selectionLineRange = getSelectionLineRange( event );
+      const selectedVertices = [];
 
-      for ( var i = selectionLineRange[0]; i <= selectionLineRange[1]; i++ ) {
+      for ( let i = selectionLineRange[0]; i <= selectionLineRange[1]; i++ ) {
         selectedVertices.push( geometry.vertices[i] );
       }
 
@@ -442,12 +429,12 @@ translateBoxVertices
       render();
     }
 
-    cursorEventTypes.forEach(function( eventType ) {
+    cursorEventTypes.forEach( eventType => {
       textareas.xyz.addEventListener( eventType, onSelectionChange );
     });
 
     // 2D.
-    [ 'xy', 'yz', 'xz' ].forEach(function( components ) {
+    [ 'xy', 'yz', 'xz' ].forEach( components => {
       createComponentInput( textareas[ components ], components );
     });
 
@@ -466,19 +453,19 @@ translateBoxVertices
       textareas.commands.dispatchEvent( new Event( 'input' ) );
     }
 
-    var gui = new dat.GUI({
-      width: 320
+    const gui = new dat.GUI({
+      width: 320,
     });
 
-    [ 'width', 'height', 'depth' ].forEach(function( dimension ) {
+    [ 'width', 'height', 'depth' ].forEach( dimension => {
       gui.add( config, dimension, 0.1, 4 )
         .step( 0.1 )
         .listen()
-        .onChange(function( value ) {
+        .onChange( value => {
           config[ dimension ] = value;
           baseGeometry = createBaseGeometry( config );
 
-          var _geometry = new THREE.Geometry().copy( baseGeometry );
+          const _geometry = new THREE.Geometry().copy( baseGeometry );
           state.transform( _geometry.vertices );
 
           setGeometry( _geometry );
@@ -503,12 +490,11 @@ translateBoxVertices
   init();
   render();
 
-  window.addEventListener( 'resize', function() {
+  window.addEventListener( 'resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
     render();
   });
-
-})();
+}());
