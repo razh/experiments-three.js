@@ -82,16 +82,14 @@
     scene.add( gridHelper );
 
     geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    material = new THREE.MultiMaterial(
-      createBoxTextures().map( texture =>
-        new THREE.MeshStandardMaterial({
-          emissive: '#333',
-          emissiveMap: texture,
-          shading: THREE.FlatShading,
-          transparent: true,
-          opacity: 0.8,
-        })
-      )
+    material = createBoxTextures().map( texture =>
+      new THREE.MeshStandardMaterial({
+        emissive: '#333',
+        emissiveMap: texture,
+        shading: THREE.FlatShading,
+        transparent: true,
+        opacity: 0.8,
+      })
     );
 
     mesh = new THREE.Mesh( geometry, material );

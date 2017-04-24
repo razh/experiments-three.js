@@ -190,14 +190,12 @@ geometryArguments
 
     material = new THREE.MeshStandardMaterial( materialParameters );
 
-    debugMaterial = new THREE.MultiMaterial(
-     createBoxTextures().map( texture =>
-        new THREE.MeshStandardMaterial(
-          Object.assign({
-            emissive: '#777',
-            emissiveMap: texture,
-          }, materialParameters
-        ))
+    debugMaterial = createBoxTextures().map( texture =>
+      new THREE.MeshStandardMaterial(
+        Object.assign({
+          emissive: '#777',
+          emissiveMap: texture,
+        }, materialParameters )
       )
     );
 
