@@ -1,16 +1,18 @@
 /* global THREE */
 /* exported modifiers */
+'use strict';
+
 function inverseLerp( a, b, x ) {
   return ( x - a ) / ( b - a );
 }
 
-var modifiers = {
-  repeat: function( geometry, count, radius ) {
-    var group = new THREE.Geometry();
+const modifiers = {
+  repeat( geometry, count, radius ) {
+    const group = new THREE.Geometry();
 
-    var angle = 2 * Math.PI / count;
-    for ( var i = 0; i <= count; i++ ) {
-      var child = new THREE.Geometry().copy( geometry )
+    const angle = 2 * Math.PI / count;
+    for ( let i = 0; i <= count; i++ ) {
+      const child = new THREE.Geometry().copy( geometry )
         .translate( radius, 0, 0 )
         .rotateZ( i * angle );
 
@@ -20,15 +22,15 @@ var modifiers = {
     return group;
   },
 
-  extrude: function( geometry, callback ) {
-    var keys = [ 'a', 'b', 'c' ];
+  extrude( geometry, callback ) {
+    const keys = [ 'a', 'b', 'c' ];
 
-    for ( var i = 0; i < geometry.faces.length; i++ ) {
-      var face = geometry.faces[i];
+    for ( let i = 0; i < geometry.faces.length; i++ ) {
+      const face = geometry.faces[ i ];
 
-      for ( var j = 0; j < face.vertexNormals.length; j++ ) {
-        var vertex = geometry.vertices[ face[ keys[ j ] ] ];
-        var normal = face.vertexNormals[ j ];
+      for ( let j = 0; j < face.vertexNormals.length; j++ ) {
+        const vertex = geometry.vertices[ face[ keys[ j ] ] ];
+        const normal = face.vertexNormals[ j ];
         callback( vertex, normal );
       }
     }
@@ -36,20 +38,18 @@ var modifiers = {
     return geometry;
   },
 
-  mirror: function( geometry ) {
-    var mirroredGeometry = new THREE.Geometry().copy( geometry );
+  mirror( geometry ) {
+    const mirroredGeometry = new THREE.Geometry().copy( geometry );
     mirroredGeometry.merge( mirroredGeometry.clone().scale( 1, 1, -1 ) );
     return mirroredGeometry;
   },
 
-  parametric: function( geometry, callback ) {
+  parametric( geometry, callback ) {
     geometry.computeBoundingBox();
 
-    var box = geometry.boundingBox;
-    var max = box.max;
-    var min = box.min;
+    const { max, min } = geometry.boundingBox;
 
-    return function( vector ) {
+    return vector => {
       return callback(
         vector,
         2 * inverseLerp( min.x, max.x, vector.x ) - 1,
@@ -57,5 +57,5 @@ var modifiers = {
         2 * inverseLerp( min.z, max.z, vector.z ) - 1
       );
     };
-  }
+  },
 };
