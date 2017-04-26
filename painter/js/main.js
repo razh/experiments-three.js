@@ -1,65 +1,64 @@
-/*global THREE, dat*/
+/* global THREE, dat */
+
 (function() {
   'use strict';
 
-  var container;
+  let container;
 
-  var canvas, ctx;
-  var size = 256;
+  let canvas, ctx;
+  const size = 256;
 
-  var brushCanvas, brushCtx;
-  var eraserCanvas, eraserCtx;
+  let brushCanvas, brushCtx;
+  let eraserCanvas, eraserCtx;
 
-  var scene, camera, renderer;
-  var raycaster;
-  var mouse;
+  let scene, camera, renderer;
+  let raycaster;
+  let mouse;
 
-  var geometry, material, mesh;
-  var intersectionMesh;
-  var texture;
+  let geometry, material, mesh;
+  let intersectionMesh;
+  let texture;
 
-  var mouseDown = false;
+  let mouseDown = false;
 
-  var options = {
+  const options = {
     brushRadius: 16,
-    scale: 0.25
+    scale: 0.25,
   };
 
   function drawRadialGradient( context, radius, colorStops ) {
-    var diameter = 2 * radius;
+    const diameter = 2 * radius;
 
-    var gradient = context.createRadialGradient(
+    const gradient = context.createRadialGradient(
       radius, radius, 0,
       radius, radius, radius
     );
 
-    colorStops.map(function( colorStop ) {
-      gradient.addColorStop.apply( gradient, colorStop );
-    });
+    colorStops.map( colorStop => gradient.addColorStop( ...colorStop ) );
 
     context.fillStyle = gradient;
     context.fillRect( 0, 0, diameter, diameter );
   }
 
   function updateBrushRadius() {
-    var radius = options.brushRadius;
+    const radius = options.brushRadius;
 
-    var brushDiameter = 2 * radius;
-    brushCanvas.width  = brushDiameter;
+    const brushDiameter = 2 * radius;
+    brushCanvas.width = brushDiameter;
     brushCanvas.height = brushDiameter;
-    eraserCanvas.width  = brushDiameter;
+    eraserCanvas.width = brushDiameter;
     eraserCanvas.height = brushDiameter;
 
     // Draw brush.
     drawRadialGradient( brushCtx, radius, [
       [ 0, '#111' ],
-      [ 1, 'transparent' ]
+      [ 1, 'transparent' ],
     ]);
 
     // Draw eraser.
     drawRadialGradient( eraserCtx, radius, [
       [ 0, 'rgba(0, 0, 0, 0.1)' ],
-      [ 1, 'transparent' ]
+      [ 1, 'transparent' ],
     ]);
   }
 
@@ -89,7 +88,7 @@
       new THREE.MeshBasicMaterial({
         wireframe: true,
         opacity: 0.5,
-        transparent: true
+        transparent: true,
       })
     );
     intersectionMesh.visible = false;
@@ -97,7 +96,7 @@
 
     // Height map.
     canvas = document.createElement( 'canvas' );
-    ctx    = canvas.getContext( '2d' );
+    ctx = canvas.getContext( '2d' );
 
     canvas.width = size;
     canvas.height = size;
@@ -116,7 +115,7 @@
       map: texture,
       displacementMap: texture,
       displacementScale: options.scale,
-      fog: false
+      fog: false,
     });
 
     mesh = new THREE.Mesh( geometry, material );
@@ -124,16 +123,16 @@
 
     // Brush gradient.
     brushCanvas = document.createElement( 'canvas' );
-    brushCtx    = brushCanvas.getContext( '2d' );
+    brushCtx = brushCanvas.getContext( '2d' );
 
     // Erase brush gradient.
     eraserCanvas = document.createElement( 'canvas' );
-    eraserCtx    = eraserCanvas.getContext( '2d' );
+    eraserCtx = eraserCanvas.getContext( '2d' );
 
     updateBrushRadius();
 
     // GUI.
-    var gui = new dat.GUI();
+    const gui = new dat.GUI();
 
     gui.add( options, 'brushRadius', 1, 128 )
       .listen()
@@ -141,14 +140,14 @@
 
     gui.add( options, 'scale', 0.01, 2, 0.01 )
       .listen()
-      .onChange(function( scale ) {
+      .onChange( scale => {
         material.setValues({ displacementScale: scale });
         material.needsUpdate = true;
       });
   }
 
   function render() {
-    var radius = options.brushRadius / 256;
+    const radius = options.brushRadius / 256;
     intersectionMesh.scale.set( radius, radius, radius );
     renderer.render( scene, camera );
   }
@@ -159,36 +158,32 @@
   function onMouse( event ) {
     event.preventDefault();
 
-    mouse.x =  ( event.clientX / window.innerWidth  ) * 2 - 1;
+    mouse.x = ( event.clientX / window.innerWidth  ) * 2 - 1;
     mouse.y = -( event.clientY / window.innerHeight ) * 2 + 1;
 
     raycaster.setFromCamera( mouse, camera );
 
-    var intersections = raycaster.intersectObject( mesh );
-    var intersection;
-    var point;
+    const intersections = raycaster.intersectObject( mesh );
     intersectionMesh.visible = false;
     if ( intersections.length ) {
-      intersection = intersections[0];
-      point = intersection.point;
+      const intersection = intersections[0];
+      const { point } = intersection;
       intersectionMesh.position.copy( point );
       intersectionMesh.visible = true;
 
-      var x = Math.round( size * (  point.x + 0.5 ) );
-      var y = Math.round( size * ( -point.y + 0.5 ) );
-      var z = options.scale * ( ctx.getImageData( x, y, 1, 1 ).data[ 0 ] / 255 );
+      const x = Math.round( size * ( point.x + 0.5 ) );
+      const y = Math.round( size * ( -point.y + 0.5 ) );
+      const z = options.scale * ( ctx.getImageData( x, y, 1, 1 ).data[ 0 ] / 255 );
       intersectionMesh.position.z = z || 0;
 
       if ( mouseDown ) {
         // Paint on left mouse button. Erase on right.
-        ctx.globalCompositeOperation = event.button !== 2 ?
-          'lighter' :
-          'normal';
+        ctx.globalCompositeOperation = event.button !== 2
+          ? 'lighter'
+          : 'normal';
 
         ctx.drawImage(
-          event.button !== 2 ?
-            brushCanvas :
-            eraserCanvas,
+          event.button !== 2 ? brushCanvas : eraserCanvas,
           x - options.brushRadius,
           y - options.brushRadius
         );
@@ -200,21 +195,21 @@
     render();
   }
 
-  document.addEventListener( 'mousedown', function( event ) {
+  document.addEventListener( 'mousedown', event => {
     mouseDown = true;
     onMouse( event );
   });
 
   document.addEventListener( 'mousemove', onMouse );
 
-  document.addEventListener( 'mouseup', function( event ) {
+  document.addEventListener( 'mouseup', event => {
     mouseDown = false;
     onMouse( event );
   });
 
   document.addEventListener( 'contextmenu', onMouse );
 
-  document.addEventListener( 'wheel', function( event ) {
+  document.addEventListener( 'wheel', event => {
     if ( !event.deltaY ) {
       return;
     }
@@ -224,12 +219,11 @@
     render();
   });
 
-  window.addEventListener( 'resize', function() {
+  window.addEventListener( 'resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
     render();
   });
-
-}) ();
+}());
