@@ -42,7 +42,7 @@ function createShipGeometry() {
   return new THREE.ExtrudeGeometry( shape, {
     amount: 3.5,
     curveSegments: 32,
-    bevelEnabled: false
+    bevelEnabled: false,
   });
 }
 
@@ -69,6 +69,8 @@ function createGunGeometry() {
 
 /* exported createTurretGeometry */
 function createTurretGeometry() {
+  'use strict';
+
   const turretRadius = 5;
   const turretHeight = 2;
 
@@ -79,7 +81,7 @@ function createTurretGeometry() {
     [ 0.3, 1 ],
     [ 0.6, 0.8 ],
     [ 0.6, 0 ],
-    [ 0.3, -0.9 ]
+    [ 0.3, -0.9 ],
   ];
 
   for ( let i = 0; i < points.length; i++ ) {
@@ -97,7 +99,7 @@ function createTurretGeometry() {
     amount: 0,
     bevelSize: 0.6,
     bevelThickness: turretHeight,
-    bevelSegments: 1
+    bevelSegments: 1,
   });
 
   // Center turret vertically.
@@ -156,7 +158,7 @@ function createSmokestackGeometry() {
   const geometry = new THREE.ExtrudeGeometry( shape, {
     amount: 10,
     bevelEnabled: false,
-    curveSegments: 4
+    curveSegments: 4,
   });
 
   return geometry;
@@ -183,7 +185,7 @@ const createFrontDeckGeometry = (function() {
       // First curve, from 0 to t.
       [ v0, v01, v012, v0123 ],
       // Second curve, from t to 1.
-      [ v0123, v123, v23, v3 ]
+      [ v0123, v123, v23, v3 ],
     ];
   }
 
@@ -204,9 +206,9 @@ const createFrontDeckGeometry = (function() {
         [ 0, halfLength ],
         [ halfWidth / 3, halfLength ],
         [ halfWidth, 2 / 3 * halfLength ],
-        [ halfWidth, 0 ]
+        [ halfWidth, 0 ],
       ].map( xy => new THREE.Vector2( ...xy ) ),
-      t
+      t,
     ];
 
     rightCurve = splitBezierCurve( ...rightCurve )[0];
@@ -216,9 +218,9 @@ const createFrontDeckGeometry = (function() {
         [ -halfWidth, 0 ],
         [ -halfWidth, 2 / 3 * halfLength ],
         [ -halfWidth / 3, halfLength ],
-        [ 0, halfLength ]
+        [ 0, halfLength ],
       ].map( xy => new THREE.Vector2( ...xy ) ),
-      1 - t
+      1 - t,
     ];
 
     leftCurve = splitBezierCurve( ...leftCurve )[1];
@@ -241,7 +243,7 @@ const createFrontDeckGeometry = (function() {
 
     const geometry = new THREE.ExtrudeGeometry( shape, {
       amount: 2,
-      bevelEnabled: false
+      bevelEnabled: false,
     });
 
     return geometry;

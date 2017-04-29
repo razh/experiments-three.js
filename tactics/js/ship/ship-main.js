@@ -7,35 +7,36 @@ createTurretGeometry
 createSmokestackGeometry
 createFrontDeckGeometry
 */
+
 (function() {
   'use strict';
 
-  var keys = [];
+  const keys = [];
 
-  var container;
+  let container;
 
-  var scene, camera, controls, renderer;
+  let scene, camera, controls, renderer;
 
-  var clock = new THREE.Clock();
+  const clock = new THREE.Clock();
 
-  var ambient;
-  var light;
-  var lightSpeed = 8;
+  let ambient;
+  let light;
+  const lightSpeed = 8;
 
   function createShipMesh() {
-    var geometry = createShipGeometry();
-    var material = new THREE.MeshStandardMaterial({
+    const geometry = createShipGeometry();
+    const material = new THREE.MeshStandardMaterial({
       color: 0xdddddd,
-      roughness: 0.8
+      roughness: 0.8,
     });
 
-    var mesh = new THREE.Mesh( geometry, material );
+    const mesh = new THREE.Mesh( geometry, material );
     mesh.rotation.x = -Math.PI / 2;
 
-    var shipHeight = 3.5;
+    const shipHeight = 3.5;
 
     // (x, y) coordinates.
-    var turretPositions = [
+    const turretPositions = [
       // Aft turrets.
       [ 0, 40 ],
       [ 0, 12 ],
@@ -43,13 +44,13 @@ createFrontDeckGeometry
       [ 7, -13 ],
       [ -7, -13 ],
       // Fore turret.
-      [ 0, -40 ]
+      [ 0, -40 ],
     ];
 
-    var turretGeometry = createTurretGeometry();
-    var gunGeometry = createGunGeometry();
-    for ( var i = 0; i < turretPositions.length; i++ ) {
-      var turretMesh = new THREE.Mesh( turretGeometry, material );
+    const turretGeometry = createTurretGeometry();
+    const gunGeometry = createGunGeometry();
+    for ( let i = 0; i < turretPositions.length; i++ ) {
+      const turretMesh = new THREE.Mesh( turretGeometry, material );
       turretMesh.castShadow = true;
       turretMesh.position.set(
         turretPositions[i][0],
@@ -58,7 +59,7 @@ createFrontDeckGeometry
         shipHeight + 1
       );
 
-      var gunMesh = new THREE.Mesh( gunGeometry, material );
+      const gunMesh = new THREE.Mesh( gunGeometry, material );
       gunMesh.castShadow = true;
       gunMesh.receiveShadow = true;
       gunMesh.position.y = shipHeight;
@@ -73,15 +74,14 @@ createFrontDeckGeometry
     }
 
     // (y, z) coordinates.
-    var smokestackPositions = [
+    const smokestackPositions = [
       [ 0, shipHeight ],
-      [ -24, shipHeight ]
+      [ -24, shipHeight ],
     ];
 
-    var smokestackGeometry = createSmokestackGeometry();
-    var smokestackMesh;
-    for ( i = 0; i < smokestackPositions.length; i++ ) {
-      smokestackMesh = new THREE.Mesh( smokestackGeometry, material );
+    const smokestackGeometry = createSmokestackGeometry();
+    for ( let i = 0; i < smokestackPositions.length; i++ ) {
+      const smokestackMesh = new THREE.Mesh( smokestackGeometry, material );
       smokestackMesh.castShadow = true;
       smokestackMesh.receiveShadow = true;
       smokestackMesh.position.y = smokestackPositions[i][0];
@@ -89,8 +89,8 @@ createFrontDeckGeometry
       mesh.add( smokestackMesh );
     }
 
-    var frontDeckGeometry = createFrontDeckGeometry();
-    var frontDeckMesh = new THREE.Mesh( frontDeckGeometry, material );
+    const frontDeckGeometry = createFrontDeckGeometry();
+    const frontDeckMesh = new THREE.Mesh( frontDeckGeometry, material );
     frontDeckMesh.position.z = shipHeight;
     mesh.add( frontDeckMesh );
 
@@ -125,27 +125,27 @@ createFrontDeckGeometry
     light.shadow.mapSize.set( 2048, 2048 );
     scene.add( light );
 
-    var shadowCameraHelper = new THREE.CameraHelper( light.shadow.camera );
+    const shadowCameraHelper = new THREE.CameraHelper( light.shadow.camera );
     scene.add( shadowCameraHelper );
 
     ambient = new THREE.AmbientLight( 0x333333 );
     scene.add( ambient );
 
-    var lightHelper = new THREE.SpotLightHelper( light, 1 );
+    const lightHelper = new THREE.SpotLightHelper( light, 1 );
     scene.add( lightHelper );
   }
 
   function animate() {
     // Update light position.
-    var dt = clock.getDelta();
+    const dt = clock.getDelta();
     // I. Forward.
-    if ( keys[ 73 ] ) { light.position.z -= lightSpeed * dt; }
+    if ( keys.KeyI ) { light.position.z -= lightSpeed * dt; }
     // K. Backward.
-    if ( keys[ 75 ] ) { light.position.z += lightSpeed * dt; }
+    if ( keys.KeyK ) { light.position.z += lightSpeed * dt; }
     // J. Left.
-    if ( keys[ 74 ] ) { light.position.x -= lightSpeed * dt; }
+    if ( keys.KeyJ ) { light.position.x -= lightSpeed * dt; }
     // L. Right.
-    if ( keys[ 76 ] ) { light.position.x += lightSpeed * dt; }
+    if ( keys.KeyL ) { light.position.x += lightSpeed * dt; }
 
     renderer.render( scene, camera );
     requestAnimationFrame( animate );
@@ -154,11 +154,6 @@ createFrontDeckGeometry
   init();
   animate();
 
-  document.addEventListener( 'keydown', function( event ) {
-    keys[ event.which ] = true;
-  });
-
-  document.addEventListener( 'keyup', function( event ) {
-    keys[ event.which ] = false;
-  });
+  document.addEventListener( 'keydown', event => keys[ event.code ] = true );
+  document.addEventListener( 'keyup', event => keys[ event.code ] = false );
 }());
