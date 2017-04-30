@@ -102,7 +102,7 @@
       console.log(event);
     }
 
-    onWheel() {
+    onWheel(event) {
       console.log(event);
     }
 
@@ -139,17 +139,16 @@
       if (keys.KeyA || keys.ArrowLeft) { x--; }
       if (keys.KeyD || keys.ArrowRight) { x++; }
 
-      if (!x && !z) {
-        return;
+      if (x || z) {
+        this.direction
+          .set(x, 0, z)
+          .applyQuaternion(this.object.quaternion)
+          .setY(0)
+          .normalize();
+
+        this.position.addScaledVector(this.direction, this.speed * dt);
       }
 
-      this.direction
-        .set(x, 0, z)
-        .applyQuaternion(this.object.quaternion)
-        .setY(0)
-        .normalize();
-
-      this.position.addScaledVector(this.direction, this.speed * dt);
       this.object.position.addVectors(this.position, this.offset);
       this.object.lookAt(this.position);
     }
@@ -201,7 +200,7 @@
       const selectionBox = new THREE.Box2().setFromPoints(
         [
           new THREE.Vector2().copy(state.mouse.start),
-          new THREE.Vector2().copy(state.mouse.end)
+          new THREE.Vector2().copy(state.mouse.end),
         ].map(toClipSpace)
       );
 
