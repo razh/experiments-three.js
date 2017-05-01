@@ -1,33 +1,34 @@
-/*global THREE*/
-(function( window, document, undefined ) {
+/* global THREE */
+
+(function() {
   'use strict';
 
-  var keys = [];
+  const keys = [];
 
-  var container;
+  let container;
 
-  var scene, camera, controls, renderer;
+  let scene, camera, controls, renderer;
 
-  var clock = new THREE.Clock();
+  const clock = new THREE.Clock();
 
-  var planeGeometry, planeMaterial, planeMesh;
+  let planeGeometry, planeMaterial, planeMesh;
 
-  var sourceGeometry, sourceMaterial, sourceMesh;
-  var sourceSpeed = 12;
+  let sourceGeometry, sourceMaterial, sourceMesh;
+  const sourceSpeed = 12;
 
   // Front direction vector used for AudioListener orientation.
-  var front = new THREE.Vector3();
+  const front = new THREE.Vector3();
 
-  var AudioContext = window.AudioContext || window.webkitAudioContext;
-  var audioCtx;
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  let audioCtx;
 
-  var listener, panner;
+  let listener, panner;
 
-  var osc, lfo, lfoGain, gain;
-  var playing = false;
+  let osc, lfo, lfoGain, gain;
+  let playing = false;
 
-  var A4 = 69;
-  var C3 = 48;
+  const A4 = 69;
+  const C3 = 48;
 
   function toFreq( note ) {
     return Math.pow( 2, ( note - A4 ) / 12 ) * 440;
@@ -114,15 +115,15 @@
     );
 
     // Update source mesh position.
-    var dt = clock.getDelta();
+    const dt = clock.getDelta();
     // I. Forward.
-    if ( keys[ 73 ] ) { sourceMesh.position.z -= sourceSpeed * dt; }
+    if ( keys.KeyI ) { sourceMesh.position.z -= sourceSpeed * dt; }
     // K. Backward.
-    if ( keys[ 75 ] ) { sourceMesh.position.z += sourceSpeed * dt; }
+    if ( keys.KeyK ) { sourceMesh.position.z += sourceSpeed * dt; }
     // J. Left.
-    if ( keys[ 74 ] ) { sourceMesh.position.x -= sourceSpeed * dt; }
+    if ( keys.KeyJ ) { sourceMesh.position.x -= sourceSpeed * dt; }
     // L. Right.
-    if ( keys[ 76 ] ) { sourceMesh.position.x += sourceSpeed * dt; }
+    if ( keys.KeyL ) { sourceMesh.position.x += sourceSpeed * dt; }
 
     panner.setPosition(
       sourceMesh.position.x,
@@ -137,11 +138,11 @@
   init();
   animate();
 
-  document.addEventListener( 'keydown', function( event ) {
-    keys[ event.which ] = true;
+  document.addEventListener( 'keydown', event => {
+    keys[ event.code ] = true;
 
     // Spacebar.
-    if ( event.which === 32 ) {
+    if ( event.code === 'Space' ) {
       playing = !playing;
 
       if ( playing ) {
@@ -152,8 +153,5 @@
     }
   });
 
-  document.addEventListener( 'keyup', function( event ) {
-    keys[ event.which ] = false;
-  });
-
-}) ( window, document );
+  document.addEventListener( 'keyup', event => keys[ event.code ] = false );
+}());
