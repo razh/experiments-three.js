@@ -1,46 +1,46 @@
-/*global THREE, dat*/
+/* global THREE, dat */
+/* eslint comma-dangle: ['error', 'always-multiline'] */
+
 (function() {
   'use strict';
 
-  var container;
+  let container;
 
-  var canvas, ctx;
+  let canvas, ctx;
 
-  var scene, camera, controls, renderer;
+  let scene, camera, renderer;
 
-  var geometry, material, mesh;
-  var texture;
+  let geometry, material, mesh;
+  let texture;
 
-  var depthScale = 0.25;
-  var depthScene, depthRenderer;
-  var depthMaterial, depthMesh;
+  const depthScale = 0.25;
+  let depthScene, depthRenderer;
+  let depthMaterial, depthMesh;
 
-  var geometries = {
+  const geometries = {
     icosahedron: new THREE.IcosahedronGeometry( 1, 3 ),
     sphere: new THREE.SphereGeometry( 1, 16, 16 ),
     octahedron: new THREE.OctahedronGeometry( 1, 2 ),
     tetrahedron: new THREE.TetrahedronGeometry( 1 ),
     box: new THREE.BoxGeometry( 1, 1, 1, 4, 4, 4 ),
     cylinder: new THREE.CylinderGeometry( 0.5, 0.5, 2, 32, 4 ),
-    torus: new THREE.TorusGeometry( 1, 0.25, 16, 16 )
+    torus: new THREE.TorusGeometry( 1, 0.25, 16, 16 ),
   };
 
-  var types = Object.keys( geometries );
+  const types = Object.keys( geometries );
 
-  var options = {
+  const options = {
     powerOfTwo: 8,
     strokeStyle: '#000',
     lineWidth: 0.5,
-    type: 'icosahedron'
+    type: 'icosahedron',
   };
 
   function drawUVs( ctx, mesh ) {
-    var canvas = ctx.canvas;
-    var width  = canvas.width;
-    var height = canvas.height;
+    const { width, height } = ctx.canvas;
     ctx.beginPath();
 
-    mesh.geometry.faceVertexUvs[0].forEach(function( uvs ) {
+    mesh.geometry.faceVertexUvs[0].forEach( uvs => {
       ctx.moveTo( width * uvs[0].x, height * uvs[0].y );
       ctx.lineTo( width * uvs[1].x, height * uvs[1].y );
       ctx.lineTo( width * uvs[2].x, height * uvs[2].y );
@@ -63,7 +63,7 @@
     depthRenderer = new THREE.WebGLRenderer({ antialias: true });
     depthRenderer.setSize( depthScale * window.innerWidth, depthScale * window.innerHeight );
 
-    var depthElement = depthRenderer.domElement;
+    const depthElement = depthRenderer.domElement;
     depthElement.style.position = 'fixed';
     depthElement.style.left = 0;
     depthElement.style.bottom = 0;
@@ -76,7 +76,7 @@
     camera.position.set( 0, 0, 2 );
     scene.add( camera );
 
-    controls = new THREE.OrbitControls( camera, renderer.domElement );
+    new THREE.OrbitControls( camera, renderer.domElement );
 
     scene.add( new THREE.HemisphereLight( '#fff', '#111' ) );
 
@@ -85,24 +85,27 @@
     ctx = canvas.getContext( '2d' );
 
     function resizeCanvas( exponent ) {
-      var size = Math.pow( 2, exponent );
+      const size = Math.pow( 2, exponent );
       canvas.width = size;
       canvas.height = size;
     }
 
-    canvas.style.position = 'fixed';
-    canvas.style.left = 0;
-    canvas.style.top = 0;
-    canvas.style.width = '256px';
-    canvas.style.height = '256px';
+    Object.assign(canvas.style, {
+      position: 'fixed',
+      left: 0,
+      top: 0,
+      width: '256px',
+      height: '256px',
+    });
 
     resizeCanvas( options.powerOfTwo );
     texture = new THREE.Texture( canvas );
+    texture.anisotropy = renderer.getMaxAnisotropy();
     document.body.appendChild( canvas );
 
     material = new THREE.MeshPhongMaterial({
       map: texture,
-      shading: THREE.FlatShading
+      shading: THREE.FlatShading,
     });
 
     depthMaterial = new THREE.MeshDepthMaterial();
@@ -136,7 +139,7 @@
     drawUVTexture( options.powerOfTwo );
 
     // GUI.
-    var gui = new dat.GUI();
+    const gui = new dat.GUI();
 
     gui.add( options, 'powerOfTwo', 0, 12 )
       .step( 1 )
@@ -153,24 +156,24 @@
 
     gui.add( options, 'type', types )
       .listen()
-      .onChange(function() {
+      .onChange(() => {
         createMesh();
         drawUVTexture();
       });
   }
 
   function setDepthCamera( mesh, camera ) {
-    var vector = new THREE.Vector3();
+    const vector = new THREE.Vector3();
 
     // Assume mesh.matrixWorld is already pre=calculated.
-    var distances = mesh.geometry.vertices.map(function( vertex ) {
+    const distances = mesh.geometry.vertices.map( vertex => {
       return vector.copy( vertex )
         .applyMatrix4( mesh.matrixWorld )
         .distanceTo( camera.position );
     });
 
-    var max = Math.max.apply( null, distances );
-    var far = Math.min( max * 1.5, 2000 );
+    const max = Math.max( ...distances );
+    const far = Math.min( max * 1.5, 2000 );
 
     // Prevent degenrate projection matrix.
     if ( far !== camera.near ) {
@@ -192,12 +195,11 @@
   init();
   animate();
 
-  window.addEventListener( 'resize', function() {
+  window.addEventListener( 'resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
     depthRenderer.setSize( depthScale * window.innerWidth, depthScale * window.innerHeight );
   });
-
-})();
+}());
