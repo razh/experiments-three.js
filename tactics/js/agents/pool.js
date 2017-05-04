@@ -1,14 +1,15 @@
-/*exported createPool*/
+/* exported createPool */
+
 function createPool( Constructor ) {
   'use strict';
 
-  var pool = [];
-  var count = 0;
-  var length = 0;
+  const pool = [];
+  let count = 0;
+  let length = 0;
 
   function get() {
     if ( count === length ) {
-      var object = new Constructor();
+      const object = new Constructor();
       pool.push( object );
       length++;
       count++;
@@ -23,7 +24,7 @@ function createPool( Constructor ) {
   }
 
   return {
-    get: get,
-    reset: reset
+    get,
+    reset,
   };
 }

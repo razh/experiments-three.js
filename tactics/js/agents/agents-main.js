@@ -1,15 +1,16 @@
-/*global THREE*/
+/* global THREE */
+
 (function() {
   'use strict';
 
-  var container;
+  let container;
 
-  var scene, camera, controls, renderer;
-  var raycaster;
-  var mouse;
+  let scene, camera, controls, renderer;
+  let raycaster;
+  let mouse;
 
-  var planeGeometry, planeMaterial, planeMesh;
-  var lineGeometry, lineMaterial, lineMesh;
+  let planeGeometry, planeMaterial, planeMesh;
+  let lineGeometry, lineMaterial, lineMesh;
 
   function init() {
     container = document.createElement( 'div' );
@@ -47,7 +48,7 @@
 
     lineMaterial = new THREE.LineBasicMaterial({
       depthTest: false,
-      depthWrite: false
+      depthWrite: false,
     });
     lineMesh = new THREE.Line( lineGeometry, lineMaterial );
     lineMesh.visible = false;
@@ -65,12 +66,12 @@
   function onMouse( event ) {
     event.preventDefault();
 
-    mouse.x =  ( event.clientX / window.innerWidth  ) * 2 - 1;
+    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
     mouse.y = -( event.clientY / window.innerHeight ) * 2 + 1;
 
     raycaster.setFromCamera( mouse, camera );
 
-    var intersections = raycaster.intersectObject( planeMesh );
+    const intersections = raycaster.intersectObject( planeMesh );
     if ( !intersections.length ) {
       return;
     }
@@ -78,12 +79,12 @@
     return intersections[0].point;
   }
 
-  document.addEventListener( 'mousedown', function( event ) {
+  document.addEventListener( 'mousedown', event => {
     if ( controls.enabled ) {
       return;
     }
 
-    var start = onMouse( event );
+    const start = onMouse( event );
     if ( start ) {
       lineGeometry.vertices[0].copy( start );
       lineGeometry.vertices[1].copy( start );
@@ -92,7 +93,7 @@
     }
   });
 
-  document.addEventListener( 'mousemove', function( event ) {
+  document.addEventListener( 'mousemove', event => {
     if ( controls.enabled ) {
       return;
     }
@@ -101,28 +102,27 @@
       return;
     }
 
-    var end = onMouse( event );
+    const end = onMouse( event );
     if ( end ) {
       lineGeometry.vertices[1].copy( end );
       lineGeometry.verticesNeedUpdate = true;
     }
   });
 
-  document.addEventListener( 'mouseup', function() {
+  document.addEventListener( 'mouseup', () => {
     lineMesh.visible = false;
   });
 
   // Shift toggle OrbitControls.
-  document.addEventListener( 'keydown', function( event ) {
+  document.addEventListener( 'keydown', event => {
     if ( event.keyCode === 16 ) {
       controls.enabled = true;
     }
   });
 
-  document.addEventListener( 'keyup', function( event ) {
+  document.addEventListener( 'keyup', event => {
     if ( event.keyCode === 16 ) {
       controls.enabled = false;
     }
   });
-
-})();
+}());
