@@ -1,20 +1,21 @@
-/*global THREE, createArrow*/
+/* global THREE, createArrow */
+
 (function() {
   'use strict';
 
-  var clock = new THREE.Clock();
+  const clock = new THREE.Clock();
 
-  var container;
+  let container;
 
-  var scene, camera, controls, renderer;
+  let scene, camera, controls, renderer;
 
-  var ambientLight;
-  var spotLight;
+  let ambientLight;
+  let spotLight;
 
-  var planeGeometry, planeMaterial, planeMesh;
-  var geometry, material, mesh;
+  let planeGeometry, planeMaterial, planeMesh;
+  let geometry, material, mesh;
 
-  var arrowShape, arrow;
+  let arrowShape, arrow;
 
   function init() {
     container = document.createElement( 'div' );
@@ -55,12 +56,12 @@
     scene.add( mesh );
 
     // Arrows.
-    var arrowOptions = {
+    const arrowOptions = {
       color: 0xff0000,
       markerWidth: 0.1,
       markerLength: 0.2,
       linewidth: 1,
-      divisions: 32
+      divisions: 32,
     };
 
     arrowShape = new THREE.Shape();
@@ -92,12 +93,11 @@
     renderer.render( scene, camera );
     requestAnimationFrame( animate );
 
-    var time = clock.getElapsedTime();
-    var t = 0.5 * ( Math.sin( time ) + 1 );
+    const time = clock.getElapsedTime();
+    const t = 0.5 * ( Math.sin( time ) + 1 );
     arrow.lerp( THREE.Math.smootherstep( t, 0, 1 ) );
   }
 
   init();
   animate();
-
-})();
+}());
