@@ -1,63 +1,62 @@
 /* global THREE */
 /* exported Box */
-var Box = (function() {
+
+const Box = (() => {
   'use strict';
 
-  var matrix = new THREE.Matrix4();
-  var vector = new THREE.Vector3();
+  const matrix = new THREE.Matrix4();
+  const vector = new THREE.Vector3();
 
-  function Node( width, height, depth ) {
-    THREE.Object3D.call( this );
+  class Node extends THREE.Object3D {
+    constructor( width, height, depth ) {
+      super();
 
-    this.width = width;
-    this.height = height;
-    this.depth = depth;
+      this.width = width;
+      this.height = height;
+      this.depth = depth;
 
-    this.geometry = new THREE.BoxGeometry( width, height, depth )
-      .translate( 0, height / 2, 0 );
+      this.geometry = new THREE.BoxGeometry( width, height, depth )
+        .translate( 0, height / 2, 0 );
 
-    this.index = 0;
-  }
+      this.index = 0;
+    }
 
-  Node.prototype = Object.create( THREE.Object3D.prototype );
-  Node.prototype.constructor = Node;
+    createGeometry() {
+      const geometry = new THREE.Geometry().copy( this.geometry );
+      const parent = this.parent;
+      if ( !parent ) {
+        return geometry;
+      }
 
-  Node.prototype.createGeometry = function() {
-    var geometry = new THREE.Geometry().copy( this.geometry );
-    var parent = this.parent;
-    if ( !parent ) {
+      parent.updateMatrixWorld();
+      geometry.applyMatrix( parent.matrixWorld );
       return geometry;
     }
 
-    parent.updateMatrixWorld();
-    geometry.applyMatrix( parent.matrixWorld );
-    return geometry;
-  };
+    createBone( geometry ) {
+      vector.set( 0, this.height, 0 );
 
-  Node.prototype.createBone = function( geometry ) {
-    vector.set( 0, this.height, 0 );
+      const parent = this.parent;
+      if ( parent ) {
+        vector.applyMatrix4( matrix.extractRotation( parent.matrixWorld ) );
+      }
 
-    var parent = this.parent;
-    if ( parent ) {
-      vector.applyMatrix4( matrix.extractRotation( parent.matrixWorld ) );
+      const parentIndex = parent && parent.index || 0;
+
+      const index = geometry.bones.push({
+        parent: parentIndex,
+        pos: vector.toArray(),
+        rotq: [ 0, 0, 0, 1 ],
+      }) - 1;
+
+      this.index = index;
+
+      for ( let i = 0, il = this.geometry.vertices.length; i < il; i++ ) {
+        geometry.skinIndices.push( new THREE.Vector4( parentIndex, 0, 0, 0 ) );
+        geometry.skinWeights.push( new THREE.Vector4( 1, 0, 0, 0 ) );
+      }
     }
-
-    var parentIndex = parent && parent.index || 0;
-
-    var index = geometry.bones.push({
-      parent: parentIndex,
-      pos: vector.toArray(),
-      rotq: [ 0, 0, 0, 1 ]
-    }) - 1;
-
-    this.index = index;
-
-    for ( var i = 0, il = this.geometry.vertices.length; i < il; i++ ) {
-      geometry.skinIndices.push( new THREE.Vector4( parentIndex, 0, 0, 0 ) );
-      geometry.skinWeights.push( new THREE.Vector4( 1, 0, 0, 0 ) );
-    }
-  };
+  }
 
   return Node;
-
 })();
