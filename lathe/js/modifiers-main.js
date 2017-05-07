@@ -1,47 +1,45 @@
 /* global THREE, dat, modifiers, createNumericInput, createViewports */
-(function() {
+
+(() => {
   'use strict';
 
-  var container;
+  let container;
 
-  var scene, camera, renderer;
-  var views;
+  let scene, camera, renderer;
+  let views;
 
-  var baseGeometry;
-  var geometry, material, mesh;
-  var wireframe;
+  let baseGeometry;
+  let geometry, material, mesh;
+  let wireframe;
 
-  var textareas = {
+  const textareas = {
     x: document.getElementById( 'textarea-x' ),
     y: document.getElementById( 'textarea-y' ),
-    z: document.getElementById( 'textarea-z' )
+    z: document.getElementById( 'textarea-z' ),
   };
 
-  var viewports = document.getElementById( 'viewports' );
+  const viewports = document.getElementById( 'viewports' );
 
-  var config = {
+  const config = {
     width: 1,
     height: 1,
     depth: 1,
     widthSegments: 8,
     heightSegments: 8,
-    depthSegments: 8
+    depthSegments: 8,
   };
 
-  var transformVertex = function() {};
+  let transformVertex = () => {};
 
   // Set from window.location.search.
-  window.location.search
-    .slice( 1 )
-    .split( '&' )
-    .forEach(function( pair ) {
-      pair = pair.split( '=' );
+  const params = new URLSearchParams( window.location.search );
 
-      var key = pair[0];
-      if ( textareas[ key ] ) {
-        textareas[ key ].value = decodeURIComponent( pair[1] );
-      }
-    });
+  Object.keys( textareas ).forEach( key => {
+    const value = params.get( key );
+    if ( value ) {
+      textareas[ key ].value = value;
+    }
+  });
 
   function createBaseGeometry( options ) {
     return new THREE.BoxGeometry(
@@ -64,7 +62,7 @@
   }
 
   function transformGeometry() {
-    var _geometry = new THREE.Geometry().copy( baseGeometry );
+    const _geometry = new THREE.Geometry().copy( baseGeometry );
     _geometry.vertices.forEach( transformVertex );
     _geometry.computeFaceNormals();
     _geometry.computeVertexNormals();
@@ -79,15 +77,15 @@
   }
 
   function onInput( event ) {
-    var x = textareas.x.value.trim() || 'x';
-    var y = textareas.y.value.trim() || 'y';
-    var z = textareas.z.value.trim() || 'z';
+    const x = textareas.x.value.trim() || 'x';
+    const y = textareas.y.value.trim() || 'y';
+    const z = textareas.z.value.trim() || 'z';
 
     try {
-      var fns = [ x, y, z ].map(function( body ) {
+      const fns = [ x, y, z ].map( body => {
         // HACK: Check for no explicit return.
         if ( !/return/.test( body ) ) {
-          body = 'return ' + body + ';';
+          body = `return ${ body };`;
         }
 
         return new Function(
@@ -96,8 +94,8 @@
         );
       });
 
-      transformVertex = modifiers.parametric( baseGeometry, function( vector, xt, yt, zt ) {
-        vector.fromArray(fns.map(function( fn ) {
+      transformVertex = modifiers.parametric( baseGeometry, ( vector, xt, yt, zt ) => {
+        vector.fromArray(fns.map( fn => {
           return fn( vector.x, vector.y, vector.z, xt, yt, zt );
         }));
       });
@@ -117,18 +115,17 @@
       event.target.setCustomValidity( '' );
     }
 
-    var query = Object.keys( textareas )
-      .map(function( key ) {
-        var value = textareas[ key ].value.trim();
-        if ( value ) {
-          return [ key, value ].map( encodeURIComponent ).join( '=' );
-        }
-      })
-      .filter( Boolean )
-      .join( '&' );
+    const newParams = new URLSearchParams();
+
+    Object.keys( textareas ).forEach( key => {
+      const value = textareas[ key ].value.trim();
+      if ( value ) {
+        newParams.set( key, value );
+      }
+    });
 
     // Update location.
-    window.history.replaceState( '', '', '?' + query );
+    window.history.replaceState( '', '', `?${ newParams }` );
   }
 
   function init() {
@@ -146,19 +143,19 @@
 
     views = createViewports( viewports );
 
-    var controls = new THREE.OrbitControls( camera, renderer.domElement );
+    const controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.addEventListener( 'change', render );
 
     scene.add( new THREE.AmbientLight( '#333' ) );
 
-    var light = new THREE.DirectionalLight();
+    const light = new THREE.DirectionalLight();
     light.position.set( 8, 8, 0 );
     scene.add( light );
 
-    var axisHelper = new THREE.AxisHelper();
+    const axisHelper = new THREE.AxisHelper();
     scene.add( axisHelper );
 
-    var gridHelper = new THREE.GridHelper( 2, 20 );
+    const gridHelper = new THREE.GridHelper( 2, 20 );
     gridHelper.position.y = -1;
     gridHelper.material.opacity = 0.5;
     gridHelper.material.transparent = true;
@@ -171,35 +168,33 @@
     scene.add( mesh );
     createWireframe( mesh );
 
-    Object.keys( textareas ).forEach(function( key ) {
-      var textarea = textareas[ key ];
+    Object.keys( textareas ).forEach( key => {
+      const textarea = textareas[ key ];
 
       createNumericInput( textarea );
       textarea.addEventListener( 'input', onInput );
 
       // Prevent input from toggling dat.gui via hide shortcut ('h').
-      textarea.addEventListener( 'keydown', function( event ) {
-        event.stopPropagation();
-      });
+      textarea.addEventListener( 'keydown', event => event.stopPropagation() );
     });
 
-    var gui = new dat.GUI();
+    const gui = new dat.GUI();
 
-    [ 'width', 'height', 'depth' ].forEach(function( dimension ) {
+    [ 'width', 'height', 'depth' ].forEach( dimension => {
       gui.add( config, dimension, 0.1, 4 )
         .listen()
-        .onChange(function( value ) {
+        .onChange( value => {
           config[ dimension ] = value;
           baseGeometry = createBaseGeometry( config );
           transformGeometry();
         });
     });
 
-    [ 'widthSegments', 'heightSegments', 'depthSegments' ].forEach(function( segmentCount ) {
+    [ 'widthSegments', 'heightSegments', 'depthSegments' ].forEach( segmentCount => {
       gui.add( config, segmentCount, 1, 16 )
         .step( 1 )
         .listen()
-        .onChange(function( count ) {
+        .onChange( count => {
           config[ segmentCount ] = count;
           baseGeometry = createBaseGeometry( config );
           transformGeometry();
@@ -210,8 +205,8 @@
   function render() {
     renderer.render( scene, camera );
 
-    Object.keys( views ).forEach(function( key ) {
-      var view = views[ key ];
+    Object.keys( views ).forEach( key => {
+      const view = views[ key ];
       view.renderer.render( scene, view.camera );
     });
   }
@@ -220,12 +215,11 @@
   onInput();
   render();
 
-  window.addEventListener( 'resize', function() {
+  window.addEventListener( 'resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
     render();
   });
-
 })();

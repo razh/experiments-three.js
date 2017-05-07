@@ -101,7 +101,7 @@ geometryArguments
   function setQueryString( key, value ) {
     const params = new URLSearchParams();
     params.set( key, value );
-    window.history.replaceState( '', '', `?${params.toString()}` );
+    window.history.replaceState( '', '', `?${ params }` );
   }
 
   function onInput( event ) {

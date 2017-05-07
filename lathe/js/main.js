@@ -108,7 +108,7 @@
       drawCanvas( points );
 
       // Update location.
-      window.history.replaceState( '', '', `#${  encodeURIComponent( textarea.value ) }` );
+      window.history.replaceState( '', '', `#${ encodeURIComponent( textarea.value ) }` );
     }
 
     onInput();
