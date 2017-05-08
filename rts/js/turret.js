@@ -1,4 +1,4 @@
-/* global THREE, Entity */
+/* global THREE, Entity, quaternionRotateTowards */
 /* exported BallTurret */
 
 class BallTurret extends Entity {
@@ -41,6 +41,10 @@ class BallTurret extends Entity {
 
     this.minPolarAngle = 0;
     this.maxPolarAngle = Math.PI / 2;
+
+    this.rotationSpeed = THREE.Math.degToRad(90);
+
+    this.target = new THREE.Object3D();
   }
 
   lookAt(vector) {
@@ -66,6 +70,15 @@ class BallTurret extends Entity {
       .setFromSpherical(spherical)
       .add(this.position);
 
-    super.lookAt(offset);
+    this.target.position.copy(this.position);
+    this.target.lookAt(offset);
+  }
+
+  update(dt) {
+    quaternionRotateTowards(
+      this.quaternion,
+      this.target.quaternion,
+      this.rotationSpeed * dt
+    );
   }
 }
