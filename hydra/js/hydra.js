@@ -54,55 +54,56 @@ var Hydra = (function() {
     HYDRA_SET_BLEND_TENSION: 1 << 8
   };
 
-  function HydraBone() {
-    this.position = new THREE.Vector3();
-    this.delta = new THREE.Vector3();
+  class HydraBone {
+    constructor() {
+      this.position = new THREE.Vector3();
+      this.delta = new THREE.Vector3();
 
-    this.idealLength = 0;
-    this.actualLength = 0;
+      this.idealLength = 0;
+      this.actualLength = 0;
 
-    this.stuck = false;
+      this.stuck = false;
 
-    this.goalPosition = new THREE.Vector3();
-    this.goalInfluence = 1;
+      this.goalPosition = new THREE.Vector3();
+      this.goalInfluence = 1;
+    }
   }
 
-  function Hydra() {
-    var geometry = new THREE.Geometry();
-    var material = new THREE.MeshBasicMaterial();
+  class Hydra extends THREE.Mesh {
+    constructor() {
+      var geometry = new THREE.Geometry();
+      var material = new THREE.MeshBasicMaterial();
 
-    THREE.Mesh.call( this, geometry, material );
+      super( geometry, material );
 
-    this.body = [];
+      this.body = [];
 
-    this.chain = [];
-    this.activeChain = 0;
+      this.chain = [];
+      this.activeChain = 0;
 
-    this.hasStuckSegments = false;
-    this.currentLength = 0;
+      this.hasStuckSegments = false;
+      this.currentLength = 0;
 
-    this.headGoal = new THREE.Vector3();
-    this.headGoalInfluence = 0;
-    this.headDirection = new THREE.Vector3();
+      this.headGoal = new THREE.Vector3();
+      this.headGoalInfluence = 0;
+      this.headDirection = new THREE.Vector3();
 
-    this.relaxedLength = 0;
-    this.outward = new THREE.Vector3();
-    this.idealLength = 0;
-    this.idealSegmentLength = 0;
+      this.relaxedLength = 0;
+      this.outward = new THREE.Vector3();
+      this.idealLength = 0;
+      this.idealSegmentLength = 0;
 
-    this.target = new THREE.Vector3();
-    this.targetDirection = new THREE.Vector3();
+      this.target = new THREE.Vector3();
+      this.targetDirection = new THREE.Vector3();
 
-    this.lastAdjustmentTime = 0;
-    this.taskStartTime = 0;
-    this.taskEndTime = 0;
-    this.lengthTime = 0;
+      this.lastAdjustmentTime = 0;
+      this.taskStartTime = 0;
+      this.taskEndTime = 0;
+      this.lengthTime = 0;
 
-    this.conditions = 0;
+      this.conditions = 0;
+    }
   }
-
-  Hydra.prototype = Object.create( THREE.Mesh.prototype );
-  Hydra.prototype.constructor = Hydra;
 
   Hydra.prototype.update = function() {
     this.checkLength();
