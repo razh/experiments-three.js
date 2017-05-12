@@ -57,6 +57,7 @@
     scene.add( camera );
 
     controls = new THREE.OrbitControls( camera, renderer.domElement );
+    controls.addEventListener( 'change', render );
 
     // Icosahedron greebled.
     const icosahedronGeometry = new THREE.IcosahedronGeometry( 2, 1 );
@@ -70,7 +71,7 @@
     planeMesh.rotation.x = -Math.PI / 2;
     scene.add( planeMesh );
 
-    scene.fog = new THREE.FogExp2( '#000', 0.1 );
+    scene.fog = new THREE.FogExp2( '#000', 0.08 );
 
     const light = new THREE.SpotLight( '#e85', 0.5 );
     light.position.set( 32, 128, 0 );
@@ -80,11 +81,20 @@
     scene.add( new THREE.AmbientLight( '#325' ) );
   }
 
-  function animate() {
+  function render() {
     renderer.render( scene, camera );
-    requestAnimationFrame( animate );
   }
 
   init();
-  animate();
+  render();
+  // HACK: Render again for shadow-map.
+  render();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    render();
+  });
 })();
