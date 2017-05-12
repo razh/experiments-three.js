@@ -1,16 +1,17 @@
-/*global THREE, greeble*/
-(function() {
+/* global THREE, greeble */
+
+(() => {
   'use strict';
 
-  var container;
+  let container;
 
-  var scene, camera, controls, renderer;
+  let scene, camera, controls, renderer;
 
   // Generic test greebling.
   function greeblerHelper( geometry ) {
-    var greebles = greeble( geometry, {
+    const greebles = greeble( geometry, {
       count: 300,
-      fn: function() {
+      fn() {
         return new THREE.BoxGeometry(
           THREE.Math.randFloat( 0.1, 1.5 ),
           THREE.Math.randFloat( 0.1, 1.5 ),
@@ -26,10 +27,10 @@
     geometry.computeFaceNormals();
     geometry.computeVertexNormals();
 
-    var mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( {
+    const mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( {
       color: '#dde',
       specular: '#fff',
-      shading: THREE.FlatShading
+      shading: THREE.FlatShading,
     }));
 
     mesh.castShadow = true;
@@ -58,20 +59,20 @@
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
     // Icosahedron greebled.
-    var geometry = new THREE.IcosahedronGeometry( 2, 1 );
-    var icosahedronMesh = greeblerHelper( geometry );
+    const icosahedronGeometry = new THREE.IcosahedronGeometry( 2, 1 );
+    const icosahedronMesh = greeblerHelper( icosahedronGeometry );
     scene.add( icosahedronMesh );
 
     // Plane greebled.
-    geometry = new THREE.PlaneGeometry( 16, 16 );
-    var planeMesh = greeblerHelper( geometry );
+    const planeGeometry = new THREE.PlaneGeometry( 16, 16 );
+    const planeMesh = greeblerHelper( planeGeometry );
     planeMesh.position.y = -3;
     planeMesh.rotation.x = -Math.PI / 2;
     scene.add( planeMesh );
 
     scene.fog = new THREE.FogExp2( '#000', 0.1 );
 
-    var light = new THREE.SpotLight( '#e85', 0.5 );
+    const light = new THREE.SpotLight( '#e85', 0.5 );
     light.position.set( 32, 128, 0 );
     light.castShadow = true;
     scene.add( light );
@@ -86,5 +87,4 @@
 
   init();
   animate();
-
 })();
