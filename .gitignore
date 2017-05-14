@@ -38,4 +38,14 @@ node_modules/**
 !node_modules/three/examples/js/controls/OrbitControls.js
 !node_modules/three/examples/js/controls/TransformControls.js
 
+!node_modules/three/examples/js/postprocessing/EffectComposer.js
+!node_modules/three/examples/js/postprocessing/RenderPass.js
+!node_modules/three/examples/js/postprocessing/MaskPass.js
+!node_modules/three/examples/js/postprocessing/ShaderPass.js
+!node_modules/three/examples/js/shaders/CopyShader.js
+!node_modules/three/examples/js/shaders/FXAAShader.js
+!node_modules/three/examples/js/shaders/ConvolutionShader.js
+!node_modules/three/examples/js/shaders/LuminosityHighPassShader.js
+!node_modules/three/examples/js/postprocessing/UnrealBloomPass.js
+
 !node_modules/three.meshline/src/THREE.MeshLine.js
