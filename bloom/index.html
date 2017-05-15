@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bloom</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <script src="../node_modules/three/build/three.js"></script>
+  <script src="../node_modules/three/examples/js/controls/OrbitControls.js"></script>
+
+  <script src="../node_modules/three/examples/js/postprocessing/EffectComposer.js"></script>
+  <script src="../node_modules/three/examples/js/postprocessing/RenderPass.js"></script>
+  <script src="../node_modules/three/examples/js/postprocessing/MaskPass.js"></script>
+  <script src="../node_modules/three/examples/js/postprocessing/ShaderPass.js"></script>
+  <script src="../node_modules/three/examples/js/shaders/CopyShader.js"></script>
+  <script src="../node_modules/three/examples/js/shaders/FXAAShader.js"></script>
+  <script src="../node_modules/three/examples/js/shaders/ConvolutionShader.js"></script>
+  <script src="../node_modules/three/examples/js/shaders/LuminosityHighPassShader.js"></script>
+  <script src="../node_modules/three/examples/js/postprocessing/UnrealBloomPass.js"></script>
+
+  <script src="./js/bloom.js"></script>
+  <script src="./js/index.js"></script>
+</body>
+</html>
