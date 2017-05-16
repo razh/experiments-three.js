@@ -52,4 +52,13 @@
 
   init();
   render();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    bloom.setSize(window.innerWidth, window.innerHeight);
+    render();
+  });
 })();

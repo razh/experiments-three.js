@@ -37,6 +37,11 @@ class Bloom {
     this.composer.addPass(this.copy);
   }
 
+  setSize(width, height) {
+    this.fxaa.uniforms.resolution.value.set(1 / width, 1 / height);
+    this.composer.setSize(width, height);
+  }
+
   render() {
     this.composer.render();
   }
