@@ -1,25 +1,26 @@
-/* global THREE, interpolateCatmullRom */
+/* global THREE, interpolateCatmullRom, currentTime */
 /* exported Hydra */
-var Hydra = (function() {
+
+const Hydra = (() => {
   'use strict';
 
-  var vector = new THREE.Vector3();
-  var vector2 = new THREE.Vector3();
+  const vector = new THREE.Vector3();
+  const vector2 = new THREE.Vector3();
 
-  var v0 = new THREE.Vector3();
-  var v3 = new THREE.Vector3();
+  const v0 = new THREE.Vector3();
+  const v3 = new THREE.Vector3();
 
-  var right = new THREE.Vector3();
-  var up = new THREE.Vector3();
+  const right = new THREE.Vector3();
+  const up = new THREE.Vector3();
 
-  var HYDRA_MAX_LENGTH = 500;
+  const HYDRA_MAX_LENGTH = 500;
 
-  var CHAIN_LINKS = 32;
+  const CHAIN_LINKS = 32;
 
-  var HYDRA_OUTWARD_BIAS = 16;
-  var HYDRA_INWARD_BIAS = 30;
+  const HYDRA_OUTWARD_BIAS = 16;
+  const HYDRA_INWARD_BIAS = 30;
 
-  var config = {
+  const config = {
     length: 100,
     slack: 200,
     segmentLength: 30,
@@ -27,10 +28,10 @@ var Hydra = (function() {
     bendDelta: 50,
     goalTension: 0.5,
     goalDelta: 400,
-    momentum: 0.5
+    momentum: 0.5,
   };
 
-  var Condition = {
+  const Condition = {
     HYDRA_SNAGGED:     1 << 0,
     HYDRA_STUCK:       1 << 1,
     HYDRA_OVERSHOOT:   1 << 2,
@@ -39,10 +40,10 @@ var Hydra = (function() {
     // Head hit something.
     HYDRA_STRIKE:      1 << 4,
     // No segments are stuck.
-    HYDRA_NOSTUCK:     1 << 5
+    HYDRA_NOSTUCK:     1 << 5,
   };
 
-  var Task = {
+  const Task = {
     HYDRA_RETRACT:           1 << 0,
     HYDRA_DEPLOY:            1 << 1,
     HYDRA_GET_OBJECT:        1 << 2,
@@ -51,7 +52,7 @@ var Hydra = (function() {
     HYDRA_STAB:              1 << 5,
     HYDRA_PULLBACK:          1 << 6,
     HYDRA_SET_MAX_TENSION:   1 << 7,
-    HYDRA_SET_BLEND_TENSION: 1 << 8
+    HYDRA_SET_BLEND_TENSION: 1 << 8,
   };
 
   class HydraBone {
@@ -71,8 +72,8 @@ var Hydra = (function() {
 
   class Hydra extends THREE.Mesh {
     constructor() {
-      var geometry = new THREE.Geometry();
-      var material = new THREE.MeshBasicMaterial();
+      const geometry = new THREE.Geometry();
+      const material = new THREE.MeshBasicMaterial();
 
       super( geometry, material );
 
@@ -113,7 +114,7 @@ var Hydra = (function() {
       this.calculateGoalForces();
       this.moveBody();
 
-      var i;
+      let i;
       for ( i = 1; i < CHAIN_LINKS && i < this.body.length; i++ ) {
         this.chain[i].copy( this.body[i].position );
       }
@@ -142,35 +143,32 @@ var Hydra = (function() {
      * stretching rules, etc.
      */
     calculateGoalForces() {
-      var body = this.body;
+      const { body } = this;
 
-      var firstIndex = 2;
-      var lastIndex = body.length - 1;
+      const firstIndex = 2;
+      const lastIndex = body.length - 1;
 
       // Keep head segment straight.
-      var last = body[ lastIndex ];
+      const last = body[ lastIndex ];
       last.goalPosition.copy( this.headGoal );
       last.goalInfluence = 1;
 
-      var segment = body [ lastIndex - 1 ];
+      const segment = body [ lastIndex - 1 ];
       vector.copy( this.headDirection ).multiplyScalar( this.idealSegmentLength );
       segment.goalPosition.subVectors( this.headGoal, vector );
       segment.goalInfluence = 1;
 
-      var i;
       // Momentum.
-      for ( i = firstIndex; i <= lastIndex; i++ ) {
+      for ( let i = firstIndex; i <= lastIndex; i++ ) {
         body[i].delta.multiplyScalar( config.momentum );
       }
 
-      var goalSegmentLength = this.idealSegmentLength *
+      const goalSegmentLength = this.idealSegmentLength *
         ( this.idealLength / this.currentLength );
 
       // Goal forces.
-      var influence;
-      var length;
-      for ( i = firstIndex; i <= lastIndex; i++ ) {
-        influence = body[i].goalInfluence;
+      for ( let i = firstIndex; i <= lastIndex; i++ ) {
+        const influence = body[i].goalInfluence;
         if ( influence > 0 ) {
           body[i].goalInfluence = 0;
 
@@ -184,8 +182,8 @@ var Hydra = (function() {
       }
 
       // Bending forces.
-      var delta;
-      for ( i = firstIndex - 1; i <= lastIndex - 1; i++ ) {
+      let delta;
+      for ( let i = firstIndex - 1; i <= lastIndex - 1; i++ ) {
         v3.subVectors( body[ i + 1 ].position, body[ i - 1 ].position )
           .setLength( goalSegmentLength );
 
@@ -216,37 +214,32 @@ var Hydra = (function() {
       body[1].delta.set( 0, 0, 0 );
 
       // Normal gravity forces.
-      for ( i = firstIndex; i <= lastIndex; i++ ) {
+      for ( let i = firstIndex; i <= lastIndex; i++ ) {
         if ( !body[i].stuck ) {
           body[i].delta.z -= 3.84 * 0.2;
         }
       }
 
       // Prevent stretching.
-      var maxChecks = body.length * 4;
-      var didStretch;
-      var stretch;
-      var f0;
-      var f1;
-      var limit;
-      i = lastIndex;
+      let maxChecks = body.length * 4;
+      let i = lastIndex;
       while ( i > firstIndex && maxChecks > 0 ) {
-        didStretch = false;
-        stretch = vector.copy( body[i].position )
+        let didStretch = false;
+        const stretch = vector.copy( body[i].position )
           .add( body[i].delta )
           .sub( body[ i - 1 ].position )
           .sub( body[ i - 1 ].delta );
 
-        length = vector.length();
+        const length = vector.length();
         vector.normalize();
 
         if ( length > goalSegmentLength ) {
-          f0 = body[ i     ].delta.dot( stretch );
-          f1 = body[ i - 1 ].delta.dot( stretch );
+          const f0 = body[ i     ].delta.dot( stretch );
+          const f1 = body[ i - 1 ].delta.dot( stretch );
 
           if ( f0 > 0 && f0 > f1 ) {
             // Half limit.
-            limit = stretch.multiplyScalar(
+            const limit = stretch.multiplyScalar(
               0.5 * ( length - goalSegmentLength )
             );
 
@@ -283,8 +276,8 @@ var Hydra = (function() {
 
       this.calculateRelaxedLength();
 
-      var adjustFailed = false;
-      var shouldAdjust = false;
+      let adjustFailed = false;
+      let shouldAdjust = false;
 
       if ( this.currentLength < this.idealLength ) {
         if ( this.relaxedLength + this.idealSegmentLength * 0.5 < this.idealLength ) {
@@ -327,7 +320,7 @@ var Hydra = (function() {
         return false;
       }
 
-      var i = this.body.length - 1;
+      let i = this.body.length - 1;
 
       if ( this.body[i].stuck &&
            this.body[ i - 1 ].actualLength > this.idealSegmentLength * 2 ) {
@@ -357,18 +350,17 @@ var Hydra = (function() {
       }
 
       // First stuck segment closest to head.
-      var stuckHeadIndex = this.virtualRoot();
+      const stuckHeadIndex = this.virtualRoot();
       if ( stuckHeadIndex < 3 ) {
         return false;
       }
 
       // Find a non-stuck node with the shortest distance between its neighbors.
-      var shortest = -1;
-      var distance = this.idealSegmentLength * 2;
-      var length;
-      for ( var i = stuckHeadIndex - 1; i > 2; i-- ) {
+      let shortest = -1;
+      let distance = this.idealSegmentLength * 2;
+      for ( let i = stuckHeadIndex - 1; i > 2; i-- ) {
         if ( !this.body[i].stuck ) {
-          length = this.body[ i - 1 ].distanceTo( this.body[ i + 1 ].position );
+          const length = this.body[ i - 1 ].distanceTo( this.body[ i + 1 ].position );
           // Check segment length.
           if ( length < distance ) {
             if ( this.isValidConnection( i - 1, i + 1 ) ) {
@@ -420,7 +412,7 @@ var Hydra = (function() {
      */
     virtualRoot() {
       // First stuck segment closest to head.
-      for ( var i = this.body.length - 2; i > 1; i-- ) {
+      for ( let i = this.body.length - 2; i > 1; i-- ) {
         if ( this.body[i].stuck ) {
           return i;
         }
@@ -437,9 +429,9 @@ var Hydra = (function() {
         return false;
       }
 
-      var body = this.body;
+      const { body } = this;
 
-      var bone = new HydraBone();
+      const bone = new HydraBone();
       bone.position.lerpVectors( body[i].position, body[ i - 1 ].position, 0.5 );
       bone.delta.lerpVectors( body[i].delta, body[ i - 1 ].delta, 0.5 );
 
@@ -466,10 +458,10 @@ var Hydra = (function() {
     }
 
     growFromMostStretched() {
-      var i = this.virtualRoot();
+      let i = this.virtualRoot();
 
-      var longest = i;
-      var distance = this.idealSegmentLength * 0.5;
+      let longest = i;
+      let distance = this.idealSegmentLength * 0.5;
 
       for ( ; i < this.body.length - 1; i++ ) {
         if ( this.body[i].actualLength > distance ) {
@@ -529,9 +521,9 @@ var Hydra = (function() {
 
     runTask( task ) {
       switch( task.task ) {
-        case Task.HYDRA_DEPLOY:
+        case Task.HYDRA_DEPLOY: {
           this.headGoalInfluence = 1;
-          var distance = this.eyePosition().distanceTo( this.headGoal );
+          const distance = this.eyePosition().distanceTo( this.headGoal );
 
           if ( distance < this.idealSegmentLength ) {
             this.completeTask();
@@ -539,16 +531,17 @@ var Hydra = (function() {
 
           this.aimHeadInTravelDirection( 0.2 );
           return;
+        }
 
-        case Task.HYDRA_PREP_STAB:
+        case Task.HYDRA_PREP_STAB: {
           if ( this.body.length < 2 ) {
             this.failTask( 'Hydra is too short to begin stab.' );
             return;
           }
 
           this.updateMatrixWorld();
-          var distanceToTarget = this.target.distanceTo( this.headGoal );
-          var distanceToBase = this.headGoal.distanceTo(
+          const distanceToTarget = this.target.distanceTo( this.headGoal );
+          const distanceToBase = this.headGoal.distanceTo(
             vector.setFromMatrixPosition( this.matrixWorld )
           );
           this.idealSegmentLength = distanceToTarget + distanceToBase * 0.5;
@@ -585,7 +578,7 @@ var Hydra = (function() {
           this.headDirection.lerp( this.taskDirection, 0.4 ).normalize();
 
           // Build tension towards strike time.
-          var influence = 1 - ( this.taskEndTime - currentTime ) / task.taskData;
+          let influence = 1 - ( this.taskEndTime - currentTime ) / task.taskData;
           if ( influence > 1 ) {
             influence = 1;
           }
@@ -594,7 +587,7 @@ var Hydra = (function() {
           this.headGoalInfluence = influence;
 
           // Keep head segment straight.
-          var i = this.body.length - 1;
+          let i = this.body.length - 1;
           this.body[i].goalPosition.subVectors(
             this.headGoal,
             vector.copy( this.headDirection )
@@ -603,18 +596,16 @@ var Hydra = (function() {
           this.body[i].goalInfluence = influence;
 
           // Curve neck into spiral.
-          var distanceBackFromHead = this.body[i].actualLength;
+          let distanceBackFromHead = this.body[i].actualLength;
           vectorVectors( this.headDirection, right, up );
 
-          var r;
-          var p0;
           for ( i = i - 1; i > 1 && distanceBackFromHead < distanceToTarget; i-- ) {
             distanceBackFromHead += this.body[i].actualLength;
 
-            r = ( distanceBackFromHead / 200 ) * 2 * Math.PI;
+            let r = ( distanceBackFromHead / 200 ) * 2 * Math.PI;
 
             // Spiral.
-            p0 = vector.copy( this.headGoal )
+            const p0 = vector.copy( this.headGoal )
               .sub(
                 vector2.copy( this.headDirection )
                   .multiplyScalar( distanceBackFromHead * 0.5 )
@@ -640,7 +631,7 @@ var Hydra = (function() {
           }
 
           // Look to see if any of the goal positions are stuck.
-          var delta;
+          let delta;
           for ( ; i < this.body.length - 1; i++ ) {
             if ( this.body[i].stuck ) {
               delta = vector.copy( this.headDirection )
@@ -669,8 +660,9 @@ var Hydra = (function() {
           }
 
           return;
+        }
 
-        case Task.HYDRA_STAB:
+        case Task.HYDRA_STAB: {
           if ( this.body.length < 2 ) {
             this.failTask( 'Hydra is too short to begin stab.' );
             return;
@@ -684,13 +676,13 @@ var Hydra = (function() {
           this.headGoalInfluence = 1;
 
           // Keep head segment straight.
-          var i = this.body.length - 2;
+          let i = this.body.length - 2;
           this.body[i].goalPosition.copy( this.headDirection )
             .multiplyScalar( this.body[i].actualLength )
             .add( this.headGoal );
           this.body[i].goalInfluence = 1;
 
-          var vectorToTarget = vector.subVectors(
+          const vectorToTarget = vector.subVectors(
             this.target,
             this.eyePosition()
           );
@@ -703,8 +695,8 @@ var Hydra = (function() {
 
           this.updateMatrixWorld();
 
-          var distanceToTarget = vectorToTarget.length();
-          var distanceToBase = this.eyePosition().distanceTo(
+          const distanceToTarget = vectorToTarget.length();
+          const distanceToBase = this.eyePosition().distanceTo(
             vector.setFromMatrixPosition( this.matrixWorld )
           );
           this.idealLength = distanceToTarget + distanceToBase;
@@ -718,12 +710,11 @@ var Hydra = (function() {
           }
 
           // Curve neck into spiral.
-          var distanceBackFromHead = this.body[i].actualLength;
+          let distanceBackFromHead = this.body[i].actualLength;
           vectorVectors( this.headDirection, right, up );
 
-          var p0;
           for ( i = i - 1; i > 1 && distanceBackFromHead < distanceToTarget; i-- ) {
-            p0 = vector.copy( this.headGoal )
+            const p0 = vector.copy( this.headGoal )
               .sub(
                 vector2.copy( this.headDirection )
                   .multiplyScalar( distanceBackFromHead )
@@ -747,6 +738,7 @@ var Hydra = (function() {
           }
 
           return;
+        }
 
         case Task.HYDRA_PULLBACK:
           if ( this.body.length < 2 ) {
@@ -768,7 +760,7 @@ var Hydra = (function() {
     failTask() {}
 
     eyePosition() {
-      var i = this.body.length - 1;
+      const i = this.body.length - 1;
       if ( i >= 0 ) {
         return this.body[i].position;
       }
@@ -778,7 +770,7 @@ var Hydra = (function() {
 
     aimHeadInTravelDirection( influence ) {
       // Aim in the direction of movement enemy.
-      var delta = vector.copy( this.body[ this.body.length - 1 ].delta )
+      const delta = vector.copy( this.body[ this.body.length - 1 ].delta )
         .normalize();
 
       if ( delta.dot( this.headDirection ) < 0 ) {
@@ -799,7 +791,7 @@ var Hydra = (function() {
      */
     calculateBoneChain( positions, chain ) {
       // Find the last chain link that's not zero length.
-      var i = CHAIN_LINKS - 1;
+      let i = CHAIN_LINKS - 1;
       while ( i > 0 ) {
         if ( chain[i].distanceToSquared( chain[ i - 1 ] ) ) {
           break;
@@ -809,24 +801,23 @@ var Hydra = (function() {
       }
 
       // Initialize the last bone to the last bone.
-      var j = this.hydraBoneCount - 1;
+      let j = this.hydraBoneCount - 1;
 
       // Clamp length.
-      var totalLength = 0;
-      for ( var k = i; k > 0; k-- ) {
+      let totalLength = 0;
+      for ( let k = i; k > 0; k-- ) {
         totalLength += chain[k].distanceTo( chain[ k - 1 ] );
       }
       totalLength = THREE.Math.clamp( totalLength, 1, this.maxPossibleLength );
-      var scale = this.relaxedLength / totalLength;
+      const scale = this.relaxedLength / totalLength;
 
       // Starting from the head, fit the hydra skeleton on to the chain spline.
-      var distance = -16;
-      var dt, dx, s;
+      let distance = -16;
       while ( j >= 0 && i > 0 ) {
-        dt = chain[i].distanceTo( chain[ i - 1 ] ) * scale;
-        dx = dt;
+        let dt = chain[i].distanceTo( chain[ i - 1 ] ) * scale;
+        let dx = dt;
         while ( j >= 0 && distance + dt >= this.boneLength[j] ) {
-          s = ( dx - ( dt - ( this.boneLength[i] - distance ) ) ) / dx;
+          let s = ( dx - ( dt - ( this.boneLength[i] - distance ) ) ) / dx;
 
           if ( 0 > s || s > 1 ) {
             s = 0;
@@ -857,10 +848,10 @@ var Hydra = (function() {
     }
   }
 
-  var vectorVectors = (function() {
-    var temp = new THREE.Vector3();
+  const vectorVectors = (() => {
+    const temp = new THREE.Vector3();
 
-    return function( forward, right, up ) {
+    return ( forward, right, up ) => {
       if ( !forward.x && !forward.y ) {
         // Pitch 90 degrees up/down from identity.
         right.set( 0, -1, 0 );
@@ -874,11 +865,11 @@ var Hydra = (function() {
   })();
 
   // Similar to THREE.Matrix4.prototype.lookAt().
-  var vectorMatrix = (function() {
-    var right = new THREE.Vector3();
-    var up = new THREE.Vector3();
+  const vectorMatrix = (() => {
+    const right = new THREE.Vector3();
+    const up = new THREE.Vector3();
 
-    return function( forward, matrix ) {
+    return ( forward, matrix ) => {
       vectorVectors( forward, right, up );
       right.negate();
 
@@ -893,25 +884,23 @@ var Hydra = (function() {
   /**
    * Minimize the amount of twist between bone segments.
    */
-  Hydra.prototype.calculateBoneAngles = (function() {
-    var boneMatrix = new THREE.Matrix4();
+  Hydra.prototype.calculateBoneAngles = (() => {
+    const boneMatrix = new THREE.Matrix4();
 
-    var forward = new THREE.Vector3();
-    var left2 = new THREE.Vector3();
+    const forward = new THREE.Vector3();
+    const left2 = new THREE.Vector3();
 
-    var up = new THREE.Vector3();
-    var left = new THREE.Vector3();
+    const up = new THREE.Vector3();
+    const left = new THREE.Vector3();
 
-    return function( positions, quaternions ) {
-      var length;
-      var i;
-      for ( i = this.hydraBoneCount - 1; i >= 0; i-- ) {
+    return ( positions, quaternions ) => {
+      for ( let i = this.hydraBoneCount - 1; i >= 0; i-- ) {
         if ( i !== this.hydraBoneCount - 1 ) {
           boneMatrix.makeFromQuaternion( quaternions[ i + 1 ] );
           left2.setFromMatrixColumn( 1, boneMatrix );
 
           forward.subVectors( positions[ i + 1 ], positions[i] );
-          length = forward.length();
+          const length = forward.length();
           if ( !length ) {
             quaternions[i].copy( quaternions[ i + 1 ] );
             continue;
@@ -935,5 +924,4 @@ var Hydra = (function() {
   })();
 
   return Hydra;
-
 })();
