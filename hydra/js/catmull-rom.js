@@ -6,9 +6,9 @@ const interpolateCatmullRom = (() => {
   'use strict';
 
   return function interpolateCatmullRom( p0, p1, p2, p3, t, output ) {
-    const t2 = t * t * 0.5;
-    const t3 = t * t2;
     t *= 0.5;
+    const t2 = t * t;
+    const t3 = t * t2;
 
     output = output.set( 0, 0, 0 ) || new THREE.Vector3();
 
@@ -38,5 +38,4 @@ const interpolateCatmullRom = (() => {
     // p1.
     return output.add( p1 );
   };
-
 })();

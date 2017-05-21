@@ -1,12 +1,13 @@
-/*global THREE, Hydra*/
-(function() {
+/* global THREE, Hydra */
+
+(() => {
   'use strict';
 
-  var container;
+  let container;
 
-  var scene, camera, controls, renderer;
+  let scene, camera, renderer;
 
-  var hydra;
+  let hydra;
 
   function init() {
     container = document.createElement( 'div' );
@@ -23,7 +24,7 @@
     camera.position.set( 0, 0, 8 );
     scene.add( camera );
 
-    controls = new THREE.OrbitControls( camera, renderer.domElement );
+    new THREE.OrbitControls( camera, renderer.domElement );
 
     hydra = new Hydra();
     scene.add( hydra );
@@ -36,5 +37,4 @@
 
   init();
   animate();
-
 })();
