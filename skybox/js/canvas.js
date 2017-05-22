@@ -1,14 +1,15 @@
-/*global THREE*/
-(function( window, document, undefined ) {
+/* global THREE */
+
+(() => {
   'use strict';
 
-  var container;
+  let container;
 
-  var skyboxScene, skyboxCamera;
-  var scene, camera, controls, renderer;
+  let skyboxScene, skyboxCamera;
+  let scene, camera, renderer;
 
-  var canvases = {};
-  var contexts = {};
+  const canvases = {};
+  const contexts = {};
 
   [
     'left',
@@ -16,23 +17,23 @@
     'top',
     'bottom',
     'back',
-    'front'
-  ].forEach(function( key ) {
-    var canvas = canvases[ key ] = document.createElement( 'canvas' );
+    'front',
+  ].forEach( key => {
+    const canvas = canvases[ key ] = document.createElement( 'canvas' );
     contexts[ key ] = canvas.getContext( '2d' );
   });
 
   function setSkyboxTextureDimensions( width, height ) {
-    Object.keys( canvases ).forEach(function( key ) {
-      var canvas = canvases[ key ];
+    Object.keys( canvases ).forEach( key => {
+      const canvas = canvases[ key ];
       canvas.width = width;
       canvas.height = height;
     });
   }
 
   function drawSkyboxTextures( textureFns ) {
-    Object.keys( textureFns ).forEach(function( key ) {
-      var ctx = contexts[ key ];
+    Object.keys( textureFns ).forEach( key => {
+      const ctx = contexts[ key ];
       if ( !ctx ) {
         return;
       }
@@ -47,11 +48,11 @@
   }
 
   function fillRandomColor( ctx ) {
-    var color = 'rgb(' +
-      Math.round( Math.random() * 255 ) + ',' +
-      Math.round( Math.random() * 255 ) + ',' +
-      Math.round( Math.random() * 255 ) +
-    ')';
+    const r = Math.round( Math.random() * 255 );
+    const g = Math.round( Math.random() * 255 );
+    const b = Math.round( Math.random() * 255 );
+
+    const color = `rgb(${ r },${ g },${ b })`;
 
     fillContext( ctx, color );
   }
@@ -63,26 +64,24 @@
       top: fillRandomColor,
       bottom: fillRandomColor,
       back: fillRandomColor,
-      front: fillRandomColor
+      front: fillRandomColor,
     };
   }
 
-  var createGradientSkyboxTextures = (function() {
-    var _canvas = document.createElement( 'canvas' );
-    var _ctx = _canvas.getContext( '2d' );
+  const createGradientSkyboxTextures = (() => {
+    const _canvas = document.createElement( 'canvas' );
+    const _ctx = _canvas.getContext( '2d' );
 
     // From top to bottom.
-    return function( height, colorStops ) {
-      var topColor = colorStops[0][1];
-      var bottomColor = colorStops[ colorStops.length - 1 ][1];
+    return ( height, colorStops ) => {
+      const topColor = colorStops[0][1];
+      const bottomColor = colorStops[ colorStops.length - 1 ][1];
 
       // Construct gradient from color stops.
-      var gradient = _ctx.createLinearGradient( 0, height, 0, 0 );
+      const gradient = _ctx.createLinearGradient( 0, height, 0, 0 );
 
-      colorStops.forEach(function( colorStop ) {
-        var offset = colorStop[0];
-        var color = colorStop[1];
-
+      colorStops.forEach( colorStop => {
+        const [ offset, color ] = colorStop;
         gradient.addColorStop( 1 - offset, color );
       });
 
@@ -93,17 +92,17 @@
       return {
         left: fillGradient,
         right: fillGradient,
-        top: function( ctx ) {
+        top( ctx ) {
           fillContext( ctx, topColor );
         },
-        bottom: function( ctx ) {
+        bottom( ctx ) {
           fillContext( ctx, bottomColor );
         },
         back: fillGradient,
-        front: fillGradient
+        front: fillGradient,
       };
     };
-  }) ();
+  })();
 
   function init() {
     container = document.createElement( 'div' );
@@ -124,52 +123,50 @@
     skyboxCamera = camera.clone();
     skyboxScene.add( skyboxCamera );
 
-    controls = new THREE.OrbitControls( camera, renderer.domElement );
+    new THREE.OrbitControls( camera, renderer.domElement );
 
     setSkyboxTextureDimensions( 512, 512 );
     drawSkyboxTextures( createRandomSkyboxTextures() );
     drawSkyboxTextures(
       createGradientSkyboxTextures( 512, [
         [ 0, '#ddd' ],
-        [ 1, '#333' ]
+        [ 1, '#333' ],
       ])
     );
 
-    var textures = Object.keys( canvases ).map(function( key ) {
-      return canvases[ key ];
-    });
+    const textures = Object.keys( canvases ).map( key => canvases[ key ] );
 
-    var textureCube = new THREE.CubeTexture( textures );
+    const textureCube = new THREE.CubeTexture( textures );
     textureCube.needsUpdate = true;
 
-    var shader = THREE.ShaderLib.cube;
+    const shader = THREE.ShaderLib.cube;
     shader.uniforms.tCube.value = textureCube;
 
-    var material = new THREE.ShaderMaterial({
+    const material = new THREE.ShaderMaterial({
       fragmentShader: shader.fragmentShader,
       vertexShader: shader.vertexShader,
       uniforms: shader.uniforms,
       depthWrite: false,
-      side: THREE.BackSide
+      side: THREE.BackSide,
     });
 
-    var mesh = new THREE.Mesh( new THREE.BoxGeometry( 100, 100, 100 ), material );
+    const mesh = new THREE.Mesh( new THREE.BoxGeometry( 100, 100, 100 ), material );
     skyboxScene.add( mesh );
 
-    var envMaterial = new THREE.MeshStandardMaterial({
+    const envMaterial = new THREE.MeshStandardMaterial({
       color: '#ddd',
-      envMap: textureCube
+      envMap: textureCube,
     });
 
-    mesh = new THREE.Mesh( new THREE.SphereBufferGeometry( 2, 64, 64 ), envMaterial );
-    scene.add( mesh );
+    const sphereMesh = new THREE.Mesh( new THREE.SphereBufferGeometry( 2, 64, 64 ), envMaterial );
+    scene.add( sphereMesh );
 
-    var light = new THREE.DirectionalLight( 0xffffff );
+    const light = new THREE.DirectionalLight( 0xffffff );
     light.position.set( 8, 8, 0 );
     scene.add( light );
 
-    light = new THREE.AmbientLight( 0x888888 );
-    scene.add( light );
+    const ambientLight = new THREE.AmbientLight( 0x888888 );
+    scene.add( ambientLight );
   }
 
   function animate() {
@@ -183,5 +180,4 @@
 
   init();
   animate();
-
-}) ( window, document );
+})();
