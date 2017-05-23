@@ -48,13 +48,13 @@
   }
 
   function fillRandomColor( ctx ) {
-    const r = Math.round( Math.random() * 255 );
-    const g = Math.round( Math.random() * 255 );
-    const b = Math.round( Math.random() * 255 );
+    const color = new THREE.Color(
+      Math.random(),
+      Math.random(),
+      Math.random()
+    );
 
-    const color = `rgb(${ r },${ g },${ b })`;
-
-    fillContext( ctx, color );
+    fillContext( ctx, color.getStyle() );
   }
 
   function createRandomSkyboxTextures() {
@@ -123,7 +123,8 @@
     skyboxCamera = camera.clone();
     skyboxScene.add( skyboxCamera );
 
-    new THREE.OrbitControls( camera, renderer.domElement );
+    const controls = new THREE.OrbitControls( camera, renderer.domElement );
+    controls.addEventListener( 'change', render );
 
     setSkyboxTextureDimensions( 512, 512 );
     drawSkyboxTextures( createRandomSkyboxTextures() );
@@ -169,15 +170,21 @@
     scene.add( ambientLight );
   }
 
-  function animate() {
+  function render() {
     skyboxCamera.rotation.copy( camera.rotation );
 
     renderer.render( skyboxScene, skyboxCamera );
     renderer.render( scene, camera );
-
-    requestAnimationFrame( animate );
   }
 
   init();
-  animate();
+  render();
+
+  window.addEventListener( 'resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    render();
+  });
 })();
