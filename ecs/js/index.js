@@ -8,24 +8,43 @@ function withEntity(Class) {
       this.components = [];
     }
 
-    addComponent(component) {
-      this.components.push(component);
+    addComponent(...components) {
+      components.forEach(component => {
+        if (this.hasComponent(component)) {
+          return;
+        }
+
+        component.parent = this;
+        this.components.push(component);
+      });
+
+      return this;
+    }
+
+    hasComponent(component) {
+      return this.components.includes(component);
     }
 
     getComponents(type) {
       return this.components.filter(component => component.type === type);
     }
 
-    removeComponent(component) {
-      const index = this.components.indexOf(component);
+    removeComponent(...components) {
+      components.forEach(component => {
+        const index = this.components.indexOf(component);
 
-      if (index >= 0) {
-        this.components.splice(index, 1);
-      }
+        if (index >= 0) {
+          this.components
+            .splice(index, 1)
+            .forEach(component => (component.parent = undefined));
+        }
+      });
+
+      return this;
     }
 
-    update(dt) {
-      this.components.forEach(component => component.update(dt));
+    update(...args) {
+      this.components.forEach(component => component.update(...args));
     }
   };
 }
