@@ -15,7 +15,6 @@
     "tests"
   ],
   "dependencies": {
-    "dat-gui": "~0.5.1",
     "threejs": "r71"
   }
 }
