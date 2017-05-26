@@ -1,4 +1,3 @@
-/* eslint comma-dangle: ["error", "always-multiline"] */
 /* global THREE, createPoints, modifiers, createNumericInput */
 
 (function() {

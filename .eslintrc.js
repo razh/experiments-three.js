@@ -9,6 +9,7 @@ module.exports = {
     Promise: true,
   },
   rules: {
+    'comma-dangle': ['error', 'always-multiline'],
     'comma-spacing': ['error', { before: false, after: true }],
     indent: ['error', 2, { SwitchCase: 1 }],
     'no-console': 'off',

@@ -1,4 +1,3 @@
-/* eslint comma-dangle: ["error", "always-multiline"] */
 /* global THREE, drawGear, drawLineCurveCircle */
 
 (function() {

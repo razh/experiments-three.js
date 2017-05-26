@@ -1,5 +1,4 @@
 /* global THREE, dat */
-/* eslint comma-dangle: ['error', 'always-multiline'] */
 
 (function() {
   'use strict';

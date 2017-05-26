@@ -1,4 +1,3 @@
-/* eslint comma-dangle: ["error", "always-mutiline"] */
 /* global THREE, fetch, dat, Toroid */
 
 (function() {

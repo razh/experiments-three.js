@@ -1,4 +1,3 @@
-/* eslint comma-dangle: ["error", "always-multiline"] */
 /* exported Grid */
 
 const Grid = (function() {
