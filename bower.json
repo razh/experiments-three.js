@@ -16,7 +16,6 @@
   ],
   "dependencies": {
     "dat-gui": "~0.5.1",
-    "fetch": "~0.7.0",
     "threejs": "r71"
   }
 }

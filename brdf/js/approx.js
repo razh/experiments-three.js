@@ -1,4 +1,4 @@
-/* global THREE, fetch */
+/* global THREE */
 
 (function() {
   'use strict';

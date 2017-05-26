@@ -1,4 +1,4 @@
-/* global THREE, fetch, dat, Toroid */
+/* global THREE, dat, Toroid */
 
 (function() {
   'use strict';
