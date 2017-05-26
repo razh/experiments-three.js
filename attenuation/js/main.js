@@ -1,4 +1,5 @@
-/*global THREE, dat*/
+/* global THREE, dat */
+
 (function() {
   'use strict';
 
@@ -26,7 +27,7 @@
       ambient: '#777',
       color: '#777',
       specular: '#fff',
-      shininess: 30
+      shininess: 30,
     };
 
     var mesh = new THREE.Mesh(
@@ -42,7 +43,7 @@
     scene.add( areaLight );
 
     var lightConfig = {
-      color: areaLight.color.getStyle()
+      color: areaLight.color.getStyle(),
     };
 
     function updateColor( object, property ) {

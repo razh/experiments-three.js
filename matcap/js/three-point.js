@@ -1,4 +1,5 @@
-/*global THREE, dat*/
+/* global THREE, dat */
+
 (function() {
   'use strict';
 
@@ -29,7 +30,7 @@
       ambient: '#fdf',
       color: '#fdf',
       specular: '#444',
-      shininess: 200
+      shininess: 200,
     };
 
     mesh = new THREE.Mesh(
@@ -59,7 +60,7 @@
       var folder = gui.addFolder( name );
 
       var config = {
-        color: light.color.getStyle()
+        color: light.color.getStyle(),
       };
 
       folder.addColor( config, 'color' )

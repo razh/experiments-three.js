@@ -17,7 +17,7 @@
   const constructors = {
     point: THREE.Points,
     wireframe: THREE.Mesh,
-    mesh: THREE.Mesh
+    mesh: THREE.Mesh,
   };
 
   const materials = {

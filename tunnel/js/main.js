@@ -1,4 +1,5 @@
-/*global THREE*/
+/* global THREE */
+
 (function( window, document, undefined ) {
   'use strict';
 
@@ -29,7 +30,7 @@
       new THREE.Vector3( -( radius + meshSpacing ), height, 0 ),
       new THREE.Vector3( -( radius / 2 + meshSpacing ), 0, 0 ),
       new THREE.Vector3( -( radius / 2 + meshSpacing ), 0, -length ),
-      new THREE.Vector3( -( radius + meshSpacing ), height, -length )
+      new THREE.Vector3( -( radius + meshSpacing ), height, -length ),
     ];
 
     geometry.faces = [
@@ -38,7 +39,7 @@
       new THREE.Face3( 4, 5, 6 ),
       new THREE.Face3( 6, 7, 4 ),
       new THREE.Face3( 8, 9, 10 ),
-      new THREE.Face3( 10, 11, 8 )
+      new THREE.Face3( 10, 11, 8 ),
     ];
 
     geometry.computeFaceNormals();
@@ -58,7 +59,7 @@
     var geometry = createTrackGeometry( radius, length, meshSpacing );
 
     var material = new THREE.MeshBasicMaterial({
-      color: '#fff'
+      color: '#fff',
     });
 
     var meshes = [];
@@ -90,7 +91,7 @@
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
     var meshes = createTrackMeshes({
-      count: 5
+      count: 5,
     });
 
     meshes.forEach(function( mesh ) {

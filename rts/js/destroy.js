@@ -21,6 +21,6 @@ const Destroy = (() => {
     update() {
       objects.forEach(remove);
       objects = [];
-    }
+    },
   });
 })();

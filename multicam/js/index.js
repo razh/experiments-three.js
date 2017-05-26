@@ -31,7 +31,7 @@
   const views = {
     main: createView( '#main' ),
     mounted: createView( '#mounted' ),
-    follow: createView( '#follow' )
+    follow: createView( '#follow' ),
   };
 
   const keys = {};

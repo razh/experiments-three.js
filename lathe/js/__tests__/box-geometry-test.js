@@ -14,7 +14,7 @@ describe( 'translateBoxVertices', () => {
   it( 'changes the geometry bounding box', () => {
     // Moving the entire right side.
     const geometry = translateBoxVertices( base.clone(), {
-      right: { x: 1 }
+      right: { x: 1 },
     });
 
     geometry.computeBoundingBox();
@@ -32,7 +32,7 @@ describe( 'translateBoxVertices', () => {
   it( 'should not change the bounding box if translated vertices are in original bounds', () => {
     // Move the top-left right.
     const geometry = translateBoxVertices( base.clone(), {
-      top_left: { x: 0.5 }
+      top_left: { x: 0.5 },
     });
 
     geometry.computeBoundingBox();

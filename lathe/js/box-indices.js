@@ -155,7 +155,7 @@ const VertexIndices = (function() {
     TOP,
     BOTTOM,
     FRONT,
-    BACK
+    BACK,
   };
 }());
 
@@ -189,7 +189,7 @@ const FaceIndices = (function() {
     TOP,
     BOTTOM,
     FRONT,
-    BACK
+    BACK,
   };
 }());
 

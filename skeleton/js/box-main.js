@@ -30,7 +30,7 @@
 
     material = new THREE.MeshBasicMaterial({
       skinning: true,
-      wireframe: true
+      wireframe: true,
     });
 
     geometry = createSkeletonGeometry([
@@ -39,11 +39,11 @@
         [
           1, 3, 1, { pos: [ 0, 5, 0 ] },
           [
-            [ 0.5, 0.5, 0.5 ]
-          ]
+            [ 0.5, 0.5, 0.5 ],
+          ],
         ],
-        [ 1, 2, 1 ]
-      ]
+        [ 1, 2, 1 ],
+      ],
     ]);
 
     mesh = new THREE.SkinnedMesh( geometry, material );

@@ -22,7 +22,7 @@ window.createViewports = (function() {
 
       views[ axis ] = {
         renderer,
-        camera
+        camera,
       };
 
       return views;

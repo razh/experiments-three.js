@@ -1,4 +1,5 @@
 /* global THREE */
+
 (function() {
   'use strict';
 
@@ -123,7 +124,7 @@
     // Plane.
     planeGeometry = new THREE.PlaneBufferGeometry( 500, 500, 20, 20 );
     planeMaterial = new THREE.MeshBasicMaterial({
-      wireframe: true
+      wireframe: true,
     });
     plane = new THREE.Mesh( planeGeometry, planeMaterial );
     scene.add( plane );
@@ -132,7 +133,7 @@
     sphereGeometry = new THREE.SphereBufferGeometry( 10 );
     sphereMaterial = new THREE.MeshBasicMaterial({
       color: 0x00ff00,
-      wireframe: true
+      wireframe: true,
     });
     sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
     scene.add( sphere );
@@ -141,7 +142,7 @@
     ikGeometry = ikGeometryFromArray( ikLengths );
     ikMaterial = new THREE.LineBasicMaterial({
       color: '#f43',
-      linewidth: 5
+      linewidth: 5,
     });
     ik = new THREE.Line( ikGeometry, ikMaterial );
     ik.position.z = 100;

@@ -96,7 +96,7 @@ var Antikythera = (function() {
     sat2: 59,
     sat3: 60,
     // Saturn pointer.
-    sat4: 60
+    sat4: 60,
   };
 
   /*
@@ -138,6 +138,6 @@ var Antikythera = (function() {
     m2: [  4.4,  3.7,  4.0 ],
     o1: [ 13.3, 12.2, 12.8 ],
     q1: [  5.3 ],
-    r1: [ 16.4, 15.9, 16.9 ]
+    r1: [ 16.4, 15.9, 16.9 ],
   };
 })();

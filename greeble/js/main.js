@@ -17,7 +17,7 @@
           THREE.Math.randFloat( 0.1, 1.5 ),
           THREE.Math.randFloat( 0.1, 1.5 )
         );
-      }
+      },
     });
 
     if ( greebles ) {

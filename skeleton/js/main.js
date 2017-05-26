@@ -82,7 +82,7 @@
         var index = geometry.bones.push({
           parent: parentIndex,
           pos: vector.toArray(),
-          rotq: [ 0, 0, 0, 1 ]
+          rotq: [ 0, 0, 0, 1 ],
         }) - 1;
 
         this.index = index;
@@ -117,8 +117,8 @@
         parent: -1,
         name: 'root',
         pos: [ 0, 0, 0 ],
-        rotq: [ 0, 0, 0, 1 ]
-      }
+        rotq: [ 0, 0, 0, 1 ],
+      },
     ];
 
     tree.traverse(function( object ) {
@@ -129,7 +129,7 @@
 
     material = new THREE.MeshBasicMaterial({
       skinning: true,
-      wireframe: true
+      wireframe: true,
     });
 
     mesh = new THREE.SkinnedMesh( geometry, material );

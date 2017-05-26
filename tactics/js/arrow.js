@@ -1,5 +1,6 @@
 /* global THREE */
 /* exported createArrow */
+
 const createArrow = (function() {
   'use strict';
 
@@ -21,7 +22,7 @@ const createArrow = (function() {
 
       getTangent( t ) {
         return path.getTangent( t );
-      }
+      },
     };
   }
 

@@ -1,4 +1,5 @@
-/*global THREE, fetch*/
+/* global THREE, fetch */
+
 (function() {
   'use strict';
 
@@ -35,7 +36,7 @@
     material = new THREE.ShaderMaterial({
       uniforms: uniforms,
       vertexShader: phong.vertexShader,
-      fragmentShader: phong.fragmentShader
+      fragmentShader: phong.fragmentShader,
     });
 
     mesh = new THREE.Mesh(
