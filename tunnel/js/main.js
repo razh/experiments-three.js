@@ -1,72 +1,71 @@
 /* global THREE */
 
-(function( window, document, undefined ) {
+(() => {
   'use strict';
 
-  var container;
+  let container;
 
-  var scene, camera, renderer;
-  var controls;
+  let scene, camera, renderer;
+  let controls;
 
   function createTrackGeometry( radius, length, meshSpacing ) {
-    var geometry = new THREE.Geometry();
+    const geometry = new THREE.Geometry();
 
-    var height = radius * Math.sin( Math.PI / 3 );
+    const height = radius * Math.sin( Math.PI / 3 );
 
     geometry.vertices = [
       // Left panel.
-      new THREE.Vector3( radius / 2 + meshSpacing, 0, 0 ),
-      new THREE.Vector3( radius + meshSpacing, height, 0 ),
-      new THREE.Vector3( radius + meshSpacing, height, -length ),
-      new THREE.Vector3( radius / 2 + meshSpacing, 0, -length ),
+      [ radius / 2 + meshSpacing, 0, 0 ],
+      [ radius + meshSpacing, height, 0 ],
+      [ radius + meshSpacing, height, -length ],
+      [ radius / 2 + meshSpacing, 0, -length ],
 
       // Center panel.
-      new THREE.Vector3( -( radius / 2 ), 0, 0 ),
-      new THREE.Vector3(  ( radius / 2 ), 0, 0 ),
-      new THREE.Vector3(  ( radius / 2 ), 0, -length ),
-      new THREE.Vector3( -( radius / 2 ), 0, -length ),
+      [ -( radius / 2 ), 0, 0 ],
+      [  ( radius / 2 ), 0, 0 ],
+      [  ( radius / 2 ), 0, -length ],
+      [ -( radius / 2 ), 0, -length ],
 
       // Right panel.
-      new THREE.Vector3( -( radius + meshSpacing ), height, 0 ),
-      new THREE.Vector3( -( radius / 2 + meshSpacing ), 0, 0 ),
-      new THREE.Vector3( -( radius / 2 + meshSpacing ), 0, -length ),
-      new THREE.Vector3( -( radius + meshSpacing ), height, -length ),
-    ];
+      [ -( radius + meshSpacing ), height, 0 ],
+      [ -( radius / 2 + meshSpacing ), 0, 0 ],
+      [ -( radius / 2 + meshSpacing ), 0, -length ],
+      [ -( radius + meshSpacing ), height, -length ],
+    ].map( vertex => new THREE.Vector3( ...vertex ) );
 
     geometry.faces = [
-      new THREE.Face3( 0, 1, 2 ),
-      new THREE.Face3( 2, 3, 0 ),
-      new THREE.Face3( 4, 5, 6 ),
-      new THREE.Face3( 6, 7, 4 ),
-      new THREE.Face3( 8, 9, 10 ),
-      new THREE.Face3( 10, 11, 8 ),
-    ];
+      [ 0, 1, 2 ],
+      [ 2, 3, 0 ],
+      [ 4, 5, 6 ],
+      [ 6, 7, 4 ],
+      [ 8, 9, 10 ],
+      [ 10, 11, 8 ],
+    ].map( face => new THREE.Face3( ...face ) );
 
     geometry.computeFaceNormals();
 
     return geometry;
   }
 
-  function createTrackMeshes( options ) {
-    options = options || {};
+  function createTrackMeshes( options = {} ) {
+    const {
+      count = 0,
+      radius = 5,
+      length = 3,
+      spacing = 0.5,
+      meshSpacing = 0.5,
+    } = options;
 
-    var count = options.count || 0;
-    var radius = options.radius || 5;
-    var length = options.length || 3;
-    var spacing = options.spacing || 0.5;
-    var meshSpacing = options.meshSpacing || 0.5;
+    const geometry = createTrackGeometry( radius, length, meshSpacing );
 
-    var geometry = createTrackGeometry( radius, length, meshSpacing );
-
-    var material = new THREE.MeshBasicMaterial({
+    const material = new THREE.MeshBasicMaterial({
       color: '#fff',
     });
 
-    var meshes = [];
+    const meshes = [];
 
-    var mesh;
-    for ( var i = 0; i < count; i++ ) {
-      mesh = new THREE.Mesh( geometry, material );
+    for ( let i = 0; i < count; i++ ) {
+      const mesh = new THREE.Mesh( geometry, material );
       mesh.position.z = i * ( length + spacing );
       meshes.push( mesh );
     }
@@ -78,28 +77,26 @@
     container = document.createElement( 'div' );
     document.body.appendChild( container );
 
-    var vw = 568;
-    var vh = 320;
+    const width = 568;
+    const height = 320;
 
     renderer = new THREE.WebGLRenderer();
     renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize( vw, vh );
+    renderer.setSize( width, height );
     container.appendChild( renderer.domElement );
 
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera( 90, vw / vh, 0.1, 1000 );
+    camera = new THREE.PerspectiveCamera( 90, width / height, 0.1, 1000 );
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
-    var meshes = createTrackMeshes({
+    const meshes = createTrackMeshes({
       count: 5,
     });
 
-    meshes.forEach(function( mesh ) {
-      scene.add( mesh );
-    });
+    meshes.forEach( mesh => scene.add( mesh ) );
 
     camera.position.set( 0, 2, -4 );
-    var position = new THREE.Vector3().copy( camera.position );
+    const position = camera.position.clone();
     position.z = 10;
     controls.target = position;
     camera.lookAt( position );
@@ -114,5 +111,4 @@
 
   init();
   animate();
-
-}) ( window, document );
+})();
