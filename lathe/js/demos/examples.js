@@ -89,8 +89,8 @@ return [
   x *= 24
   y *= -24
 
-  return _
-    ( geometry
-    , t(x, y, -8)
-    )
+  return _(
+    geometry,
+    t(x, y, -8),
+  )
 })

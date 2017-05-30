@@ -10,8 +10,8 @@ a = parameters => $$(parameters.map(
   ([x, y, xt = 0, yt = 0]) => _(
     [x * _1, y * _1, _z],
     align('nx_py'),
-    t(xt * _1, _5 - (yt * _1), 0)
-  )
+    t(xt * _1, _5 - (yt * _1), 0),
+  ),
 ))
 
 A = a([
@@ -540,13 +540,13 @@ log = string =>
                 _(
                   chars[key].clone(),
                   tx(_4 * (charIndex - line.length / 2)),
-                  ty(-_6 * lineIndex)
-                )
+                  ty(-_6 * lineIndex),
+                ),
               )
             }
 
             return charArray;
-          }, [])
+          }, []),
       )
     , [])
 

@@ -13,12 +13,12 @@ truss = (width = 16, height = 8, thickness = 1) => {
 
   const top = _(
     dimensions.x,
-    ty(horizontalY)
+    ty(horizontalY),
   )
 
   const bottom = _(
     dimensions.x,
-    ty(-horizontalY)
+    ty(-horizontalY),
   )
 
   const vertical = _(dimensions.y)
@@ -26,23 +26,23 @@ truss = (width = 16, height = 8, thickness = 1) => {
   const leftDiagonal = _(
     dimensions.y,
     tx(-thickness),
-    $tx('py', -diagonalX)
+    $tx('py', -diagonalX),
   )
 
   const rightDiagonal = _(
     dimensions.y,
     tx(thickness),
-    $tx('py', diagonalX)
+    $tx('py', diagonalX),
   )
 
   const leftVertical = _(
     dimensions.y,
-    tx(-verticalX)
+    tx(-verticalX),
   )
 
   const rightVertical = _(
     dimensions.y,
-    tx(verticalX)
+    tx(verticalX),
   )
 
   return [

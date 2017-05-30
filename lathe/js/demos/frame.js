@@ -1,6 +1,6 @@
 frame = (size = 8, thickness = 1) => {
-  length = size - (2 * thickness)
-  radius = (size - thickness) / 2
+  const length = size - (2 * thickness)
+  const radius = (size - thickness) / 2
 
   dimensions = {
     x: [thickness, length, thickness],
