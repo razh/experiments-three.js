@@ -1,6 +1,6 @@
 /* global VertexIndices */
 
-const applyBoxNoise = (function() {
+const applyBoxNoise = (() => {
   'use strict';
 
   return function applyNoise( geometry, key, noise ) {
@@ -12,6 +12,6 @@ const applyBoxNoise = (function() {
 
     return geometry;
   };
-}());
+})();
 
 window.applyBoxNoise = applyBoxNoise;

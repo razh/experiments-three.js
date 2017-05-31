@@ -1,6 +1,6 @@
 /* global THREE, VertexIndices, FaceIndices */
 
-const applyBoxVertexColors = (function() {
+const applyBoxVertexColors = (() => {
   'use strict';
 
   function setFaceVertexColor( face, index, color ) {
@@ -45,7 +45,7 @@ const applyBoxVertexColors = (function() {
 
     return geometry;
   };
-}());
+})();
 
 // Like _.defaults, but with THREE.Face vertexColors.
 function defaultVertexColors( geometry, defaultColor ) {
@@ -64,7 +64,7 @@ function defaultVertexColors( geometry, defaultColor ) {
   return geometry;
 }
 
-const applyBoxFaceColors = (function() {
+const applyBoxFaceColors = (() => {
   'use strict';
 
   function baseFaceColors( geometry, key, color ) {
@@ -87,9 +87,9 @@ const applyBoxFaceColors = (function() {
 
     return geometry;
   };
-}());
+})();
 
-const applyBoxFaceVertexColors = (function() {
+const applyBoxFaceVertexColors = (() => {
   'use strict';
 
   function baseFaceVertexColors( geometry, key, color ) {
@@ -119,7 +119,7 @@ const applyBoxFaceVertexColors = (function() {
 
     return geometry;
   };
-}());
+})();
 
 window.applyBoxVertexColors = applyBoxVertexColors;
 window.defaultVertexColors = defaultVertexColors;

@@ -1,6 +1,6 @@
 /* global THREE, VertexIndices, computeCentroid */
 
-const relativeLerpBoxVertices = (function() {
+const relativeLerpBoxVertices = (() => {
   'use strict';
 
   const centroidA = new THREE.Vector3();
@@ -24,6 +24,6 @@ const relativeLerpBoxVertices = (function() {
 
     return geometryA;
   };
-}());
+})();
 
 window.relativeLerpBoxVertices = relativeLerpBoxVertices;

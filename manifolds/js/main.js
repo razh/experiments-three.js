@@ -1,6 +1,6 @@
 /* global THREE, dat */
 
-(function() {
+(() => {
   'use strict';
 
   /**
@@ -390,4 +390,4 @@
 
     renderer.setSize( window.innerWidth, window.innerHeight );
   });
-}());
+})();

@@ -1,4 +1,4 @@
-const VertexIndices = (function() {
+const VertexIndices = (() => {
   'use strict';
 
   // Vertices.
@@ -157,9 +157,9 @@ const VertexIndices = (function() {
     FRONT,
     BACK,
   };
-}());
+})();
 
-const FaceIndices = (function() {
+const FaceIndices = (() => {
   'use strict';
 
   const PX = [ 0, 1 ];
@@ -191,7 +191,7 @@ const FaceIndices = (function() {
     FRONT,
     BACK,
   };
-}());
+})();
 
 window.VertexIndices = VertexIndices;
 window.FaceIndices = FaceIndices;

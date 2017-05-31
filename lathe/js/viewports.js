@@ -1,5 +1,6 @@
 /* global THREE */
-window.createViewports = (function() {
+
+window.createViewports = (() => {
   'use strict';
 
   const zero = new THREE.Vector3();
@@ -28,4 +29,4 @@ window.createViewports = (function() {
       return views;
     }, {} );
   };
-}());
+})();

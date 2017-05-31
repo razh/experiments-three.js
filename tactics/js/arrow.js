@@ -1,7 +1,7 @@
 /* global THREE */
 /* exported createArrow */
 
-const createArrow = (function() {
+const createArrow = (() => {
   'use strict';
 
   function createrLerper(path, divisions) {
@@ -114,4 +114,4 @@ const createArrow = (function() {
     arrow.lerp( 1 );
     return arrow;
   };
-}());
+})();

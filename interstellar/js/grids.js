@@ -1,6 +1,6 @@
 /* exported Grid */
 
-const Grid = (function() {
+const Grid = (() => {
   'use strict';
 
   function create( options = {}, callback ) {
@@ -52,4 +52,4 @@ const Grid = (function() {
     create,
     checkerboard,
   };
-}());
+})();

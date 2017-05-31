@@ -29,14 +29,14 @@ _copy = _(d, copy('px_py_pz', vertex('px_py_pz')(_setY)))
 
 // Align
 _align = _(d, align('ny'))
-_relativeAlign = (function() {
+_relativeAlign = (() => {
   var _d = _(d);
 
   return $$([
     _d,
     _(d, relativeAlign('px')(_d, 'nx')),
   ])
-}())
+})()
 
 // Transforms
 // Rotate

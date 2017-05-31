@@ -1,5 +1,5 @@
 /* exported Complex */
-var Complex = (function() {
+var Complex = (() => {
   'use strict';
 
   var TAU = 2 * Math.PI;
@@ -62,4 +62,4 @@ var Complex = (function() {
       return out;
     },
   };
-}());
+})();

@@ -11,7 +11,7 @@ createTextLabel
 translateBoxVertices
 */
 
-(function() {
+(() => {
   'use strict';
 
   let container;
@@ -497,4 +497,4 @@ translateBoxVertices
     renderer.setSize( window.innerWidth, window.innerHeight );
     render();
   });
-}());
+})();

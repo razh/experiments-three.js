@@ -1,6 +1,6 @@
 /* global THREE */
 
-(function() {
+(() => {
   'use strict';
 
   const keys = [];
@@ -154,4 +154,4 @@
   });
 
   document.addEventListener( 'keyup', event => keys[ event.code ] = false );
-}());
+})();

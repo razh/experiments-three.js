@@ -1,6 +1,6 @@
 /* global THREE, Destroy */
 
-(function() {
+(() => {
   'use strict';
 
   let container;
@@ -318,7 +318,7 @@
     hud.scene.add(selection);
   }
 
-  const update = (function() {
+  const update = (() => {
     const dt = 1 / 60;
     let accumulatedTime = 0;
 
@@ -353,7 +353,7 @@
 
       Destroy.update();
     };
-  }());
+  })();
 
   function animate() {
     update();

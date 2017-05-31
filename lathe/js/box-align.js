@@ -1,6 +1,6 @@
 /* global THREE, VertexIndices, computeCentroid */
 
-const alignBox = (function() {
+const alignBox = (() => {
   'use strict';
 
   const centroid = new THREE.Vector3();
@@ -10,9 +10,9 @@ const alignBox = (function() {
     computeCentroid( geometry, indices, centroid );
     return geometry.translate( -centroid.x, -centroid.y, -centroid.z );
   };
-}());
+})();
 
-const relativeAlignBox = (function() {
+const relativeAlignBox = (() => {
   'use strict';
 
   const centroidA = new THREE.Vector3();
@@ -29,7 +29,7 @@ const relativeAlignBox = (function() {
     delta.subVectors( centroidB, centroidA );
     return geometryA.translate( delta.x, delta.y, delta.z );
   };
-}());
+})();
 
 window.alignBox = alignBox;
 window.relativeAlignBox = relativeAlignBox;

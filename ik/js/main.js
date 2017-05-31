@@ -1,6 +1,6 @@
 /* global THREE */
 
-(function() {
+(() => {
   'use strict';
 
   let container;
@@ -232,4 +232,4 @@
     scene.add( ik );
     requestAnimationFrame( animate );
   });
-}());
+})();

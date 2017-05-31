@@ -1,6 +1,6 @@
 /* global THREE, dat */
 
-(function() {
+(() => {
   'use strict';
 
   let container;
@@ -201,4 +201,4 @@
     renderer.setSize( window.innerWidth, window.innerHeight );
     depthRenderer.setSize( depthScale * window.innerWidth, depthScale * window.innerHeight );
   });
-}());
+})();

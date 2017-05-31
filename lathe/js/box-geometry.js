@@ -1,6 +1,6 @@
 /* global THREE, VertexIndices */
 
-const transformBoxVertices = (function() {
+const transformBoxVertices = (() => {
   'use strict';
 
   const vector = new THREE.Vector3();
@@ -41,14 +41,14 @@ const transformBoxVertices = (function() {
       return geometry;
     };
   };
-}());
+})();
 
 window.translateBoxVertices = transformBoxVertices( 'add' );
 window.scaleBoxVertices = transformBoxVertices( 'multiply', new THREE.Vector3( 1, 1, 1 ) );
 window.lerpBoxVertices = transformBoxVertices( 'lerp' );
 
 // Per-axis THREE.BoxGeometry methods.
-const transformAxisBoxVertices = (function() {
+const transformAxisBoxVertices = (() => {
   'use strict';
 
   const vector = new THREE.Vector3();
@@ -91,7 +91,7 @@ const transformAxisBoxVertices = (function() {
       };
     };
   };
-}());
+})();
 
 const translateAxisBoxVertices = transformAxisBoxVertices( 'add' );
 

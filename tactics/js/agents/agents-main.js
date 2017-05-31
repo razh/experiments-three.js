@@ -1,6 +1,6 @@
 /* global THREE */
 
-(function() {
+(() => {
   'use strict';
 
   let container;
@@ -125,4 +125,4 @@
       controls.enabled = false;
     }
   });
-}());
+})();

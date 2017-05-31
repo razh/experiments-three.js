@@ -1,6 +1,6 @@
 /* global THREE, Collision, BODY_STATIC, BODY_DYNAMIC */
 
-(function() {
+(() => {
   'use strict';
 
   let container;
@@ -96,4 +96,4 @@
     renderer.setSize( window.innerWidth, window.innerHeight );
     render();
   });
-}());
+})();

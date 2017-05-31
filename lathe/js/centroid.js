@@ -1,5 +1,6 @@
 /* global THREE */
-window.computeCentroid = (function() {
+
+window.computeCentroid = (() => {
   'use strict';
 
   return function centroid( geometry, indices, vector = new THREE.Vector3() ) {
@@ -15,4 +16,4 @@ window.computeCentroid = (function() {
 
     return vector;
   };
-}());
+})();

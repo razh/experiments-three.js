@@ -1,6 +1,6 @@
 /* global THREE, dat, createAnimatedSphereGeometry */
 
-(function() {
+(() => {
   'use strict';
 
   let container;
@@ -114,4 +114,4 @@
 
     renderer.setSize( window.innerWidth, window.innerHeight );
   });
-}());
+})();

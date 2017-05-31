@@ -165,7 +165,7 @@ function createSmokestackGeometry() {
 }
 
 /* exported createFrontDeckGeometry */
-const createFrontDeckGeometry = (function() {
+const createFrontDeckGeometry = (() => {
   'use strict';
 
   function splitBezierCurve( v0, v1, v2, v3, t ) {

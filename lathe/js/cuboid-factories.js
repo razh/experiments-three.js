@@ -1,6 +1,6 @@
 /* global THREE, defaultVertexColors */
 
-(function() {
+(() => {
   'use strict';
 
   function applyTransforms( geometry, ...transforms ) {
@@ -46,4 +46,4 @@
   window.createGeometryWrapper = createGeometryWrapper;
   window.mergeGeometries = mergeGeometries;
   window.applyDefaultVertexColors = applyDefaultVertexColors;
-}());
+})();

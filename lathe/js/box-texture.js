@@ -1,6 +1,6 @@
 /* global THREE */
 
-const createBoxTextures = (function() {
+const createBoxTextures = (() => {
   'use strict';
 
   return function textures(
@@ -29,6 +29,6 @@ const createBoxTextures = (function() {
       return texture;
     });
   };
-}());
+})();
 
 window.createBoxTextures = createBoxTextures;

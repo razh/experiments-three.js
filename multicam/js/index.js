@@ -1,6 +1,6 @@
 /* global THREE */
 
-(function() {
+(() => {
   'use strict';
 
   let scene;

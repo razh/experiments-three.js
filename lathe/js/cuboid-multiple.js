@@ -12,7 +12,7 @@ applyDefaultVertexColors
 geometryArguments
 */
 
-(function() {
+(() => {
   'use strict';
 
   let container;
@@ -76,7 +76,7 @@ geometryArguments
     });
   }
 
-  const getBoundingBoxLabel = (function() {
+  const getBoundingBoxLabel = (() => {
     const labels = {};
 
     return index => {
@@ -87,7 +87,7 @@ geometryArguments
       labels[ index ] = createTextLabel( index );
       return labels[ index ];
     };
-  }());
+  })();
 
   function createBoundingBoxLabels( boundingBoxes ) {
     return boundingBoxes.map( ( boundingBox, index ) => {
@@ -211,7 +211,7 @@ geometryArguments
     const params = new URLSearchParams( window.location.search );
 
     // Get default value.
-    (function() {
+    (() => {
       // Fetch from file-path if it exists.
       const path = params.get( 'path' );
       if ( path ) {
@@ -222,7 +222,7 @@ geometryArguments
 
       const value = params.get( 'commands' ) || 'return _([1, 1, 1])';
       return Promise.resolve( value );
-    }())
+    })()
       .then( value => {
         textarea.value = value;
         textarea.dispatchEvent( new Event( 'input' ) );
@@ -282,4 +282,4 @@ geometryArguments
     renderer.setSize( window.innerWidth, window.innerHeight );
     render();
   });
-}());
+})();

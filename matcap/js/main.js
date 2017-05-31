@@ -1,6 +1,6 @@
 /* global THREE, dat, Toroid */
 
-(function() {
+(() => {
   'use strict';
 
   let container;
@@ -161,4 +161,4 @@
 
     return canvas;
   }
-}());
+})();

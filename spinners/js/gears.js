@@ -1,6 +1,7 @@
 /* global THREE */
+
 /* exported drawGear */
-const drawGear = (function() {
+const drawGear = (() => {
   'use strict';
 
   function lineTo( ctx, radius, angle ) {
@@ -83,10 +84,10 @@ const drawGear = (function() {
   drawGear.lineTo = lineTo;
 
   return drawGear;
-}());
+})();
 
 /* exported drawLineCurveCircle */
-const drawLineCurveCircle = (function() {
+const drawLineCurveCircle = (() => {
   'use strict';
 
   /*
@@ -114,4 +115,4 @@ const drawLineCurveCircle = (function() {
 
     return ctx;
   };
-}());
+})();

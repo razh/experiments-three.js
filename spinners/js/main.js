@@ -1,6 +1,6 @@
 /* global THREE, drawGear, drawLineCurveCircle */
 
-(function() {
+(() => {
   'use strict';
 
   let container;
@@ -24,7 +24,7 @@
   };
 
   const spinners = {
-    circles: (function() {
+    circles: (() => {
       const geometry = new THREE.BoxGeometry( 1, 1, 1 );
       const material = new THREE.MeshPhongMaterial();
 
@@ -46,7 +46,7 @@
       };
     })(),
 
-    loops: (function() {
+    loops: (() => {
       const radius = 0.1;
       const diameter = 2 * radius;
 
@@ -88,7 +88,7 @@
       };
     })(),
 
-    particles: (function() {
+    particles: (() => {
       const PI2 = 2 * Math.PI;
 
       function randomPointOnSphere( vector, radius = 1 ) {
@@ -163,7 +163,7 @@
       };
     })(),
 
-    gears: (function() {
+    gears: (() => {
       const sunRadius = 2;
       const planetRadius = 1.5;
       const toothHeight = 0.2 * planetRadius;

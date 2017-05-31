@@ -1,5 +1,6 @@
 /* global THREE */
-(function() {
+
+(() => {
   'use strict';
 
   function createPoints( string ) {
@@ -102,4 +103,4 @@
 
   window.createPoints = createPoints;
   window.createPathPoints = createPathPoints;
-}());
+})();

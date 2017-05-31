@@ -8,14 +8,14 @@ createSmokestackGeometry
 createFrontDeckGeometry
 */
 
-(function() {
+(() => {
   'use strict';
 
   const keys = [];
 
   let container;
 
-  let scene, camera, controls, renderer;
+  let scene, camera, renderer;
 
   const clock = new THREE.Clock();
 
@@ -113,7 +113,7 @@ createFrontDeckGeometry
     camera.position.set( 0, 32, 160 );
     scene.add( camera );
 
-    controls = new THREE.OrbitControls( camera, renderer.domElement );
+    new THREE.OrbitControls( camera, renderer.domElement );
 
     scene.add( createShipMesh() );
 
@@ -156,4 +156,4 @@ createFrontDeckGeometry
 
   document.addEventListener( 'keydown', event => keys[ event.code ] = true );
   document.addEventListener( 'keyup', event => keys[ event.code ] = false );
-}());
+})();

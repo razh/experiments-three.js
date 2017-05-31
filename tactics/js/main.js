@@ -1,6 +1,6 @@
 /* global THREE, createArrow */
 
-(function() {
+(() => {
   'use strict';
 
   const clock = new THREE.Clock();
@@ -100,4 +100,4 @@
 
   init();
   animate();
-}());
+})();

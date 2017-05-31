@@ -1,6 +1,6 @@
 /* global THREE, createPoints, modifiers, createNumericInput */
 
-(function() {
+(() => {
   'use strict';
 
   let container;
@@ -139,7 +139,7 @@
     renderer.render( scene, camera );
   }
 
-  const drawCanvas = (function() {
+  const drawCanvas = (() => {
     const canvas = document.getElementById( 'canvas' );
     const ctx = canvas.getContext( '2d' );
 
@@ -197,7 +197,7 @@
       });
     }
 
-    canvas.addEventListener( 'mousemove', (function() {
+    canvas.addEventListener( 'mousemove', (() => {
       const pointerCanvas = document.getElementById( 'pointer-canvas' );
       const pointerCtx = pointerCanvas.getContext( '2d' );
 

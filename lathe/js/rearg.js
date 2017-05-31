@@ -30,7 +30,7 @@ scaleZBoxVertices
 */
 /* exported geometryArguments */
 
-const geometryArguments = (function() {
+const geometryArguments = (() => {
   'use strict';
 
   function reargMethod( method ) {
@@ -216,4 +216,4 @@ const geometryArguments = (function() {
       .concat( reargGeometryAxisMethods )
       .concat( reargGeometryAxisMethods ),
   };
-}());
+})();

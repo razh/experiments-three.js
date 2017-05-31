@@ -1,6 +1,6 @@
 /* global THREE, createNumericInput */
 
-(function() {
+(() => {
   'use strict';
 
   let container;
@@ -80,7 +80,7 @@
     const params = new URLSearchParams( window.location.search );
 
     // Get default value.
-    (function() {
+    (() => {
       // Fetch from file-path if it exists.
       const path = params.get( 'path' );
       if ( path ) {
@@ -90,7 +90,7 @@
       }
 
       return Promise.resolve( params.get( 'commands' ) );
-    }())
+    })()
       .then( value => {
         textarea.value = value;
         textarea.dispatchEvent( new Event( 'input' ) );
@@ -116,4 +116,4 @@
     renderer.setSize( window.innerWidth, window.innerHeight );
     render();
   });
-}());
+})();
