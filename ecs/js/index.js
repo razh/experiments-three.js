@@ -53,11 +53,11 @@
 
     new THREE.OrbitControls(camera, renderer.domElement);
 
-    scene.add( new THREE.AmbientLight( '#777' ) );
+    scene.add(new THREE.AmbientLight('#777'));
 
     const light = new THREE.DirectionalLight();
-    light.position.set( 0, 8, 8 );
-    scene.add( light );
+    light.position.set(0, 8, 8);
+    scene.add(light);
 
     const entity = new MeshEntity(
       new THREE.BoxBufferGeometry(1, 1, 1),
@@ -97,7 +97,7 @@
   init();
   animate();
 
-  document.addEventListener( 'keydown', event => {
+  document.addEventListener('keydown', event => {
     // Pause/play.
     if (event.code === 'KeyP') {
       running = !running;

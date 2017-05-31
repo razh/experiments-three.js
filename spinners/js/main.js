@@ -248,12 +248,14 @@
       sunGear.rotation.z += Math.PI / sunTeethCount;
 
       const group = new THREE.Group();
-      group.add( annulusGear );
-      group.add( sunGear );
-      group.add( topPlanetGear );
-      group.add( leftPlanetGear );
-      group.add( rightPlanetGear );
-      group.add( bottomPlanetGear );
+      group.add(
+        annulusGear,
+        sunGear,
+        topPlanetGear,
+        leftPlanetGear,
+        rightPlanetGear,
+        bottomPlanetGear
+      );
       lights.basic( group );
 
       return {
