@@ -1,7 +1,23 @@
-/* global THREE */
+/* global THREE, withEntity */
 /* exported Entity */
 
-class Entity extends THREE.Mesh {
+class Body {
+  constructor() {
+    this.type = 'Body';
+  }
+
+  update(dt) {
+    const { parent } = this;
+
+    parent.previousPosition.copy(parent.position);
+    parent.previousVelocity.copy(parent.velocity);
+
+    parent.velocity.addScaledVector(parent.acceleration, dt);
+    parent.position.addScaledVector(parent.velocity, dt);
+  }
+}
+
+class Entity extends withEntity(THREE.Mesh) {
   constructor(...args) {
     super(...args);
 
@@ -10,13 +26,7 @@ class Entity extends THREE.Mesh {
 
     this.previousPosition = new THREE.Vector3();
     this.previousVelocity = new THREE.Vector3();
-  }
 
-  update(dt) {
-    this.previousPosition.copy(this.position);
-    this.previousVelocity.copy(this.velocity);
-
-    this.velocity.addScaledVector(this.acceleration, dt);
-    this.position.addScaledVector(this.velocity, dt);
+    this.addComponent(new Body());
   }
 }
