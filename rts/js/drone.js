@@ -1,8 +1,10 @@
-/* global THREE, Entity */
+/* global THREE, Destroy, Entity */
 /* exported Drone */
 
 class FollowPathComponent {
   constructor(path) {
+    this.type = 'FollowPathComponent';
+
     this.path = path;
     this.time = 0;
     this.speed = 4;
@@ -25,6 +27,23 @@ class FollowPathComponent {
   }
 }
 
+class FlashOnBulletCollideComponent {
+  update(dt, scene) {
+    const { radius } = this.parent.geometry.boundingSphere;
+
+    this.parent.material.color.set('#fff');
+    scene.traverse(object => {
+      if (object.type === 'Bullet') {
+        if (object.position.distanceTo(this.parent.position) < radius) {
+          console.log('hit');
+          this.parent.material.color.set('#f00');
+          Destroy(object);
+        }
+      }
+    });
+  }
+}
+
 class Drone extends Entity {
   constructor(path) {
     const geometry = new THREE.IcosahedronBufferGeometry(2);
@@ -35,7 +54,8 @@ class Drone extends Entity {
     super(geometry, material);
 
     this.addComponent(
-      new FollowPathComponent(path)
+      new FollowPathComponent(path),
+      new FlashOnBulletCollideComponent()
     );
   }
 }

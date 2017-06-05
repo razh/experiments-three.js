@@ -344,7 +344,7 @@
 
         scene.traverse(object => {
           if (typeof object.update === 'function') {
-            object.update(dt);
+            object.update(dt, scene);
           }
         });
 
