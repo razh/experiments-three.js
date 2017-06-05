@@ -47,6 +47,10 @@ function withEntity(Class) {
       return this;
     }
 
+    fixedUpdate(...args) {
+      this.components.forEach(component => component.fixedUpdate(...args));
+    }
+
     update(...args) {
       this.components.forEach(component => component.update(...args));
     }
