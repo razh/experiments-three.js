@@ -18,8 +18,6 @@ class Bullet extends Entity {
   constructor() {
     super(Bullet.GEOMETRY, new THREE.MeshBasicMaterial());
 
-    this.type = 'Bullet';
-
     this.addComponent(
       new DestroyAfterDistanceTraveledComponent(256)
     );

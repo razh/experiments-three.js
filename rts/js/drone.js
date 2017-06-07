@@ -1,10 +1,8 @@
-/* global THREE, Destroy, Entity */
+/* global THREE, Destroy, Entity, Bullet */
 /* exported Drone */
 
 class FollowPathComponent {
   constructor(path) {
-    this.type = 'FollowPathComponent';
-
     this.path = path;
     this.time = 0;
     this.speed = 4;
@@ -33,7 +31,7 @@ class FlashOnBulletCollideComponent {
 
     this.parent.material.color.set('#fff');
     scene.traverse(object => {
-      if (object.type === 'Bullet') {
+      if (object instanceof Bullet) {
         if (object.position.distanceTo(this.parent.position) < radius) {
           console.log('hit');
           this.parent.material.color.set('#f00');

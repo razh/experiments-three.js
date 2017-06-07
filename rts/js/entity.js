@@ -2,10 +2,6 @@
 /* exported Entity */
 
 class Body {
-  constructor() {
-    this.type = 'Body';
-  }
-
   update(dt) {
     const { parent } = this;
 
