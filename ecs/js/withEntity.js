@@ -25,12 +25,12 @@ function withEntity(Class) {
       return this.components.includes(component);
     }
 
-    getComponent(type) {
-      return this.components.find(component => component.type === type);
+    getComponent(Type) {
+      return this.components.find(component => component instanceof Type);
     }
 
-    getComponents(type) {
-      return this.components.filter(component => component.type === type);
+    getComponents(Type) {
+      return this.components.filter(component => component instanceof Type);
     }
 
     removeComponent(...components) {
