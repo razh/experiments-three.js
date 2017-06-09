@@ -250,4 +250,4 @@ const createFrontDeckGeometry = (() => {
   }
 
   return createFrontDeckGeometry;
-}());
+})();
