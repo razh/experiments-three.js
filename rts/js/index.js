@@ -1,4 +1,4 @@
-/* global THREE, Destroy */
+/* global THREE, Levels, Destroy */
 
 (() => {
   'use strict';
@@ -279,7 +279,7 @@
     plane.rotateX(-Math.PI / 2);
     scene.add(plane);
 
-    selectableGroup = new THREE.Group;
+    selectableGroup = new THREE.Group();
     scene.add(selectableGroup);
 
     const box = new THREE.Mesh(
@@ -316,6 +316,8 @@
     selection.rect(0, 0, 128, 128);
 
     hud.scene.add(selection);
+
+    Levels.level0(selectableGroup);
   }
 
   const update = (() => {
