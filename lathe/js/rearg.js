@@ -169,11 +169,11 @@ const geometryArguments = (() => {
       '$sy',
       '$scaleZ',
       '$sz',
-    ]
-      .concat( geometryMethods )
-      .concat( shorthandGeometryMethods )
-      .concat( geometryAxisMethods )
-      .concat( shorthandGeometryAxisMethods ),
+      ...geometryMethods,
+      ...shorthandGeometryMethods,
+      ...geometryAxisMethods,
+      ...shorthandGeometryAxisMethods,
+    ],
     values: [
       THREE,
       sizeBox,
@@ -210,10 +210,10 @@ const geometryArguments = (() => {
       reargScaleYVertices,
       reargScaleZVertices,
       reargScaleZVertices,
-    ]
-      .concat( reargGeometryMethods )
-      .concat( reargGeometryMethods )
-      .concat( reargGeometryAxisMethods )
-      .concat( reargGeometryAxisMethods ),
+      ...reargGeometryMethods,
+      ...reargGeometryMethods,
+      ...reargGeometryAxisMethods,
+      ...reargGeometryAxisMethods,
+    ],
   };
 })();
