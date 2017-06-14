@@ -10,6 +10,9 @@
   let controls;
   let renderer;
 
+  const loader = new THREE.OBJLoader2();
+  let group;
+
   function init() {
     container = document.createElement('div');
     document.body.appendChild(container);
@@ -51,8 +54,8 @@
 
     const reader = new FileReader();
     reader.addEventListener('load', event => {
-      const loader = new THREE.OBJLoader2();
-      const group = loader.parse(event.target.result);
+      scene.remove(group);
+      group = loader.parse(event.target.result);
       scene.add(group);
       render();
     });
