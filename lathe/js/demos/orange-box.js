@@ -1,19 +1,26 @@
-const tileWidth = 16
-const tileDepth = 16
+const tileSize = 16
 
 const orange = defaultColor('orange')
 const grey = defaultColor('lightgrey')
 
-const orangeTile = _(
-  [tileWidth, 1, tileDepth],
+const empty = () => new THREE.Geometry()
+
+const orangeTile = () => _(
+  [tileSize, 1, tileSize],
   orange,
-  tx(-tileWidth),
 )
 
-const greyTile = _(
-  [tileWidth, 1, tileDepth],
+const greyTile = () => _(
+  [tileSize, 1, tileSize],
   grey,
-  tx(tileWidth),
 )
 
-return [orangeTile, greyTile]
+return [
+  [orangeTile(), empty(), greyTile()],
+]
+  .map((row, rowIndex) =>
+    row.map((geometry, colIndex) =>
+      t(colIndex * tileSize, 0, rowIndex * tileSize)(geometry),
+    ),
+  )
+  .reduce((a, b) => a.concat(b), [])
