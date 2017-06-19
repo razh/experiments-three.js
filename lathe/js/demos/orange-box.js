@@ -3,20 +3,22 @@ const tileSize = 16
 const orange = defaultColor('orange')
 const grey = defaultColor('lightgrey')
 
+const alignBottom = align('ny')
+
 const empty = () => new THREE.Geometry()
 
-const orangeTile = () => _(
-  [tileSize, 1, tileSize],
-  orange,
-)
+const tile = () => _([tileSize, 1, tileSize], alignBottom)
+const orangeTile = () => orange(tile())
+const greyTile = () => grey(tile())
 
-const greyTile = () => _(
-  [tileSize, 1, tileSize],
-  grey,
-)
+const box = () => _([tileSize, tileSize, tileSize], alignBottom);
+const orangeBox = () => orange(box())
+const greyBox = () => grey(box())
 
 return [
-  [orangeTile(), empty(), greyTile()],
+  [greyBox(), orangeBox(), orangeTile()],
+  [greyTile(), greyTile(), orangeTile()],
+  [empty(), greyTile(), orangeTile()],
 ]
   .map((row, rowIndex) =>
     row.map((geometry, colIndex) =>
