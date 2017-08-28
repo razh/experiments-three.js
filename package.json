@@ -21,7 +21,7 @@
   "homepage": "https://github.com/razh/experiments-three.js#readme",
   "dependencies": {
     "dat.gui": "https://github.com/dataarts/dat.gui.git#v0.6.5",
-    "three": "0.86.0",
+    "three": "0.87.1",
     "three.meshline": "1.0.3"
   },
   "devDependencies": {
