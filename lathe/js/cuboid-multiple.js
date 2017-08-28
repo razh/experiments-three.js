@@ -26,6 +26,8 @@ geometryArguments
   let debugMaterial;
   let geometryLabels;
 
+  const params = new URLSearchParams( window.location.search );
+
   let DEBUG = true;
 
   function setGeometry( _geometry ) {
@@ -181,18 +183,22 @@ geometryArguments
 
     geometry = new THREE.BoxGeometry( 1, 1, 1 );
 
+    const Material = params.get( 'phong' ) !== null
+      ? THREE.MeshPhongMaterial
+      : THREE.MeshStandardMaterial;
+
     const materialParameters = {
       shading: THREE.FlatShading,
-      transparent: true,
-      opacity: 0.95,
       vertexColors: THREE.VertexColors,
     };
 
-    material = new THREE.MeshStandardMaterial( materialParameters );
+    material = new Material( materialParameters );
 
     debugMaterial = createBoxTextures().map( texture =>
-      new THREE.MeshStandardMaterial(
+      new Material(
         Object.assign({
+          transparent: true,
+          opacity: 0.95,
           emissive: '#777',
           emissiveMap: texture,
         }, materialParameters )
@@ -207,8 +213,6 @@ geometryArguments
     textarea.addEventListener( 'input', onInput );
     // Disable OrbitControls when focused on textarea.
     textarea.addEventListener( 'keydown', event => event.stopPropagation() );
-
-    const params = new URLSearchParams( window.location.search );
 
     // Get default value.
     (() => {
