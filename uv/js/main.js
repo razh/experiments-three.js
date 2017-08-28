@@ -99,7 +99,7 @@
 
     resizeCanvas( options.powerOfTwo );
     texture = new THREE.Texture( canvas );
-    texture.anisotropy = renderer.getMaxAnisotropy();
+    texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
     document.body.appendChild( canvas );
 
     material = new THREE.MeshPhongMaterial({

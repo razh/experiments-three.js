@@ -34,7 +34,7 @@
     controls.addEventListener( 'change', render );
 
     texture = new THREE.Texture( image );
-    texture.anisotropy = renderer.getMaxAnisotropy();
+    texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
     image.addEventListener( 'load', () => {
       texture.needsUpdate = true;
       render();
