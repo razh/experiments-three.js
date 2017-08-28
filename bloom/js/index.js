@@ -38,7 +38,7 @@
     geometry = new THREE.IcosahedronBufferGeometry(4, 1);
     material = new THREE.MeshStandardMaterial({
       color: 'lightsteelblue',
-      shading: THREE.FlatShading,
+      flatShading: true,
     });
     mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);

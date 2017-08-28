@@ -374,7 +374,7 @@ translateBoxVertices
     baseGeometry = createBaseGeometry( config );
     geometry = baseGeometry.clone();
     material = new THREE.MeshStandardMaterial({
-      shading: THREE.FlatShading,
+      flatShading: true,
       transparent: true,
       opacity: 0.95,
     });

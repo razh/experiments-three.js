@@ -86,7 +86,7 @@
       new THREE.MeshStandardMaterial({
         emissive: '#333',
         emissiveMap: texture,
-        shading: THREE.FlatShading,
+        flatShading: true,
         transparent: true,
         opacity: 0.8,
       })

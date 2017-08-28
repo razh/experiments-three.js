@@ -188,7 +188,7 @@ geometryArguments
       : THREE.MeshStandardMaterial;
 
     const materialParameters = {
-      shading: THREE.FlatShading,
+      flatShading: true,
       vertexColors: THREE.VertexColors,
     };
 

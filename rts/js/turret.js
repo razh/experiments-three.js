@@ -33,7 +33,7 @@ class BallTurret extends Entity {
 
     super(
       geometry,
-      new THREE.MeshStandardMaterial({ shading: THREE.FlatShading })
+      new THREE.MeshStandardMaterial({ flatShading: true })
     );
 
     this.offset = new THREE.Vector3();

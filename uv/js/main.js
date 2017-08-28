@@ -104,7 +104,7 @@
 
     material = new THREE.MeshPhongMaterial({
       map: texture,
-      shading: THREE.FlatShading,
+      flatShading: true,
     });
 
     depthMaterial = new THREE.MeshDepthMaterial();

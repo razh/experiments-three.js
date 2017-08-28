@@ -46,7 +46,7 @@ class Drone extends Entity {
   constructor(path) {
     const geometry = new THREE.IcosahedronBufferGeometry(2);
     const material = new THREE.MeshPhongMaterial({
-      shading: THREE.FlatShading,
+      flatShading: true,
     });
 
     super(geometry, material);

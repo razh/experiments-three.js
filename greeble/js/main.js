@@ -30,7 +30,7 @@
     const mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( {
       color: '#dde',
       specular: '#fff',
-      shading: THREE.FlatShading,
+      flatShading: true,
     }));
 
     mesh.castShadow = true;

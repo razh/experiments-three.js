@@ -30,7 +30,7 @@
     }),
 
     mesh: new THREE.MeshPhongMaterial({
-      shading: THREE.FlatShading,
+      flatShading: true,
       side: THREE.DoubleSide,
     }),
   };

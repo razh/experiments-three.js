@@ -163,7 +163,7 @@
 
     baseGeometry = createBaseGeometry( config );
     geometry = baseGeometry;
-    material = new THREE.MeshStandardMaterial({ shading: THREE.FlatShading });
+    material = new THREE.MeshStandardMaterial({ flatShading: true });
     mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
     createWireframe( mesh );
