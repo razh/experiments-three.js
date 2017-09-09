@@ -28,7 +28,7 @@ geometryArguments
 
   const params = new URLSearchParams( window.location.search );
 
-  let DEBUG = true;
+  let DEBUG = false;
 
   function setGeometry( _geometry ) {
     if ( geometry ) {
@@ -41,7 +41,7 @@ geometryArguments
   }
 
   function createGeometryLabels( geometries ) {
-    const visible = geometryLabels ? geometryLabels.visible : true;
+    const visible = geometryLabels ? geometryLabels.visible : false;
     remove( geometryLabels );
 
     geometryLabels = new THREE.Group();
@@ -53,7 +53,7 @@ geometryArguments
   }
 
   function createWireframe() {
-    const visible = wireframe ? wireframe.visible : true;
+    const visible = wireframe ? wireframe.visible : false;
     remove( wireframe );
 
     wireframe = new THREE.LineSegments(
