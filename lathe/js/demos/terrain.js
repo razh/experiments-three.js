@@ -13,22 +13,22 @@ map = [
   '        ',
 ]
 
-terrain = (map, heights, scale = 1) => {
-  getHeight = char => scale * heights.indexOf(char)
+terrain = (map, heights, scale = new THREE.Vector3(1, 1, 1)) => {
+  let height = char => scale.y * heights.indexOf(char)
 
   let geometries = []
 
   map.map((row, i) =>
-    row.split('').map((height, j) => {
+    row.split('').map((char, j) => {
       if (i < map.length - 1 && j < row.length - 1) {
         geometries.push(_(
-          [1, 1, 1],
-          t(j, 0, i),
+          scale.toArray(),
+          t(j * scale.x, 0, i * scale.z),
           $ty({
-            nx_py_nz: getHeight(height),
-            px_py_nz: getHeight(row[j + 1]),
-            nx_py_pz: getHeight(map[i + 1][j]),
-            px_py_pz: getHeight(map[i + 1][j + 1]),
+            nx_py_nz: height(char),
+            px_py_nz: height(row[j + 1]),
+            nx_py_pz: height(map[i + 1][j]),
+            px_py_pz: height(map[i + 1][j + 1]),
           }),
         ));
       }
