@@ -21,11 +21,12 @@
   "homepage": "https://github.com/razh/experiments-three.js#readme",
   "dependencies": {
     "dat.gui": "https://github.com/dataarts/dat.gui.git#v0.6.5",
+    "lz-string": "1.4.4",
     "three": "0.87.1",
     "three.meshline": "1.0.3"
   },
   "devDependencies": {
-    "eslint": "^3.19.0",
+    "eslint": "4.5.0",
     "jest": "^20.0.4"
   }
 }

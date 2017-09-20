@@ -34,6 +34,7 @@ node_modules/**
 !node_modules/**/
 
 !node_modules/dat.gui/build/dat.gui.js
+!node_modules/lz-string/libs/lz-string.min.js
 
 !node_modules/three/build/three.js
 !node_modules/three/examples/js/SimplexNoise.js
