@@ -3,7 +3,7 @@
 'use strict';
 
 /* exported computeNeighbors */
-function computeNeighbors(nodes, objects) {
+function computeNeighbors(nodes, objects, recursive) {
   const adjacencyList = nodes.map(() => []);
 
   // Calculate node visibility with line-of-sight.
@@ -16,7 +16,7 @@ function computeNeighbors(nodes, objects) {
       ray.direction.subVectors(nodes[j], nodes[i]);
 
       const distance = ray.direction.length();
-      const intersections = raycaster.intersectObjects(objects);
+      const intersections = raycaster.intersectObjects(objects, recursive);
 
       if (!intersections.length || distance < intersections[0].distance) {
         adjacencyList[i].push(j);
