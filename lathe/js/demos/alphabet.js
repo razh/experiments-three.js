@@ -528,7 +528,7 @@ log = string =>
   string
     .trim()
     .split('\n')
-    .reduce((array, line, lineIndex) =>
+    .reduce((array, line, lineIndex) => (
       array.concat(
         line
           .trim()
@@ -548,7 +548,7 @@ log = string =>
             return charArray;
           }, []),
       )
-    , [])
+    ), [])
 
 return log([
   'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
