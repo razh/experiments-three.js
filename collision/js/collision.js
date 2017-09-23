@@ -20,16 +20,19 @@ const Collision = {
     for (let i = 0; i < bodies.length; i++) {
       const bodyA = bodies[i];
 
+      if (!bodyA.physics) {
+        continue;
+      }
+
       for (let j = i + 1; j < bodies.length; j++) {
         const bodyB = bodies[j];
 
-        if (!bodyA.physics || !bodyB.physics) {
+        if (!bodyB.physics) {
           continue;
         }
 
         // Both bodies can't move.
-        if (bodyA.physics === BODY_STATIC &&
-            bodyB.physics === BODY_STATIC) {
+        if (bodyA.physics === BODY_STATIC && bodyB.physics === BODY_STATIC) {
           continue;
         }
 
@@ -76,9 +79,9 @@ const Collision = {
           const ady = Math.abs(dy);
           const adz = Math.abs(dz);
 
-          if (adx <= ady && adx <= adz) {
+          if (adx < ady && adx < adz) {
             Collision.penetration.set(dx, 0, 0);
-          } else if (ady <= adx && ady <= adz) {
+          } else if (ady < adz) {
             Collision.penetration.set(0, dy, 0);
           } else {
             Collision.penetration.set(0, 0, dz);
