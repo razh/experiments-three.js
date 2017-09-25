@@ -13,6 +13,7 @@ module.exports = {
     'comma-spacing': ['error', { before: false, after: true }],
     indent: ['error', 2, { SwitchCase: 1 }],
     'no-console': 'off',
+    'no-constant-condition': ['error', { checkLoops: false }],
     'object-curly-spacing': ['error', 'always'],
     semi: ['error', 'always'],
     quotes: ['error', 'single', 'avoid-escape'],
