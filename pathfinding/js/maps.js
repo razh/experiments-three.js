@@ -1,18 +1,17 @@
-/* global minHeap */
+/* global THREE, minHeap */
 
 'use strict';
 
 // https://bl.ocks.org/mbostock/83d1073cb0a45ac158fb
-/* exported generateMaze */
-function generateMaze(width, height) {
+function generateMaze(cellWidth, cellHeight) {
   const N = 1 << 0;
   const S = 1 << 1;
   const W = 1 << 2;
   const E = 1 << 3;
 
-  const cells = new Array(width * height);
+  const cells = new Array(cellWidth * cellHeight);
   const frontier = minHeap((a, b) => a.weight - b.weight);
-  const startIndex = (height - 1) * width;
+  const startIndex = (cellHeight - 1) * cellWidth;
 
   cells[startIndex] = 0;
 
@@ -26,9 +25,9 @@ function generateMaze(width, height) {
 
     let i1 = i0;
     if (d0 === N) {
-      i1 -= width;
+      i1 -= cellWidth;
     } else if (d0 === S) {
-      i1 += width;
+      i1 += cellWidth;
     } else if (d0 === W) {
       i1--;
     } else {
@@ -36,8 +35,8 @@ function generateMaze(width, height) {
     }
 
     if (cells[i1] === undefined) {
-      const x0 = i0 % width;
-      const y0 = Math.floor(i0 / width);
+      const x0 = i0 % cellWidth;
+      const y0 = Math.floor(i0 / cellWidth);
 
       let x1;
       let y1;
@@ -64,11 +63,11 @@ function generateMaze(width, height) {
       cells[i0] |= d0;
       cells[i1] |= d1;
 
-      if (y1 > 0 && cells[i1 - width] === undefined) {
+      if (y1 > 0 && cells[i1 - cellWidth] === undefined) {
         frontier.push({ index: i1, direction: N, weight: Math.random() });
       }
 
-      if (y1 < height - 1 && cells[i1 + width] === undefined) {
+      if (y1 < cellHeight - 1 && cells[i1 + cellWidth] === undefined) {
         frontier.push({ index: i1, direction: S, weight: Math.random() });
       }
 
@@ -76,11 +75,65 @@ function generateMaze(width, height) {
         frontier.push({ index: i1, direction: W, weight: Math.random() });
       }
 
-      if (x1 < width - 1 && cells[i1 + 1] === undefined) {
+      if (x1 < cellWidth - 1 && cells[i1 + 1] === undefined) {
         frontier.push({ index: i1, direction: E, weight: Math.random() });
       }
     }
   }
 
   return cells;
+}
+
+function fillMaze(cells, width, cellWidth, cellDepth) {
+  const grid = [];
+
+  function fill(x, z) {
+    // Add border-width of 1.
+    grid[(x + 1) * width + (z + 1)] = 1;
+  }
+
+  const S = 1 << 1;
+  const E = 1 << 3;
+
+  for (let z = 0, i = 0; z < cellDepth; z++) {
+    for (let x = 0; x < cellWidth; x++, i++) {
+      fill(2 * x, 2 * z);
+      if (cells[i] & S) fill(2 * x, 2 * z + 1);
+      if (cells[i] & E) fill(2 * x + 1, 2 * z);
+    }
+  }
+
+  return grid;
+}
+
+/* exported createMazeGeometry */
+function createMazeGeometry(width, depth, scale = new THREE.Vector3(1, 1, 1)) {
+  const geometries = [];
+
+  const cellWidth = Math.floor((width - 1) / 2);
+  const cellDepth = Math.floor((depth - 1) / 2);
+
+  const cells = generateMaze(cellWidth, cellDepth);
+  const grid = fillMaze(cells, width, cellWidth, cellDepth);
+
+  function createBox(x, z) {
+    geometries.push(
+      new THREE.BoxBufferGeometry(...scale.toArray())
+        .translate(
+          scale.x * x,
+          0,
+          scale.z * z
+        )
+    );
+  }
+
+  for (let z = 0, i = 0; z < depth; z++) {
+    for (let x = 0; x < width; x++, i++) {
+      if (!grid[i]) {
+        createBox(x, z);
+      }
+    }
+  }
+
+  return geometries;
 }
