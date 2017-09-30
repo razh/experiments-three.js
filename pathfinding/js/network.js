@@ -14,8 +14,9 @@ function computeNeighbors(nodes, objects, recursive) {
 
     for (let j = i + 1; j < nodes.length; j++) {
       ray.direction.subVectors(nodes[j], nodes[i]);
-
       const distance = ray.direction.length();
+      ray.direction.normalize();
+
       const intersections = raycaster.intersectObjects(objects, recursive);
 
       if (!intersections.length || distance < intersections[0].distance) {
@@ -53,9 +54,9 @@ function computeNeighbors(nodes, objects, recursive) {
         if (v0.dot(v1) >= tolerance) {
           // Remove longer redundant edge.
           if (length0 < length1) {
-            edgeSet.delete(k);
+            edgeSet.delete(edges[k]);
           } else {
-            edgeSet.delete(j);
+            edgeSet.delete(edges[j]);
           }
         }
       }
