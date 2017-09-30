@@ -89,7 +89,7 @@ function fillMaze(cells, width, cellWidth, cellDepth) {
 
   function fill(x, z) {
     // Add border-width of 1.
-    grid[(x + 1) * width + (z + 1)] = 1;
+    grid[(z + 1) * width + (x + 1)] = 1;
   }
 
   const S = 1 << 1;
@@ -135,5 +135,65 @@ function createMazeGeometry(width, depth, scale = new THREE.Vector3(1, 1, 1)) {
     }
   }
 
-  return geometries;
+  return {
+    grid,
+    geometries,
+  };
+}
+
+/* exported findExteriorCorners */
+// http://www.redblobgames.com/pathfinding/visibility-graphs/analyze.js
+function findExteriorCorners(grid, width, depth) {
+  const corners = [];
+
+  // Is empty?
+  const get = (x, z) => grid[z * width + x] === 1;
+
+  for (let z = 1; z < depth - 1; z++) {
+    for (let x = 1; x < width - 1; x++) {
+      if (get(x, z)) {
+        const NW = get(x - 1, z - 1);
+        const N  = get(x,     z - 1);
+        const NE = get(x + 1, z - 1);
+        const W  = get(x - 1, z    );
+        const E  = get(x + 1, z    );
+        const SW = get(x - 1, z + 1);
+        const S  = get(x,     z + 1);
+        const SE = get(x + 1, z + 1);
+
+        if (
+          /*
+            Corners:
+
+              ┌──┐
+              │NW│ N
+              └──┘
+               W
+           */
+          (!NW && N && W) ||
+          (!NE && N && E) ||
+          (!SW && S && W) ||
+          (!SE && S && E) ||
+          /*
+            Dead-ends:
+
+              ┌──┐   ┌──┐
+              │NW│ N │NE│
+              ├──┤   ├──┤
+              │W │   │E │
+              ├──┼───┼──┤
+              │SW│ S │SE│
+              └──┴───┴──┘
+           */
+          (N && !NW && !NE && !W && !E && !SW && !S && !SE) ||
+          (S && !NW && !N && !NE && !W && !E && !SW && !SE) ||
+          (W && !NW && !N && !NE && !E && !SW && !S && !SE) ||
+          (E && !NW && !N && !NE && !W && !SW && !S && !SE)
+        ) {
+          corners.push([x, z]);
+        }
+      }
+    }
+  }
+  return corners;
 }
