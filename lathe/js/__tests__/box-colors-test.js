@@ -10,7 +10,7 @@ describe( 'defaultVertexColors', () => {
   const { defaultVertexColors } = window;
 
   it( 'sets all vertex colors', () => {
-    const box = new THREE.BoxGeometry( 1, 1, 1 );
+    const box = new THREE.BoxGeometry();
     defaultVertexColors( box, 'red' );
 
     expect(
@@ -29,7 +29,7 @@ describe( 'applyBoxVertexColors', () => {
   const { applyBoxVertexColors } = window;
 
   it( 'sets some vertex colors', () => {
-    const box = new THREE.BoxGeometry( 1, 1, 1 );
+    const box = new THREE.BoxGeometry();
     const getVertexAtIndex = index => box.vertices[ index ];
 
     applyBoxVertexColors( box, 'px', 'red' );

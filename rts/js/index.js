@@ -159,7 +159,7 @@
       super();
 
       this.fill = new THREE.Mesh(
-        new THREE.PlaneBufferGeometry(1, 1)
+        new THREE.PlaneBufferGeometry()
           .rotateY(Math.PI)
           .translate(0.5, 0.5, 0),
         new THREE.MeshBasicMaterial({

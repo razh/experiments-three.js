@@ -9,11 +9,11 @@ describe( 'translateBoxVertices', () => {
   require('../box-geometry');
   const { translateBoxVertices } = window;
 
-  const base = new THREE.BoxGeometry( 1, 1, 1 );
+  const box = () => new THREE.BoxGeometry();
 
   it( 'changes the geometry bounding box', () => {
     // Moving the entire right side.
-    const geometry = translateBoxVertices( base.clone(), {
+    const geometry = translateBoxVertices( box(), {
       right: { x: 1 },
     });
 
@@ -31,7 +31,7 @@ describe( 'translateBoxVertices', () => {
 
   it( 'should not change the bounding box if translated vertices are in original bounds', () => {
     // Move the top-left right.
-    const geometry = translateBoxVertices( base.clone(), {
+    const geometry = translateBoxVertices( box(), {
       top_left: { x: 0.5 },
     });
 

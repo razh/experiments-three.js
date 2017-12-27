@@ -60,7 +60,7 @@
     scene.add(light);
 
     const entity = new MeshEntity(
-      new THREE.BoxBufferGeometry(1, 1, 1),
+      new THREE.BoxBufferGeometry(),
       new THREE.MeshStandardMaterial()
     );
     entity.addComponent(

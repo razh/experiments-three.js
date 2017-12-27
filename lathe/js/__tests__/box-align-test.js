@@ -10,11 +10,11 @@ describe( 'alignBox', () => {
   require('../centroid');
   const { alignBox } = window;
 
-  const base = new THREE.BoxGeometry( 1, 1, 1 );
+  const box = () => new THREE.BoxGeometry();
 
   it( 'shifts the vertex or face-centroid to the origin', () => {
     // Align right face.
-    let geometry = alignBox( base.clone(), 'right' );
+    let geometry = alignBox( box(), 'right' );
 
     geometry.computeBoundingBox();
 
@@ -28,7 +28,7 @@ describe( 'alignBox', () => {
     ).toBe( true );
 
     // Align top_left edge.
-    geometry = alignBox( base.clone(), 'top_left' );
+    geometry = alignBox( box(), 'top_left' );
 
     geometry.computeBoundingBox();
 

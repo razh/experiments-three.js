@@ -181,7 +181,7 @@ geometryArguments
     gridHelper.material.transparent = true;
     scene.add( gridHelper );
 
-    geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    geometry = new THREE.BoxGeometry();
 
     const Material = params.get( 'phong' ) !== null
       ? THREE.MeshPhongMaterial

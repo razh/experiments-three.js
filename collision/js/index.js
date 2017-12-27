@@ -62,7 +62,7 @@
     }
 
     const userBoxMesh = new THREE.Mesh(
-      new THREE.BoxGeometry( 1, 1, 1 ),
+      new THREE.BoxGeometry(),
       new THREE.MeshStandardMaterial({
         emissive: 'green',
       })

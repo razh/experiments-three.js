@@ -25,7 +25,7 @@
 
   const spinners = {
     circles: (() => {
-      const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+      const geometry = new THREE.BoxGeometry();
       const material = new THREE.MeshPhongMaterial();
 
       const mesh = new THREE.Mesh( geometry, material );

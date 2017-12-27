@@ -31,7 +31,7 @@
     light.position.set(8, 8, 8);
     scene.add(light);
 
-    geometry = new THREE.BoxGeometry(1, 1, 1);
+    geometry = new THREE.BoxGeometry();
     material = new THREE.MeshStandardMaterial();
     mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);

@@ -84,7 +84,7 @@
     mouse = new THREE.Vector2();
 
     intersectionMesh = new THREE.Mesh(
-      new THREE.SphereGeometry( 1 ),
+      new THREE.SphereGeometry(),
       new THREE.MeshBasicMaterial({
         wireframe: true,
         opacity: 0.5,

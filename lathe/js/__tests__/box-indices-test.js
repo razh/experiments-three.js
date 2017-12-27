@@ -8,7 +8,7 @@ describe( 'VertexIndices', () => {
   require('../box-indices');
   const { VertexIndices } = window;
 
-  const box = new THREE.BoxGeometry( 1, 1, 1 );
+  const box = new THREE.BoxGeometry();
   const getVertexAtIndex = index => box.vertices[ index ];
 
   it( 'matches the orientation of THREE.BoxGeometry vertices', () => {
@@ -27,7 +27,7 @@ describe( 'FaceIndices', () => {
   require('../box-indices');
   const { FaceIndices } = window;
 
-  const box = new THREE.BoxGeometry( 1, 1, 1 );
+  const box = new THREE.BoxGeometry();
 
   function getVerticesForFaceIndices( faceIndices ) {
     return faceIndices

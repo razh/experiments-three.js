@@ -4,7 +4,7 @@
 
 class ReferenceImage extends THREE.Mesh {
   constructor() {
-    const geometry = new THREE.PlaneBufferGeometry( 1, 1 );
+    const geometry = new THREE.PlaneBufferGeometry();
     const texture = new THREE.Texture();
 
     super( geometry, new THREE.MeshBasicMaterial({

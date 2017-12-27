@@ -58,7 +58,7 @@
     scene.add( planeMesh );
 
     // Sound source mesh.
-    sourceGeometry = new THREE.SphereBufferGeometry( 1 );
+    sourceGeometry = new THREE.SphereBufferGeometry();
     sourceMaterial = new THREE.MeshBasicMaterial({ wireframe: true, color: 0x555555 });
     sourceMesh = new THREE.Mesh( sourceGeometry, sourceMaterial );
     sourceMesh.position.y = 1;
