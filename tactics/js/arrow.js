@@ -4,8 +4,9 @@
 const createArrow = (() => {
   'use strict';
 
-  function createrLerper(path, divisions) {
-    const geometry = path.createSpacedPointsGeometry( divisions );
+  function createLerper(path, divisions) {
+    const points = path.getSpacedPoints( divisions );
+    const geometry = new THREE.Geometry().setFromPoints( points );
 
     return {
       geometry,
@@ -44,7 +45,7 @@ const createArrow = (() => {
     const arrow = new THREE.Group();
 
     // Create path.
-    const lerper = createrLerper( path, divisions );
+    const lerper = createLerper( path, divisions );
     const lineGeometry = lerper.geometry;
 
     // Cache endpoint vertex.

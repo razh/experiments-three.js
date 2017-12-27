@@ -33,9 +33,10 @@ const Levels = (() => {
         curve.v2.add(pathOffset);
       });
 
-      const spacedPoints = createBoxCurvePath(60, 40, 240).createSpacedPointsGeometry(100);
+      const spacedPoints = createBoxCurvePath(60, 40, 240).getSpacedPoints(100);
+      const lineGeometry = new THREE.Geometry().setFromPoints( spacedPoints );
       const line = new THREE.Line(
-        spacedPoints,
+        lineGeometry,
         new THREE.LineBasicMaterial({ color: '#f00' })
       );
       line.position.add(pathOffset);
