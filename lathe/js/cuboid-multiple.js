@@ -172,8 +172,8 @@ geometryArguments
     light.position.set( 0, 64, 64 );
     scene.add( light );
 
-    const axisHelper = new THREE.AxisHelper( 16 );
-    scene.add( axisHelper );
+    const axesHelper = new THREE.AxesHelper( 16 );
+    scene.add( axesHelper );
 
     const gridHelper = new THREE.GridHelper( 32, 16 );
     gridHelper.position.y = -4;

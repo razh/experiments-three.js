@@ -29,8 +29,8 @@
     const controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.addEventListener( 'change', render );
 
-    const axisHelper = new THREE.AxisHelper();
-    scene.add( axisHelper );
+    const axesHelper = new THREE.AxesHelper();
+    scene.add( axesHelper );
 
     const gridHelper = new THREE.GridHelper( 4, 20 );
     gridHelper.position.y = -2;

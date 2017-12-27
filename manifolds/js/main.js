@@ -17,7 +17,7 @@
   let scene, camera, controls, renderer;
 
   let geometry, mesh;
-  let axisHelper;
+  let axesHelper;
 
   // Hyperbolic trigonometric functions.
   // Cached Math.exp(x) is significantly less accurate.
@@ -322,8 +322,8 @@
     mesh = new constructors[ config.type ]( geometry, materials[ config.type ] );
     scene.add( mesh );
 
-    axisHelper = new THREE.AxisHelper( 2 );
-    scene.add( axisHelper );
+    axesHelper = new THREE.AxesHelper( 2 );
+    scene.add( axesHelper );
 
     function createMesh() {
       scene.remove( mesh );
@@ -373,7 +373,7 @@
     renderer.render( scene, camera );
     requestAnimationFrame( animate );
 
-    axisHelper.rotation.copy( mesh.rotation );
+    axesHelper.rotation.copy( mesh.rotation );
 
     if ( config.animateAngle ) {
       config.angle = ( config.angle + 90 * THREE.Math.DEG2RAD * dt ) % TAU;
