@@ -82,12 +82,16 @@ geometryArguments
     const labels = {};
 
     return index => {
-      if ( labels[ index ] ) {
-        return labels[ index ];
+      let label = labels[ index ];
+
+      if ( label ) {
+        return label;
       }
 
-      labels[ index ] = createTextLabel( index );
-      return labels[ index ];
+      label = createTextLabel( index );
+      label.renderOrder = 1;
+      labels[ index ] = label;
+      return label;
     };
   })();
 

@@ -31,7 +31,7 @@
     scene.add( light );
 
     for ( let i = 0; i < 100; i++ ) {
-      const geometry = new THREE.BoxGeometry(
+      const geometry = new THREE.BoxBufferGeometry(
         THREE.Math.randFloat( 1, 4 ),
         THREE.Math.randFloat( 1, 4 ),
         THREE.Math.randFloat( 1, 4 )
@@ -62,7 +62,7 @@
     }
 
     const userBoxMesh = new THREE.Mesh(
-      new THREE.BoxGeometry(),
+      new THREE.BoxBufferGeometry(),
       new THREE.MeshStandardMaterial({
         emissive: 'green',
       })

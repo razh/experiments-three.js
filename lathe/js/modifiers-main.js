@@ -152,8 +152,8 @@
     light.position.set( 8, 8, 0 );
     scene.add( light );
 
-    const axisHelper = new THREE.AxisHelper();
-    scene.add( axisHelper );
+    const axesHelper = new THREE.AxesHelper();
+    scene.add( axesHelper );
 
     const gridHelper = new THREE.GridHelper( 2, 20 );
     gridHelper.position.y = -1;

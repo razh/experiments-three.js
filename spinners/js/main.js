@@ -25,7 +25,7 @@
 
   const spinners = {
     circles: (() => {
-      const geometry = new THREE.BoxGeometry();
+      const geometry = new THREE.BoxBufferGeometry();
       const material = new THREE.MeshPhongMaterial();
 
       const mesh = new THREE.Mesh( geometry, material );
@@ -59,7 +59,7 @@
       while ( i-- ) {
         const scale = i * diameter + 2;
 
-        const geometry = new THREE.TorusGeometry( scale, radius, 16, 64 );
+        const geometry = new THREE.TorusBufferGeometry( scale, radius, 16, 64 );
         const material = new THREE.MeshPhongMaterial({
           color: `hsl(${( i * 360 / count )}, 100%, 50%)`,
         });
@@ -216,7 +216,7 @@
       planetGearShape.holes.push( hole );
 
       const extrudeOptions = {
-        amount: 0.5,
+        depth: 0.5,
         curveSegments: 2 * annulusTeethCount,
         bevelEnabled: true,
         steps: 1,
@@ -225,9 +225,9 @@
         bevelSegments: 1,
       };
 
-      const annulusGearGeometry = new THREE.ExtrudeGeometry( annulusGearShape, extrudeOptions );
-      const sunGearGeometry = new THREE.ExtrudeGeometry( sunGearShape, extrudeOptions );
-      const planetGearGeometry = new THREE.ExtrudeGeometry( planetGearShape, extrudeOptions );
+      const annulusGearGeometry = new THREE.ExtrudeBufferGeometry( annulusGearShape, extrudeOptions );
+      const sunGearGeometry = new THREE.ExtrudeBufferGeometry( sunGearShape, extrudeOptions );
+      const planetGearGeometry = new THREE.ExtrudeBufferGeometry( planetGearShape, extrudeOptions );
 
       const material = new THREE.MeshStandardMaterial();
 

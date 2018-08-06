@@ -113,6 +113,7 @@ translateBoxVertices
   function createVertexLabels( vertices ) {
     vertexLabels = vertices.map(( vertex, index ) => {
       const sprite = createTextLabel( index );
+      sprite.renderOrder = 1;
       sprite.scale.multiplyScalar( 0.5 );
       scene.add( sprite );
       return sprite;
@@ -352,8 +353,8 @@ translateBoxVertices
     light.position.set( 0, 8, 8 );
     scene.add( light );
 
-    const axisHelper = new THREE.AxisHelper();
-    scene.add( axisHelper );
+    const axesHelper = new THREE.AxesHelper();
+    scene.add( axesHelper );
 
     const gridHelper = new THREE.GridHelper( 4, 20 );
     gridHelper.position.y = -2;

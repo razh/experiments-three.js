@@ -1,4 +1,4 @@
-/* global THREE, Entity, quaternionRotateTowards */
+/* global THREE, Entity */
 /* exported BallTurret */
 
 class BallTurret extends Entity {
@@ -75,8 +75,7 @@ class BallTurret extends Entity {
   }
 
   update(dt) {
-    quaternionRotateTowards(
-      this.quaternion,
+    this.quaternion.rotateTowards(
       this.target.quaternion,
       this.rotationSpeed * dt
     );

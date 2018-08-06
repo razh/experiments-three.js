@@ -40,7 +40,7 @@ function createShipGeometry() {
   );
 
   return new THREE.ExtrudeGeometry( shape, {
-    amount: 3.5,
+    depth: 3.5,
     curveSegments: 32,
     bevelEnabled: false,
   });
@@ -96,7 +96,7 @@ function createTurretGeometry() {
   }
 
   const geometry = new THREE.ExtrudeGeometry( turretShape, {
-    amount: 0,
+    depth: 0,
     bevelSize: 0.6,
     bevelThickness: turretHeight,
     bevelSegments: 1,
@@ -156,7 +156,7 @@ function createSmokestackGeometry() {
   shape.closePath();
 
   const geometry = new THREE.ExtrudeGeometry( shape, {
-    amount: 10,
+    depth: 10,
     bevelEnabled: false,
     curveSegments: 4,
   });
@@ -242,7 +242,7 @@ const createFrontDeckGeometry = (() => {
     );
 
     const geometry = new THREE.ExtrudeGeometry( shape, {
-      amount: 2,
+      depth: 2,
       bevelEnabled: false,
     });
 

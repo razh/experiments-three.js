@@ -160,7 +160,6 @@
       bone.updateMatrixWorld();
     });
 
-    skeletonHelper.update();
     renderer.render( scene, camera );
     requestAnimationFrame( animate );
   }

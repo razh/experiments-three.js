@@ -12,7 +12,7 @@
 
   const textarea = document.getElementById( 'points' );
   const segmentsInput = document.getElementById( 'segments' );
-  const shadingInput = document.getElementById( 'shading' );
+  const shadingInput = document.getElementById( 'flat-shading' );
   const wireframeInput = document.getElementById( 'wireframe' );
   const toArrayButton = document.getElementById( 'to-array' );
 
@@ -118,7 +118,7 @@
     textarea.addEventListener( 'keydown', event => event.stopPropagation() );
 
     shadingInput.addEventListener( 'change', event => {
-      material.shading = THREE[event.target.value];
+      material.flatShading = event.target.checked;
       material.needsUpdate = true;
       render();
     });
