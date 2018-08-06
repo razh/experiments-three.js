@@ -33,7 +33,7 @@
   }
 
   function ikSet( target, line, lengths ) {
-    const point = new THREE.Vector3().copy( point );
+    const point = target.clone();
 
     const geometry = line.geometry;
     const distance = line.position.distanceTo( point );
