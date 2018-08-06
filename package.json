@@ -20,13 +20,13 @@
   },
   "homepage": "https://github.com/razh/experiments-three.js#readme",
   "dependencies": {
-    "dat.gui": "https://github.com/dataarts/dat.gui.git#v0.6.5",
+    "dat.gui": "0.7.2",
     "lz-string": "1.4.4",
-    "three": "0.89.0",
-    "three.meshline": "1.0.3"
+    "three": "0.95.0",
+    "three.meshline": "1.1.0"
   },
   "devDependencies": {
-    "eslint": "4.14.0",
-    "jest": "22.0.4"
+    "eslint": "5.3.0",
+    "jest": "23.4.2"
   }
 }
