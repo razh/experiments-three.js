@@ -11,8 +11,8 @@
 
   // Must be odd integers.
   const mazeOptions = {
-    xCount: 11,
-    zCount: 11,
+    xCount: 17,
+    zCount: 17,
   };
 
   function init() {
@@ -64,21 +64,35 @@
     });
 
     const nodeGeometry = new THREE.BoxBufferGeometry(0.2, 0.2, 0.2);
-    const nodeMaterial = new THREE.MeshStandardMaterial({ emissive: '#0f0' });
+    const nodeMaterial = new THREE.MeshStandardMaterial({ emissive: '#730' });
 
     const nodes = findExteriorCorners(
       maze.grid,
       mazeOptions.xCount,
       mazeOptions.zCount,
-    ).map(([x, z]) => {
-      const mesh = new THREE.Mesh(nodeGeometry, nodeMaterial);
-      mesh.position.set(x, 0, z);
-      scene.add(mesh);
-
-      return mesh.position.clone();
-    });
+    ).map(([x, z]) => new THREE.Vector3(x, 0, z));
 
     const adjacencyList = computeNeighbors(nodes, walls);
+    const path = aStar(nodes[0], nodes[nodes.length - 1], nodes, adjacencyList);
+
+    nodes.map(node => {
+      const mesh = new THREE.Mesh(nodeGeometry, nodeMaterial);
+      mesh.position.copy(node);
+
+      // Highlight path nodes.
+      if (path.includes(node)) {
+        mesh.material = mesh.material.clone();
+        mesh.material.emissive.set('#0f0');
+      }
+
+      scene.add(mesh);
+    });
+
+    function isPathEdge(source, target) {
+      const sourceIndex = path.indexOf(source);
+      return sourceIndex >= 0 && target === path[sourceIndex + 1];
+    }
+
     const delta = new THREE.Vector3();
 
     adjacencyList.map((edges, sourceIndex) => {
@@ -91,6 +105,7 @@
           delta,
           source,
           0.4 * delta.length(),
+          isPathEdge(source, target) ? '#0f0' : '#730',
         );
         scene.add(arrow);
       });
