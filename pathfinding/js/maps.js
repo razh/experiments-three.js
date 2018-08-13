@@ -116,21 +116,66 @@ function createMazeGeometry(width, depth, scale = new THREE.Vector3(1, 1, 1)) {
   const cells = generateMaze(cellWidth, cellDepth);
   const grid = fillMaze(cells, width, cellWidth, cellDepth);
 
-  function createBox(x, z) {
+  function createBox(x, z, w = 1, d = 1) {
     geometries.push(
-      new THREE.BoxBufferGeometry(...scale.toArray())
+      new THREE.BoxBufferGeometry(w * scale.x, scale.y, d * scale.z)
+        // Reset origin.
+        .translate((w - 1) / 2, 0, (d - 1) / 2)
+        // Position.
         .translate(
           scale.x * x,
           0,
-          scale.z * z
+          scale.z * z,
         )
     );
   }
 
-  for (let z = 0, i = 0; z < depth; z++) {
-    for (let x = 0; x < width; x++, i++) {
-      if (!grid[i]) {
-        createBox(x, z);
+  // Invert grid to create mask.
+  const mask = new Int8Array(width * depth).fill(1);
+  for (let i = 0; i < grid.length; i++) {
+    mask[i] = !grid[i];
+  }
+
+  // Greedy meshing.
+  // https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/
+  for (let z = 0, n = 0; z < depth; z++) {
+    for (let x = 0; x < width;) {
+      if (mask[n]) {
+        let w;
+
+        // Compute width.
+        for (w = 1; mask[n + w] && x + w < width; w++) {}
+
+        // Compute depth.
+        let done = false;
+        let d;
+        for (d = 1; z + d < depth; d++) {
+          for (let i = 0; i < w; i++) {
+            if (!mask[n + i + d * width]) {
+              done = true;
+              break;
+            }
+          }
+          if (done) {
+            break;
+          }
+        }
+
+        createBox(x, z, w, d);
+
+        // Zero-out mask.
+        for (let j = 0; j < d; j++) {
+          for (let i = 0; i < w; i++) {
+            mask[n + i + j * width] = false;
+          }
+        }
+
+        // Increment counters and continue.
+        x += w;
+        n += w;
+      } else {
+        x++;
+        n++;
       }
     }
   }
