@@ -1,9 +1,6 @@
-/* global THREE */
+const { THREE } = window;
 
-'use strict';
-
-/* exported computeNeighbors */
-function computeNeighbors(nodes, objects, recursive) {
+export function computeNeighbors(nodes, objects, recursive) {
   const adjacencyList = nodes.map(() => []);
 
   // Calculate node visibility with line-of-sight.

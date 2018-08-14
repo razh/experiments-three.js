@@ -1,6 +1,4 @@
-/* global minHeap */
-
-'use strict';
+import { minHeap } from './heap.js';
 
 function reconstructPath(parents, node) {
   const path = [];
@@ -13,8 +11,7 @@ function reconstructPath(parents, node) {
   return path;
 }
 
-/* exported aStar */
-function aStar(start, target, nodes, network) {
+export function aStar(start, target, nodes, network) {
   // Distances from start to node.
   const g = new Map();
   g.set(start, 0);

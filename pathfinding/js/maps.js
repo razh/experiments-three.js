@@ -1,6 +1,6 @@
-/* global THREE, minHeap */
+import { minHeap } from './heap.js';
 
-'use strict';
+const { THREE } = window;
 
 // https://bl.ocks.org/mbostock/83d1073cb0a45ac158fb
 function generateMaze(cellWidth, cellHeight) {
@@ -106,8 +106,11 @@ function fillMaze(cells, width, cellWidth, cellDepth) {
   return grid;
 }
 
-/* exported createMazeGeometry */
-function createMazeGeometry(width, depth, scale = new THREE.Vector3(1, 1, 1)) {
+export function createMazeGeometry(
+  width,
+  depth,
+  scale = new THREE.Vector3(1, 1, 1),
+) {
   const geometries = [];
 
   const cellWidth = Math.floor((width - 1) / 2);
@@ -122,11 +125,7 @@ function createMazeGeometry(width, depth, scale = new THREE.Vector3(1, 1, 1)) {
         // Reset origin.
         .translate((w - 1) / 2, 0, (d - 1) / 2)
         // Position.
-        .translate(
-          scale.x * x,
-          0,
-          scale.z * z,
-        )
+        .translate(scale.x * x, 0, scale.z * z),
     );
   }
 
@@ -139,7 +138,8 @@ function createMazeGeometry(width, depth, scale = new THREE.Vector3(1, 1, 1)) {
   // Greedy meshing.
   // https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/
   for (let z = 0, n = 0; z < depth; z++) {
-    for (let x = 0; x < width;) {
+    // eslint-disable-next-line no-empty
+    for (let x = 0; x < width; ) {
       if (mask[n]) {
         let w;
 
@@ -186,9 +186,8 @@ function createMazeGeometry(width, depth, scale = new THREE.Vector3(1, 1, 1)) {
   };
 }
 
-/* exported findExteriorCorners */
 // http://www.redblobgames.com/pathfinding/visibility-graphs/analyze.js
-function findExteriorCorners(grid, width, depth) {
+export function findExteriorCorners(grid, width, depth) {
   const corners = [];
 
   // Is empty?

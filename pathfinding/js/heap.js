@@ -1,8 +1,5 @@
-'use strict';
-
 // https://github.com/mbostock
-/* exported minHeap */
-function minHeap(compare) {
+export function minHeap(compare) {
   var array = [];
   var size = 0;
 
