@@ -121,11 +121,12 @@ export function createMazeGeometry(
 
   function createBox(x, z, w = 1, d = 1) {
     geometries.push(
-      new THREE.BoxBufferGeometry(w * scale.x, scale.y, d * scale.z)
+      new THREE.BoxBufferGeometry(w, 1, d)
         // Reset origin.
         .translate((w - 1) / 2, 0, (d - 1) / 2)
         // Position.
-        .translate(scale.x * x, 0, scale.z * z),
+        .translate(x, 0, z)
+        .scale(...scale.toArray()),
     );
   }
 
