@@ -1,12 +1,11 @@
 module.exports = {
   extends: 'eslint:recommended',
   env: {
-    es6: true,
     browser: true,
+    es6: true,
   },
-  globals: {
-    Float32Array: true,
-    Promise: true,
+  parserOptions: {
+    ecmaVersion: 2018,
   },
   rules: {
     'comma-dangle': ['error', 'always-multiline'],
