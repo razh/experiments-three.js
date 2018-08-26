@@ -147,7 +147,6 @@ export class Player {
     wishspeed *= scale;
 
     this.accelerate(wishdir, wishspeed, PM_ACCELERATE);
-    this.current.velocity.y -= this.current.gravity * this.frametime;
 
     const vel = this.current.velocity.length();
 
@@ -285,6 +284,8 @@ export class Player {
   }
 
   checkGround() {
+    this.current.position.y = Math.max(this.current.position.y, 0);
+
     if (this.current.position.y <= 0) {
       this.groundPlane = true;
       this.walking = true;
@@ -292,8 +293,6 @@ export class Player {
       this.groundPlane = false;
       this.walking = false;
     }
-
-    this.current.position.y = Math.max(this.current.position.y, 0);
   }
 
   stepSlideMove(gravity) {
