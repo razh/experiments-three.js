@@ -14,6 +14,59 @@ let player, playerMesh;
 const clock = new THREE.Clock();
 let running = true;
 
+function pointerLock(controls, element) {
+  const hasPointerLock = 'pointerLockElement' in document;
+
+  if (!hasPointerLock) {
+    controls.enabled = true;
+    return;
+  }
+
+  function onPointerLockChange() {
+    controls.enabled = element === document.pointerLockElement;
+  }
+
+  document.addEventListener('pointerlockchange', onPointerLockChange);
+  document.addEventListener('click', () => element.requestPointerLock());
+}
+
+const Controls = (() => {
+  const pitchQuat = new THREE.Quaternion();
+  const yawQuat = new THREE.Quaternion();
+
+  return class Controls {
+    constructor(object) {
+      this.object = object;
+      this.sensitivity = 0.002;
+      this.enabled = false;
+
+      this.onMouseMove = this.onMouseMove.bind(this);
+      document.addEventListener('mousemove', this.onMouseMove);
+    }
+
+    onMouseMove(event) {
+      if (!this.enabled) {
+        return;
+      }
+
+      const { movementX, movementY } = event;
+
+      const pitch = -movementY * this.sensitivity;
+      const yaw = -movementX * this.sensitivity;
+
+      pitchQuat.set(pitch, 0, 0, 1).normalize();
+      yawQuat.set(0, yaw, 0, 1).normalize();
+
+      // pitch * object * yaw
+      this.object.quaternion.multiply(pitchQuat).premultiply(yawQuat);
+    }
+
+    dispose(document) {
+      document.removeEventListener('mousemove', this.onMouseMove);
+    }
+  };
+})();
+
 function init() {
   container = document.createElement('div');
   document.body.appendChild(container);
@@ -53,7 +106,11 @@ function init() {
     ),
     new THREE.MeshStandardMaterial({ color: '#0f0' }),
   );
+  player.mesh = playerMesh;
   scene.add(playerMesh);
+
+  const controls = new Controls(camera);
+  pointerLock(controls, renderer.domElement);
 }
 
 const update = (() => {
@@ -68,14 +125,22 @@ const update = (() => {
     player.command.rightmove = 0;
     player.command.upmove = 0;
 
-    if (keys.KeyW || keys.ArrowUp) player.command.forwardmove += 127;
-    if (keys.KeyS || keys.ArrowDown) player.command.forwardmove -= 127;
-    if (keys.KeyA || keys.ArrowLeft) player.command.rightmove -= 127;
-    if (keys.KeyD || keys.ArrowRight) player.command.rightmove += 127;
-    if (keys.Space) player.command.upmove += 127;
+    if (keys.KeyW || keys.ArrowUp) player.command.forwardmove++;
+    if (keys.KeyS || keys.ArrowDown) player.command.forwardmove--;
+    if (keys.KeyA || keys.ArrowLeft) player.command.rightmove--;
+    if (keys.KeyD || keys.ArrowRight) player.command.rightmove++;
+    if (keys.Space) player.command.upmove++;
 
-    player.viewForward.set(0, 0, -1);
-    player.viewRight.set(1, 0, 0);
+    const movespeed = 127;
+    player.command.forwardmove *= movespeed;
+    player.command.rightmove *= movespeed;
+    player.command.upmove *= movespeed;
+
+    player.viewForward.set(0, 0, -1).applyQuaternion(camera.quaternion);
+    player.viewRight
+      .set(0, -1, 0)
+      .cross(player.viewForward)
+      .normalize();
 
     player.frametime = dt;
 
@@ -85,9 +150,11 @@ const update = (() => {
       accumulatedTime -= dt;
     }
 
+    const DEFAULT_VIEWHEIGHT = 26;
+
     playerMesh.position.copy(player.current.position);
     camera.position.copy(playerMesh.position);
-    camera.position.y += playerDimensions.y;
+    camera.position.y += DEFAULT_VIEWHEIGHT;
   };
 })();
 
