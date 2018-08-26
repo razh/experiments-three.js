@@ -8,6 +8,7 @@ let container;
 
 let scene, camera, renderer;
 
+const playerDimensions = new THREE.Vector3(30, 56, 30);
 let player, playerMesh;
 
 const clock = new THREE.Clock();
@@ -42,7 +43,6 @@ function init() {
   plane.rotateX(-Math.PI / 2);
   scene.add(plane);
 
-  const playerDimensions = new THREE.Vector3(30, 56, 30);
 
   player = new Player();
   playerMesh = new THREE.Mesh(
@@ -59,11 +59,13 @@ function init() {
 function update(dt) {
   player.command.forwardmove = 0;
   player.command.rightmove = 0;
+  player.command.upmove = 0;
 
   if (keys.KeyW || keys.ArrowUp) player.command.forwardmove += 127;
   if (keys.KeyS || keys.ArrowDown) player.command.forwardmove -= 127;
   if (keys.KeyA || keys.ArrowLeft) player.command.rightmove -= 127;
   if (keys.KeyD || keys.ArrowRight) player.command.rightmove += 127;
+  if (keys.Space) player.command.upmove += 127;
 
   player.viewForward.set(0, 0, -1);
   player.viewRight.set(1, 0, 0);
@@ -73,6 +75,7 @@ function update(dt) {
 
   playerMesh.position.copy(player.current.position);
   camera.position.x = playerMesh.position.x;
+  camera.position.y = playerMesh.position.y + playerDimensions.y;
   camera.position.z = playerMesh.position.z;
 }
 

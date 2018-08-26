@@ -1,6 +1,10 @@
 const { THREE } = window;
 
+const PMF_JUMP_HELD = 1;
+
 const STEPSIZE = 18;
+
+const JUMP_VELOCITY = 270;
 
 const OVERCLIP = 1.001;
 
@@ -13,11 +17,14 @@ const PM_AIRACCELERATE = 1;
 const PM_FRICTION = 6;
 
 const g_speed = 320;
+const g_gravity = 800;
 
 class PlayerState {
   constructor() {
     this.position = new THREE.Vector3();
     this.velocity = new THREE.Vector3();
+    this.gravity = 0;
+    this.movementFlags = 0;
   }
 }
 
@@ -46,13 +53,13 @@ export class Player {
 
     // run-time variables
     this.frametime = 0;
+    this.current.gravity = g_gravity;
     this.playerSpeed = g_speed;
     this.viewForward = new THREE.Vector3();
     this.viewRight = new THREE.Vector3();
 
     // walk movement
-    // this.walking = false;
-    this.walking = true;
+    this.walking = false;
     this.groundPlane = false;
     this.groundTrace = {
       plane: {
@@ -62,6 +69,11 @@ export class Player {
   }
 
   update() {
+    if (this.command.upmove < 10) {
+      // not holding jump
+      this.current.movementFlags &= ~PMF_JUMP_HELD;
+    }
+
     this.checkGround();
 
     if (this.walking) {
@@ -85,9 +97,27 @@ export class Player {
       // not holding jump
       return false;
     }
+
+    if (this.current.movementFlags & PMF_JUMP_HELD) {
+      this.command.upmove = 0;
+      return false;
+    }
+
+    this.groundPlane = false;
+    this.walking = false;
+    this.current.movementFlags |= PMF_JUMP_HELD;
+
+    this.current.velocity.y = JUMP_VELOCITY;
+
+    return true;
   }
 
   walkMove() {
+    if (this.checkJump()) {
+      this.airMove();
+      return;
+    }
+
     this.friction();
 
     const fmove = this.command.forwardmove;
@@ -117,6 +147,7 @@ export class Player {
     wishspeed *= scale;
 
     this.accelerate(wishdir, wishspeed, PM_ACCELERATE);
+    this.current.velocity.y -= this.current.gravity * this.frametime;
 
     const vel = this.current.velocity.length();
 
@@ -253,10 +284,42 @@ export class Player {
     this.current.velocity.addScaledVector(wishdir, accelspeed);
   }
 
-  checkGround() {}
+  checkGround() {
+    if (this.current.position.y <= 0) {
+      this.groundPlane = true;
+      this.walking = true;
+    } else {
+      this.groundPlane = false;
+      this.walking = false;
+    }
 
-  stepSlideMove() {
+    this.current.position.y = Math.max(this.current.position.y, 0);
+  }
+
+  stepSlideMove(gravity) {
     const start_o = this.current.position.clone();
     const start_v = this.current.velocity.clone();
+
+    const clipVelocity = new THREE.Vector3();
+    const endVelocity = new THREE.Vector3();
+
+    if (gravity) {
+      endVelocity.copy(this.current.velocity);
+      endVelocity.y -= this.current.gravity * this.frametime;
+      this.current.velocity.y = (this.current.velocity.y + endVelocity.y) * 0.5;
+      // primal_velocity = endVelocity;
+      if (this.groundPlane) {
+        // slide along the ground plane
+        clipVelocity(
+          this.current.velocity,
+          this.groundTrace.plane.normal,
+          OVERCLIP,
+        );
+      }
+    }
+
+    if (gravity) {
+      // this.current.velocity.copy(endVelocity);
+    }
   }
 }
