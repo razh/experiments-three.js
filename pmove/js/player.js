@@ -40,8 +40,19 @@ function clipVelocity(vector, normal, overbounce) {
   vector.addScaledVector(normal, -backoff);
 }
 
+// HACK: Should store a reference to scene instead.
+function getScene(object) {
+  while (object.parent) {
+    object = object.parent;
+  }
+
+  return object;
+}
+
 export class Player {
   constructor() {
+    this.mesh = undefined;
+
     this.current = new PlayerState();
 
     // player input
@@ -292,6 +303,43 @@ export class Player {
     } else {
       this.groundPlane = false;
       this.walking = false;
+    }
+
+    const objects = [];
+    getScene(this.mesh).traverse(object => {
+      if (object instanceof THREE.Mesh && object !== this.mesh) {
+        objects.push(object);
+      }
+    });
+
+    const boundingBox = new THREE.Box3().setFromObject(this.mesh);
+
+    // Raycast all points.
+    const { min, max } = boundingBox;
+
+    const raycaster = new THREE.Raycaster();
+    const { ray } = raycaster;
+
+    boundingBox.getCenter(ray.origin);
+
+    const intersections = [];
+
+    function raycast(x, y, z) {
+      ray.direction.set(x, y, z); // 000
+      intersections.push(...raycaster.intersectObjects(objects));
+    }
+
+    raycast(min.x, min.y, min.z); // 000
+    raycast(min.x, min.y, max.z); // 001
+    raycast(min.x, max.y, min.z); // 010
+    raycast(min.x, max.y, max.z); // 011
+    raycast(max.x, min.y, min.z); // 100
+    raycast(max.x, min.y, max.z); // 101
+    raycast(max.x, max.y, min.z); // 110
+    raycast(max.x, max.y, max.z); // 111
+
+    if (intersections.length) {
+      console.log(intersections);
     }
   }
 
