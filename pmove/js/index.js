@@ -78,7 +78,7 @@ function init() {
 
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(
-    60,
+    90,
     window.innerWidth / window.innerHeight,
   );
   camera.position.set(0, 64, 128);
@@ -98,7 +98,10 @@ function init() {
   scene.add(plane);
 
   // Walls
-  const walls = [[[-16, 0, -129], [16, 56, -128]]];
+  const walls = [
+    [[-16, 0, -129], [16, 56, -128]],
+    [[-64, 0, -129], [-32, 116, -128]],
+  ];
 
   const min = new THREE.Vector3();
   const max = new THREE.Vector3();
@@ -114,7 +117,12 @@ function init() {
       new THREE.BoxBufferGeometry(...dimensions.toArray()),
       new THREE.MeshStandardMaterial(),
     );
-    wallMesh.position.copy(dimensions).multiplyScalar(0.5).add(min);
+
+    wallMesh.position
+      .copy(dimensions)
+      .multiplyScalar(0.5)
+      .add(min);
+
     scene.add(wallMesh);
   });
 

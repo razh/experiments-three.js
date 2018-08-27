@@ -332,22 +332,13 @@ export class Player {
     const distances = [];
     let intersections = [];
 
-    let intersectingIndices = [];
-
     let index = 0;
     function raycast(x, y, z) {
       ray.direction.set(x, y, z);
       const distance = ray.direction.distanceTo(ray.origin);
       distances[index] = distance;
       ray.direction.sub(ray.origin).normalize();
-
-      const currentIntersections = raycaster
-        .intersectObjects(objects)
-        .filter(i => i.distance < distance * 1.00001);
-      if (currentIntersections.length) {
-        intersectingIndices.push(index);
-      }
-      intersections.push(...currentIntersections);
+      intersections.push(...raycaster.intersectObjects(objects));
       index++;
     }
 
@@ -360,19 +351,11 @@ export class Player {
     raycast(max.x, max.y, min.z); // 110
     raycast(max.x, max.y, max.z); // 111
 
-    // console.log(intersections.map(i => i.distance));
-
-    // intersections = intersections.filter((intersection, index) => {
-    //   return intersection.distance < distances[index];
-    // });
-
-    if (intersections.length) {
-      // console.log(intersections);
-    }
-
-    if (intersectingIndices.length) {
-      // console.log(intersectingIndices);
-    }
+    intersections = intersections
+      .filter((intersection, index) => {
+        return intersection.distance < distances[index] * OVERCLIP;
+      })
+      .sort((a, b) => a.distance - b.distance);
 
     scene.remove(...intersectionMeshes);
     intersectionMeshes = intersections.map(intersection => {
@@ -414,3 +397,5 @@ export class Player {
     }
   }
 }
+
+function trace(origin, box) {}
