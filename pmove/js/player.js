@@ -49,6 +49,8 @@ function getScene(object) {
   return object;
 }
 
+let intersectionMeshes = [];
+
 export class Player {
   constructor() {
     this.mesh = undefined;
@@ -306,8 +308,13 @@ export class Player {
     }
 
     const objects = [];
-    getScene(this.mesh).traverse(object => {
-      if (object instanceof THREE.Mesh && object !== this.mesh) {
+    const scene = getScene(this.mesh);
+    scene.traverse(object => {
+      if (
+        object instanceof THREE.Mesh &&
+        object !== this.mesh &&
+        !intersectionMeshes.includes(object)
+      ) {
         objects.push(object);
       }
     });
@@ -322,11 +329,26 @@ export class Player {
 
     boundingBox.getCenter(ray.origin);
 
-    const intersections = [];
+    const distances = [];
+    let intersections = [];
 
+    let intersectingIndices = [];
+
+    let index = 0;
     function raycast(x, y, z) {
-      ray.direction.set(x, y, z); // 000
-      intersections.push(...raycaster.intersectObjects(objects));
+      ray.direction.set(x, y, z);
+      const distance = ray.direction.distanceTo(ray.origin);
+      distances[index] = distance;
+      ray.direction.sub(ray.origin).normalize();
+
+      const currentIntersections = raycaster
+        .intersectObjects(objects)
+        .filter(i => i.distance < distance * 1.00001);
+      if (currentIntersections.length) {
+        intersectingIndices.push(index);
+      }
+      intersections.push(...currentIntersections);
+      index++;
     }
 
     raycast(min.x, min.y, min.z); // 000
@@ -338,9 +360,31 @@ export class Player {
     raycast(max.x, max.y, min.z); // 110
     raycast(max.x, max.y, max.z); // 111
 
+    // console.log(intersections.map(i => i.distance));
+
+    // intersections = intersections.filter((intersection, index) => {
+    //   return intersection.distance < distances[index];
+    // });
+
     if (intersections.length) {
-      console.log(intersections);
+      // console.log(intersections);
     }
+
+    if (intersectingIndices.length) {
+      // console.log(intersectingIndices);
+    }
+
+    scene.remove(...intersectionMeshes);
+    intersectionMeshes = intersections.map(intersection => {
+      const mesh = new THREE.Mesh(
+        new THREE.BoxBufferGeometry(),
+        new THREE.MeshStandardMaterial({ color: '#0f0' }),
+      );
+      mesh.position.copy(intersection.point);
+      // console.log(mesh.position);
+      scene.add(mesh);
+      return mesh;
+    });
   }
 
   stepSlideMove(gravity) {

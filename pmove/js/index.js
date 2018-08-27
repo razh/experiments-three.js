@@ -97,6 +97,27 @@ function init() {
   plane.rotateX(-Math.PI / 2);
   scene.add(plane);
 
+  // Walls
+  const walls = [[[-16, 0, -129], [16, 56, -128]]];
+
+  const min = new THREE.Vector3();
+  const max = new THREE.Vector3();
+  const dimensions = new THREE.Vector3();
+
+  walls.forEach(wall => {
+    min.fromArray(wall[0]);
+    max.fromArray(wall[1]);
+
+    dimensions.subVectors(max, min);
+
+    const wallMesh = new THREE.Mesh(
+      new THREE.BoxBufferGeometry(...dimensions.toArray()),
+      new THREE.MeshStandardMaterial(),
+    );
+    wallMesh.position.copy(dimensions).multiplyScalar(0.5).add(min);
+    scene.add(wallMesh);
+  });
+
   player = new Player();
   playerMesh = new THREE.Mesh(
     new THREE.BoxGeometry(...playerDimensions.toArray()).translate(
