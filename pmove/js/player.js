@@ -382,6 +382,7 @@ export class Player {
     if (gravity) {
       // console.log('obj');
       // console.log(this.current.velocity.y.toFixed(2));
+      // console.log(this.current.gravity * this.frametime);
       endVelocity.copy(this.current.velocity);
       endVelocity.y -= this.current.gravity * this.frametime;
       this.current.velocity.y = (this.current.velocity.y + endVelocity.y) * 0.5;
@@ -398,7 +399,7 @@ export class Player {
     }
 
     if (gravity) {
-      // this.current.velocity.copy(endVelocity);
+      this.current.velocity.copy(endVelocity);
     }
   }
 }
