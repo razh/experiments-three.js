@@ -1,7 +1,10 @@
+/* global Debug */
+
 const { THREE } = window;
 
 const PMF_JUMP_HELD = 1;
 
+const MIN_WALK_NORMAL = 0.7; // can't walk on very steep slopes
 const STEPSIZE = 18;
 
 const JUMP_VELOCITY = 270;
@@ -37,7 +40,13 @@ function clipVelocity(vector, normal, overbounce) {
     backoff /= overbounce;
   }
 
-  vector.addScaledVector(normal, -backoff);
+  // console.log({ vector: vector.clone(), normal, backoff });
+  if (vector.y < -200) {
+    vector.addScaledVector(normal, -backoff);
+  } else {
+    vector.addScaledVector(normal, -backoff);
+  }
+  // console.log(vector);
 }
 
 // HACK: Should store a reference to scene instead.
@@ -75,7 +84,7 @@ export class Player {
     this.walking = false;
     this.groundPlane = false;
     this.groundTrace = {
-      plane: {
+      face: {
         normal: new THREE.Vector3(0, 1, 0),
       },
     };
@@ -144,8 +153,8 @@ export class Player {
     this.viewRight.y = 0;
 
     // project the forward and right directions onto the ground plane
-    clipVelocity(this.viewForward, this.groundTrace.plane.normal, OVERCLIP);
-    clipVelocity(this.viewRight, this.groundTrace.plane.normal, OVERCLIP);
+    clipVelocity(this.viewForward, this.groundTrace.face.normal, OVERCLIP);
+    clipVelocity(this.viewRight, this.groundTrace.face.normal, OVERCLIP);
     //
     this.viewForward.normalize();
     this.viewRight.normalize();
@@ -162,17 +171,27 @@ export class Player {
     this.accelerate(wishdir, wishspeed, PM_ACCELERATE);
 
     const vel = this.current.velocity.length();
+    let oldVelocity = this.current.velocity.clone();
 
+    const y = this.current.velocity.y;
     // slide along the ground plane
-    clipVelocity(
-      this.current.velocity,
-      this.groundTrace.plane.normal,
-      OVERCLIP,
-    );
+    clipVelocity(this.current.velocity, this.groundTrace.face.normal, OVERCLIP);
 
-    // don't decrease velocity when going up or down a slope
-    this.current.velocity.normalize();
-    this.current.velocity.multiplyScalar(vel);
+    // Doom 3 fix.
+    // if (oldVelocity.dot(this.current.velocity) > 0.0) {
+    //   const newVel = this.current.velocity.length();
+    //   if (newVel > 1.0) {
+    //     const oldVel = oldVelocity.length();
+    //     if (oldVel > 1.0) {
+    //       // don't decrease velocity when going up or down a slope
+    //       this.current.velocity.multiplyScalar(oldVel / newVel);
+    //     }
+    //   }
+    // }
+
+    // // don't decrease velocity when going up or down a slope
+    // this.current.velocity.normalize();
+    // this.current.velocity.multiplyScalar(vel);
 
     // don't do anything if standing still
     if (!this.current.velocity.x && !this.current.velocity.z) {
@@ -216,7 +235,7 @@ export class Player {
     if (this.groundPlane) {
       clipVelocity(
         this.current.velocity,
-        this.groundTrace.plane.normal,
+        this.groundTrace.face.normal,
         OVERCLIP,
       );
     }
@@ -297,16 +316,6 @@ export class Player {
   }
 
   checkGround() {
-    this.current.position.y = Math.max(this.current.position.y, 0);
-
-    if (this.current.position.y <= 0) {
-      this.groundPlane = true;
-      this.walking = true;
-    } else {
-      this.groundPlane = false;
-      this.walking = false;
-    }
-
     const objects = [];
     const scene = getScene(this.mesh);
     scene.traverse(object => {
@@ -319,45 +328,20 @@ export class Player {
       }
     });
 
+    scene.remove(...intersectionMeshes);
+
     const boundingBox = new THREE.Box3().setFromObject(this.mesh);
+    boundingBox.translate(new THREE.Vector3(0, -0.25, 0));
 
-    // Raycast all points.
-    const { min, max } = boundingBox;
-
-    const raycaster = new THREE.Raycaster();
-    const { ray } = raycaster;
-
-    boundingBox.getCenter(ray.origin);
-
-    const distances = [];
-    let intersections = [];
-
-    let index = 0;
-    function raycast(x, y, z) {
-      ray.direction.set(x, y, z);
-      const distance = ray.direction.distanceTo(ray.origin);
-      distances[index] = distance;
-      ray.direction.sub(ray.origin).normalize();
-      intersections.push(...raycaster.intersectObjects(objects));
-      index++;
+    const intersections = trace(boundingBox, objects);
+    if (!intersections.length) {
+      this.groundPlane = false;
+      this.walking = false;
+      return;
     }
 
-    raycast(min.x, min.y, min.z); // 000
-    raycast(min.x, min.y, max.z); // 001
-    raycast(min.x, max.y, min.z); // 010
-    raycast(min.x, max.y, max.z); // 011
-    raycast(max.x, min.y, min.z); // 100
-    raycast(max.x, min.y, max.z); // 101
-    raycast(max.x, max.y, min.z); // 110
-    raycast(max.x, max.y, max.z); // 111
+    Debug.i = intersections.map(i => i.point.toArray().map(Math.round));
 
-    intersections = intersections
-      .filter((intersection, index) => {
-        return intersection.distance < distances[index] * OVERCLIP;
-      })
-      .sort((a, b) => a.distance - b.distance);
-
-    scene.remove(...intersectionMeshes);
     intersectionMeshes = intersections.map(intersection => {
       const mesh = new THREE.Mesh(
         new THREE.BoxBufferGeometry(),
@@ -368,6 +352,24 @@ export class Player {
       scene.add(mesh);
       return mesh;
     });
+
+    const intersection = intersections[0];
+
+    const normal = calculateNormal(
+      intersection.object.geometry,
+      intersection.face,
+    );
+    normal.applyMatrix4(intersection.object.matrixWorld);
+
+    // slopes that are too steep will not be considered onground
+    if (normal.y < MIN_WALK_NORMAL) {
+      this.groundPlane = false;
+      this.walking = false;
+      return;
+    }
+
+    this.groundPlane = true;
+    this.walking = true;
   }
 
   stepSlideMove(gravity) {
@@ -378,15 +380,18 @@ export class Player {
     const endVelocity = new THREE.Vector3();
 
     if (gravity) {
+      // console.log('obj');
+      // console.log(this.current.velocity.y.toFixed(2));
       endVelocity.copy(this.current.velocity);
       endVelocity.y -= this.current.gravity * this.frametime;
       this.current.velocity.y = (this.current.velocity.y + endVelocity.y) * 0.5;
+      // console.log(this.current.velocity.y.toFixed(2));
       // primal_velocity = endVelocity;
       if (this.groundPlane) {
         // slide along the ground plane
         clipVelocity(
           this.current.velocity,
-          this.groundTrace.plane.normal,
+          this.groundTrace.face.normal,
           OVERCLIP,
         );
       }
@@ -398,4 +403,63 @@ export class Player {
   }
 }
 
-function trace(origin, box) {}
+const trace = (() => {
+  const raycaster = new THREE.Raycaster();
+  const { ray } = raycaster;
+
+  const distances = [];
+
+  return (boundingBox, objects) => {
+    const { min, max } = boundingBox;
+    boundingBox.getCenter(ray.origin);
+
+    const intersections = [];
+    let index = 0;
+
+    function raycast(x, y, z) {
+      ray.direction.set(x, y, z);
+
+      const distance = ray.direction.distanceTo(ray.origin);
+      distances[index++] = distance;
+
+      ray.direction.sub(ray.origin).normalize();
+      intersections.push(...raycaster.intersectObjects(objects));
+    }
+
+    raycast(min.x, min.y, min.z); // 000
+    raycast(min.x, min.y, max.z); // 001
+    raycast(min.x, max.y, min.z); // 010
+    raycast(min.x, max.y, max.z); // 011
+    raycast(max.x, min.y, min.z); // 100
+    raycast(max.x, min.y, max.z); // 101
+    raycast(max.x, max.y, min.z); // 110
+    raycast(max.x, max.y, max.z); // 111
+
+    return intersections
+      .filter(
+        (intersection, index) =>
+          intersection.distance < distances[index] * OVERCLIP,
+      )
+      .sort((a, b) => a.distance - b.distance);
+  };
+})();
+
+const calculateNormal = (() => {
+  const edge1 = new THREE.Vector3();
+  const edge2 = new THREE.Vector3();
+
+  return (geometry, face, normal = new THREE.Vector3()) => {
+    if (geometry instanceof THREE.BufferGeometry) {
+      throw new Error('Cannot calculate normals for THREE.BufferGeometry');
+    }
+
+    const a = geometry.vertices[face.a];
+    const b = geometry.vertices[face.b];
+    const c = geometry.vertices[face.c];
+
+    edge1.subVectors(b, a);
+    edge2.subVectors(c, a);
+
+    return normal.crossVectors(edge1, edge2).normalize();
+  };
+})();

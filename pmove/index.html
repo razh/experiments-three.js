@@ -12,9 +12,20 @@
       background-color: #000;
       overflow: hidden;
     }
+
+    .console {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      color: #fff;
+      font-size: 0.875rem;
+      font-family: 'SFMono-Regular', Menlo, Courier, monospace;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
+  <pre class="console"></pre>
   <script src="../node_modules/three/build/three.js"></script>
   <script type="module" src="./js/index.js"></script>
 </body>

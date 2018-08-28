@@ -14,6 +14,8 @@ let player, playerMesh;
 const clock = new THREE.Clock();
 let running = true;
 
+window.Debug = {};
+
 function pointerLock(controls, element) {
   const hasPointerLock = 'pointerLockElement' in document;
 
@@ -86,12 +88,12 @@ function init() {
   scene.add(new THREE.AmbientLight('#777'));
 
   const light = new THREE.DirectionalLight();
-  light.position.set(128, 128, 128);
+  light.position.set(128, 64, 128);
   scene.add(light);
 
   // Plane
   const plane = new THREE.Mesh(
-    new THREE.PlaneBufferGeometry(512, 512),
+    new THREE.PlaneGeometry(512, 512),
     new THREE.MeshStandardMaterial(),
   );
   plane.rotateX(-Math.PI / 2);
@@ -101,6 +103,7 @@ function init() {
   const walls = [
     [[-16, 0, -129], [16, 56, -128]],
     [[-64, 0, -129], [-32, 116, -128]],
+    [[-768, 24, -64], [-128, 32, 64]],
   ];
 
   const min = new THREE.Vector3();
@@ -114,7 +117,7 @@ function init() {
     dimensions.subVectors(max, min);
 
     const wallMesh = new THREE.Mesh(
-      new THREE.BoxBufferGeometry(...dimensions.toArray()),
+      new THREE.BoxGeometry(...dimensions.toArray()),
       new THREE.MeshStandardMaterial(),
     );
 
@@ -192,8 +195,14 @@ function render() {
 }
 
 function animate() {
+  window.Debug = {};
+
   update();
   render();
+
+  const debugString = JSON.stringify(window.Debug);
+  document.querySelector('.console').innerHTML =
+    debugString !== '{}' ? debugString : '';
 
   if (running) {
     requestAnimationFrame(animate);
