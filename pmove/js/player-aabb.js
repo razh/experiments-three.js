@@ -115,6 +115,100 @@ export class Player {
     return true;
   }
 
+  walkMove() {
+    if (this.checkJump()) {
+      this.airMove();
+      return;
+    }
+
+    this.friction();
+
+    const fmove = this.command.forwardmove;
+    const smove = this.command.rightmove;
+
+    const cmd = this.command;
+    const scale = this.cmdScale(cmd);
+
+    // project moves down to flat plane
+    this.viewForward.y = 0;
+    this.viewRight.y = 0;
+
+    // project the forward and right directions onto the ground plane
+    clipVelocity(this.viewForward, this.groundTrace.face.normal, OVERCLIP);
+    clipVelocity(this.viewRight, this.groundTrace.face.normal, OVERCLIP);
+    //
+    this.viewForward.normalize();
+    this.viewRight.normalize();
+
+    const wishvel = new THREE.Vector3()
+      .addScaledVector(this.viewForward, fmove)
+      .addScaledVector(this.viewRight, smove);
+
+    const wishdir = wishvel.clone();
+    let wishspeed = wishdir.length();
+    wishdir.normalize();
+    wishspeed *= scale;
+
+    this.accelerate(wishdir, wishspeed, PM_ACCELERATE);
+
+    const vel = this.current.velocity.length();
+
+    clipVelocity(this.current.velocity, this.groundTrace.face.normal, OVERCLIP);
+
+    // don't decrease velocity when going up or down a slope
+    this.current.velocity.normalize();
+    this.current.velocity.multiplyScalar(vel);
+
+    // don't do anything if standing still
+    if (!this.current.velocity.x && !this.current.velocity.z) {
+      return;
+    }
+
+    this.stepSlideMove(false);
+  }
+
+  airMove() {
+    this.friction();
+
+    const fmove = this.command.forwardmove;
+    const smove = this.command.rightmove;
+
+    const cmd = this.command;
+    const scale = this.cmdScale(cmd);
+
+    // project moves down to flat plane
+    this.viewForward.y = 0;
+    this.viewRight.y = 0;
+    this.viewForward.normalize();
+    this.viewRight.normalize();
+
+    const wishvel = new THREE.Vector3()
+      .addScaledVector(this.viewForward, fmove)
+      .addScaledVector(this.viewRight, smove);
+    wishvel.y = 0;
+
+    const wishdir = wishvel.clone();
+    let wishspeed = wishdir.length();
+    wishdir.normalize();
+    wishspeed *= scale;
+
+    // not on ground, so little effect on velocity
+    this.accelerate(wishdir, wishspeed, PM_AIRACCELERATE);
+
+    // we may have a ground plane that is very steep, even
+    // though we don't have a groundentity
+    // slide along the steep plane
+    if (this.groundPlane) {
+      clipVelocity(
+        this.current.velocity,
+        this.groundTrace.face.normal,
+        OVERCLIP,
+      );
+    }
+
+    this.stepSlideMove(true);
+  }
+
   friction() {
     const vel = this.current.velocity;
 
@@ -186,4 +280,33 @@ export class Player {
 
     this.current.velocity.addScaledVector(wishdir, accelspeed);
   }
+
+  checkGround() {
+
+  }
+
+  stepSlideMove(gravity) {
+    const MAX_CLIP_PLANES = 5;
+    const numbumps = 4;
+
+  }
 }
+
+const trace = (() => {
+  const boxA = new THREE.Box3();
+  const boxB = new THREE.Box3();
+
+  return (tw, boundingBox, objects) =>{
+    boxA.copy(boundingBox);
+
+    const intersections = [];
+
+    for (let i = 0; i < objects.length; i++) {
+      const object = objects[i];
+
+      boxB.copy(object.boundingBox).translate(object.position);
+    }
+
+    return intersections;
+  };
+})();
