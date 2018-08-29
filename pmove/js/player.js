@@ -40,13 +40,7 @@ function clipVelocity(vector, normal, overbounce) {
     backoff /= overbounce;
   }
 
-  // console.log({ vector: vector.clone(), normal, backoff });
-  if (vector.y < -200) {
-    vector.addScaledVector(normal, -backoff);
-  } else {
-    vector.addScaledVector(normal, -backoff);
-  }
-  // console.log(vector);
+  vector.addScaledVector(normal, -backoff);
 }
 
 // HACK: Should store a reference to scene instead.
