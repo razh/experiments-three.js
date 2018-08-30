@@ -281,14 +281,11 @@ export class Player {
     this.current.velocity.addScaledVector(wishdir, accelspeed);
   }
 
-  checkGround() {
-
-  }
+  checkGround() {}
 
   stepSlideMove(gravity) {
     const MAX_CLIP_PLANES = 5;
     const numbumps = 4;
-
   }
 }
 
@@ -296,15 +293,84 @@ const trace = (() => {
   const boxA = new THREE.Box3();
   const boxB = new THREE.Box3();
 
-  return (tw, boundingBox, objects) =>{
-    boxA.copy(boundingBox);
+  return (tw, bodyA, bodies) => {
+    boxA.copy(bodyA.boundingBox);
 
     const intersections = [];
 
-    for (let i = 0; i < objects.length; i++) {
-      const object = objects[i];
+    for (let i = 0; i < bodies.length; i++) {
+      const bodyB = bodies[i];
 
-      boxB.copy(object.boundingBox).translate(object.position);
+      boxB.copy(bodyB.boundingBox).translate(bodyB.position);
+
+      // Intersection moving AABB against AABB from 'Real-Time Collision Detection'.
+      let enterFrac;
+      let leaveFrac;
+
+      if (boxA.intersects(boxB)) {
+        enterFrac = 0;
+        leaveFrac = 0;
+        return 1;
+      }
+
+      const v = bodyB.sub(bodyA.velocity);
+
+      enterFrac = 0;
+      leaveFrac = 1;
+
+      if (v.x < 0) {
+        if (boxB.max.x < boxA.min.x) return 0; // Nonintersecting and moving apart.
+        if (boxA.max.x < boxB.min.x)
+          enterFrac = Math.max((boxA.max.x - boxB.min.x) / v.x, enterFrac);
+        if (boxB.max.x > boxA.min.x)
+          leaveFrac = Math.min((boxA.min.x - boxB.max.x) / v.x, leaveFrac);
+      }
+
+      if (v.x > 0) {
+        if (boxB.min.x > boxA.max.x) return 0; // Nonintersecting and moving apart.
+        if (boxB.max.x < boxA.min.x)
+          enterFrac = Math.max((boxA.min.x - boxB.max.x) / v.x, enterFrac);
+        if (boxA.max.x > boxB.min.x)
+          leaveFrac = Math.min((boxA.max.x - boxB.min.x) / v.x, leaveFrac);
+      }
+
+      if (v.y < 0) {
+        if (boxB.max.y < boxA.min.y) return 0; // Nonintersecting and moving apart.
+        if (boxA.max.y < boxB.min.y)
+          enterFrac = Math.max((boxA.max.y - boxB.min.y) / v.y, enterFrac);
+        if (boxB.max.y > boxA.min.y)
+          leaveFrac = Math.min((boxA.min.y - boxB.max.y) / v.y, leaveFrac);
+      }
+
+      if (v.y > 0) {
+        if (boxB.min.y > boxA.max.y) return 0; // Nonintersecting and moving apart.
+        if (boxB.max.y < boxA.min.y)
+          enterFrac = Math.max((boxA.min.y - boxB.max.y) / v.y, enterFrac);
+        if (boxA.max.y > boxB.min.y)
+          leaveFrac = Math.min((boxA.max.y - boxB.min.y) / v.y, leaveFrac);
+      }
+
+      if (v.z < 0) {
+        if (boxB.max.z < boxA.min.z) return 0; // Nonintersecting and moving apart.
+        if (boxA.max.z < boxB.min.z)
+          enterFrac = Math.max((boxA.max.z - boxB.min.z) / v.z, enterFrac);
+        if (boxB.max.z > boxA.min.z)
+          leaveFrac = Math.min((boxA.min.z - boxB.max.z) / v.z, leaveFrac);
+      }
+
+      if (v.z > 0) {
+        if (boxB.min.z > boxA.max.z) return 0; // Nonintersecting and moving apart.
+        if (boxB.max.z < boxA.min.z)
+          enterFrac = Math.max((boxA.min.z - boxB.max.z) / v.z, enterFrac);
+        if (boxA.max.z > boxB.min.z)
+          leaveFrac = Math.min((boxA.max.z - boxB.min.z) / v.z, leaveFrac);
+      }
+
+      if (enterFrac > leaveFrac) {
+        return 0;
+      }
+
+      return 1;
     }
 
     return intersections;
