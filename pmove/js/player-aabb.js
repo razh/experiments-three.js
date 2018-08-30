@@ -281,7 +281,17 @@ export class Player {
     this.current.velocity.addScaledVector(wishdir, accelspeed);
   }
 
-  checkGround() {}
+  checkGround() {
+    const objects = [];
+    scene.traverse(object => {
+      if (object instanceof THREE.Mesh && object !== this.mesh) {
+        objects.push(object);
+      }
+    });
+
+    const boundingBox = new THREE.Box3().setFromObject(this.mesh);
+    boundingBox.translate(new THREE.Vector3(0, -0.25, 0));
+  }
 
   stepSlideMove(gravity) {
     const MAX_CLIP_PLANES = 5;
@@ -289,90 +299,102 @@ export class Player {
   }
 }
 
+class Trace {
+  constructor() {
+    this.allsolid = false; // if true, plane is not valid
+    this.fraction = 0; // time completed, 1.0 = didn't hit anything
+    this.endpos = undefined; // final position
+    this.face = undefined;
+    this.normal = undefined; // surface normal at impact, transformed to world space
+  }
+}
+
+function intersectMovingAABBs(tw, boxA, boxB, velocity) {
+  // Intersection moving AABB against AABB from 'Real-Time Collision Detection'.
+  let enterFrac = -1;
+  let leaveFrac = 1;
+
+  if (boxA.intersects(boxB)) {
+    enterFrac = 0;
+    leaveFrac = 0;
+    return 1;
+  }
+
+  // Determine overlap.
+  // d0 is negative side or 'left' side.
+  // d1 is positive or 'right' side.
+  const d0x = boxA.min.x - boxB.max.x;
+  const d1x = boxA.max.x - boxB.min.x;
+
+  const d0y = boxA.min.y - boxB.max.y;
+  const d1y = boxA.max.y - boxB.min.y;
+
+  const d0z = boxA.min.z - boxB.max.z;
+  const d1z = boxA.max.z - boxB.min.z;
+
+  if (v.x < 0) {
+    if (d0x > 0) return; // Nonintersecting and moving apart.
+    if (d1x < 0) enterFrac = Math.max(d1x / v.x, enterFrac);
+    if (d0x < 0) leaveFrac = Math.min(d0x / v.x, leaveFrac);
+  }
+
+  if (v.x > 0) {
+    if (d1x < 0) return;
+    if (d0x > 0) enterFrac = Math.max(d0x / v.x, enterFrac);
+    if (d1x > 0) leaveFrac = Math.min(d1x / v.x, leaveFrac);
+  }
+
+  if (v.y < 0) {
+    if (d0y > 0) return;
+    if (d1y < 0) enterFrac = Math.max(d1y / v.y, enterFrac);
+    if (d0y < 0) leaveFrac = Math.min(d0y / v.y, leaveFrac);
+  }
+
+  if (v.y > 0) {
+    if (d1y < 0) return;
+    if (d0y > 0) enterFrac = Math.max(d0y / v.y, enterFrac);
+    if (d1y > 0) leaveFrac = Math.min(d1y / v.y, leaveFrac);
+  }
+
+  if (v.z < 0) {
+    if (d0z > 0) return;
+    if (d1z < 0) enterFrac = Math.max(d1z / v.z, enterFrac);
+    if (d0z < 0) leaveFrac = Math.min(d0z / v.z, leaveFrac);
+  }
+
+  if (v.z > 0) {
+    if (d1z < 0) return;
+    if (d0z > 0) enterFrac = Math.max(d0z / v.z, enterFrac);
+    if (d1z > 0) leaveFrac = Math.min(d1z / v.z, leaveFrac);
+  }
+
+  if (enterFrac > leaveFrac) {
+    return;
+  }
+
+  if (enterFrac < tw.trace.fraction) {
+    tw.trace.fraction = Math.max(enterFrac, 0);
+    tw.trace.normal;
+    tw.trace.endpos;
+  }
+}
+
 const trace = (() => {
   const boxA = new THREE.Box3();
   const boxB = new THREE.Box3();
 
-  return (tw, bodyA, bodies) => {
-    boxA.copy(bodyA.boundingBox);
+  const velocity = new THREE.Vector3();
 
-    const intersections = [];
+  return (tw, bodyA, bodies) => {
+    boxA.copy(bodyA.boundingBox).translate(bodyA.position);
 
     for (let i = 0; i < bodies.length; i++) {
       const bodyB = bodies[i];
-
       boxB.copy(bodyB.boundingBox).translate(bodyB.position);
-
-      // Intersection moving AABB against AABB from 'Real-Time Collision Detection'.
-      let enterFrac;
-      let leaveFrac;
-
-      if (boxA.intersects(boxB)) {
-        enterFrac = 0;
-        leaveFrac = 0;
-        return 1;
-      }
-
-      const v = bodyB.sub(bodyA.velocity);
-
-      enterFrac = 0;
-      leaveFrac = 1;
-
-      if (v.x < 0) {
-        if (boxB.max.x < boxA.min.x) return 0; // Nonintersecting and moving apart.
-        if (boxA.max.x < boxB.min.x)
-          enterFrac = Math.max((boxA.max.x - boxB.min.x) / v.x, enterFrac);
-        if (boxB.max.x > boxA.min.x)
-          leaveFrac = Math.min((boxA.min.x - boxB.max.x) / v.x, leaveFrac);
-      }
-
-      if (v.x > 0) {
-        if (boxB.min.x > boxA.max.x) return 0; // Nonintersecting and moving apart.
-        if (boxB.max.x < boxA.min.x)
-          enterFrac = Math.max((boxA.min.x - boxB.max.x) / v.x, enterFrac);
-        if (boxA.max.x > boxB.min.x)
-          leaveFrac = Math.min((boxA.max.x - boxB.min.x) / v.x, leaveFrac);
-      }
-
-      if (v.y < 0) {
-        if (boxB.max.y < boxA.min.y) return 0; // Nonintersecting and moving apart.
-        if (boxA.max.y < boxB.min.y)
-          enterFrac = Math.max((boxA.max.y - boxB.min.y) / v.y, enterFrac);
-        if (boxB.max.y > boxA.min.y)
-          leaveFrac = Math.min((boxA.min.y - boxB.max.y) / v.y, leaveFrac);
-      }
-
-      if (v.y > 0) {
-        if (boxB.min.y > boxA.max.y) return 0; // Nonintersecting and moving apart.
-        if (boxB.max.y < boxA.min.y)
-          enterFrac = Math.max((boxA.min.y - boxB.max.y) / v.y, enterFrac);
-        if (boxA.max.y > boxB.min.y)
-          leaveFrac = Math.min((boxA.max.y - boxB.min.y) / v.y, leaveFrac);
-      }
-
-      if (v.z < 0) {
-        if (boxB.max.z < boxA.min.z) return 0; // Nonintersecting and moving apart.
-        if (boxA.max.z < boxB.min.z)
-          enterFrac = Math.max((boxA.max.z - boxB.min.z) / v.z, enterFrac);
-        if (boxB.max.z > boxA.min.z)
-          leaveFrac = Math.min((boxA.min.z - boxB.max.z) / v.z, leaveFrac);
-      }
-
-      if (v.z > 0) {
-        if (boxB.min.z > boxA.max.z) return 0; // Nonintersecting and moving apart.
-        if (boxB.max.z < boxA.min.z)
-          enterFrac = Math.max((boxA.min.z - boxB.max.z) / v.z, enterFrac);
-        if (boxA.max.z > boxB.min.z)
-          leaveFrac = Math.min((boxA.max.z - boxB.min.z) / v.z, leaveFrac);
-      }
-
-      if (enterFrac > leaveFrac) {
-        return 0;
-      }
-
-      return 1;
+      velocity.subVectors(bodyB.velocity, bodyA.velocity);
+      intersectMovingAABBs(tw, boxA, boxB, velocity);
     }
 
-    return intersections;
+    return tw;
   };
 })();

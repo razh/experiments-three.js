@@ -43,20 +43,12 @@ function clipVelocity(vector, normal, overbounce) {
   vector.addScaledVector(normal, -backoff);
 }
 
-// HACK: Should store a reference to scene instead.
-function getScene(object) {
-  while (object.parent) {
-    object = object.parent;
-  }
-
-  return object;
-}
-
 let intersectionMeshes = [];
 
 export class Player {
   constructor() {
     this.mesh = undefined;
+    this.scene = undefined;
 
     this.current = new PlayerState();
 
@@ -315,7 +307,7 @@ export class Player {
 
   checkGround() {
     const objects = [];
-    const scene = getScene(this.mesh);
+    const { scene } = this;
     scene.traverse(object => {
       if (
         object instanceof THREE.Mesh &&
@@ -407,7 +399,7 @@ export class Player {
 
     /*
     const objects = [];
-    const scene = getScene(this.mesh);
+    const { scene } = this;
     scene.traverse(object => {
       if (
         object instanceof THREE.Mesh &&

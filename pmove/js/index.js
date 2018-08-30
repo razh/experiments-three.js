@@ -139,6 +139,7 @@ function init() {
     new THREE.MeshStandardMaterial({ color: '#0f0' }),
   );
   player.mesh = playerMesh;
+  player.scene = scene;
   scene.add(playerMesh);
 
   const controls = new Controls(camera);
