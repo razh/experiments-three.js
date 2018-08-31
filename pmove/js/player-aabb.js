@@ -292,23 +292,21 @@ export class Player {
       }
     });
 
-    const traceWork = {
-      trace: new Trace(),
-    };
+    const trace = new Trace();
 
     const point = this.current.position.clone();
     point.y -= 0.25;
 
-    trace(
-      traceWork,
+    pm_trace(
+      trace,
       point,
       { boundingBox: this.mesh.boundingBox, velocity: this.current.velocity },
       objects,
       this.frametime,
     );
-    this.groundTrace = traceWork.trace;
+    this.groundTrace = trace;
 
-    if (traceWork.trace.fraction === 1) {
+    if (trace.fraction === 1) {
       this.groundPane = false;
       this.walking = false;
       return;
@@ -321,6 +319,13 @@ export class Player {
   slideMove() {}
 
   stepSlideMove(gravity) {
+    const objects = [];
+    this.scene.traverse(object => {
+      if (object instanceof THREE.Mesh && object !== this.mesh) {
+        objects.push(object);
+      }
+    });
+
     const start_o = this.current.position.clone();
     const start_v = this.current.velocity.clone();
 
@@ -341,18 +346,151 @@ export class Player {
       this.current.velocity.y = (this.current.velocity.y + endVelocity.y) * 0.5;
       // console.log(this.current.velocity.y.toFixed(2));
       // primal_velocity = endVelocity;
-      // if (this.groundPlane) {
-      //   // slide along the ground plane
-      //   clipVelocity(
-      //     this.current.velocity,
-      //     this.groundTrace.normal,
-      //     calculateNormal(this.groundTrace.object.geometry, this.groundTrace.face),
-      //     OVERCLIP,
-      //   );
-      // }
+      if (this.groundPlane) {
+        // slide along the ground plane
+        clipVelocity(
+          this.current.velocity,
+          this.groundTrace.normal,
+          // calculateNormal(this.groundTrace.object.geometry, this.groundTrace.face),
+          OVERCLIP,
+        );
+      }
     }
 
-    // console.log(this.groundTrace.fraction);
+    let time_left = this.frametime;
+
+    let numplanes;
+    const planes = [];
+
+    // never turn against the ground plane
+    if (this.groundPlane) {
+      numplanes = 1;
+      planes[0] = this.groundTrace.normal.clone();
+    } else {
+      numplanes = 0;
+    }
+
+    // never turn against original velocity
+    planes[numplanes] = this.current.velocity.clone().normalize();
+    numplanes++;
+
+    const end = new THREE.Vector3();
+    let trace = new Trace();
+    for (let bumpcount = 0; bumpcount < numbumps; bumpcount++) {
+      // calculate position we are trying to move to
+      // see if we can make it there
+      trace = pm_trace(
+        trace,
+        this.current.position,
+        { boundingBox: this.mesh.boundingBox, velocity: this.current.velocity },
+        objects,
+        time_left,
+      );
+
+      if (trace.allsolid) {
+        // entity is completely trapped in another solid
+        this.current.velocity.y = 0; // don't build up falling damage, but allow sideways acceleration
+        return true;
+      }
+
+      if (trace.fraction > 0) {
+        // actually covered some distance
+        this.current.position.copy(trace.endpos);
+      }
+
+      if (trace.fraction === 1) {
+        break; // moved the entire distance
+      }
+
+      time_left -= time_left * trace.fraction;
+
+      if (numplanes >= MAX_CLIP_PLANES) {
+        // this shouldn't really happen
+        this.current.velocity.setScalar(0);
+        return true;
+      }
+
+      // if this is the same plane we hit before, nudge velocity
+      // out along it, which fixes some epsilon issues with
+      // non-axial planes
+      let i;
+      for (i = 0; i < numplanes; i++) {
+        if (trace.normal.dot(planes[i]) > 0.99) {
+          this.current.velocity.add(trace.normal);
+          break;
+        }
+      }
+      if (i < numplanes) {
+        continue;
+      }
+      planes[numplanes] = trace.normal.clone();
+      numplanes++;
+
+      // modify velocity so it parallels all of the clip planes
+
+      // find a plane that it enters
+      for (i = 0; i < numplanes; i++) {
+        let into = this.current.velocity.dot(planes[i]);
+        if (into >= 0.01) {
+          continue; // move doesn't interact with the plane
+        }
+
+        // slide along the plane
+        _clipVelocity.copy(this.current.velocity);
+        clipVelocity(_clipVelocity, planes[i], OVERCLIP);
+
+        // slide along the plane
+        endClipVelocity.copy(endVelocity);
+        clipVelocity(endVelocity, planes[i], OVERCLIP);
+
+        // see if there is a second plane that the new move enters
+        for (let j = 0; j < numplanes; j++) {
+          if (j === i) {
+            continue;
+          }
+          if (_clipVelocity.dot(planes[j]) >= 0.1) {
+            continue; // move doesn't interact with the plane
+          }
+
+          // try clipping the move to the plane
+          clipVelocity(_clipVelocity, planes[j], OVERCLIP);
+          clipVelocity(endClipVelocity, planes[j], OVERCLIP);
+
+          // see if it goes back into the first clip plane
+          if (_clipVelocity.dot(planes[i]) >= 0) {
+            continue;
+          }
+
+          // slide the original velocity along the crease
+          dir.crossVectors(planes[i], planes[j]).normalize();
+
+          let d = dir.dot(this.current.velocity);
+          _clipVelocity.copy(dir).multiplyScalar(d);
+
+          d = dir.dot(endVelocity);
+          endClipVelocity.copy(dir).multiplyScalar(d);
+
+          // see if there is a third plane that the new move enters
+          for (let k = 0; k < numplanes; k++) {
+            if (k === i || k === j) {
+              continue;
+            }
+            if (_clipVelocity.dot(planes[k]) >= 0.1) {
+              continue; // move doesn't interact with the plane
+            }
+
+            // stop dead at a triple plane intersection
+            this.current.velocity.setScalar(0);
+            return true;
+          }
+        }
+
+        // if we have fixed all interactions, try another move
+        this.current.velocity.copy(_clipVelocity);
+        endVelocity.copy(endClipVelocity);
+        break;
+      }
+    }
 
     if (gravity) {
       this.current.velocity.copy(endVelocity);
@@ -372,7 +510,7 @@ class Trace {
 
 function intersectAABBs(tw, boxA, boxB) {}
 
-function intersectMovingAABBs(tw, start, boxA, boxB, end) {
+function intersectMovingAABBs(trace, start, boxA, boxB, end) {
   // Intersection moving AABB against AABB from 'Real-Time Collision Detection'.
   let enterFrac = -1;
   let leaveFrac = 1;
@@ -440,8 +578,9 @@ function intersectMovingAABBs(tw, start, boxA, boxB, end) {
   }
 
   if (boxB.intersectsBox(boxA)) {
-    tw.trace.allsolid = false;
-    tw.trace.normal.copy(normal).normalize();
+    trace.allsolid = false;
+    trace.fraction = 0;
+    trace.normal.copy(normal).normalize();
     return true;
   }
 
@@ -500,7 +639,7 @@ function intersectMovingAABBs(tw, start, boxA, boxB, end) {
     return false;
   }
 
-  if (enterFrac > -1 && enterFrac < tw.trace.fraction) {
+  if (enterFrac > -1 && enterFrac < trace.fraction) {
     // if (boxB.min.x === -768) {
     //   console.log(boxA.min.y, boxB.max.y, v.y);
     //   console.log(v.y, d0y / v.y, d1y / v.y);
@@ -517,10 +656,9 @@ function intersectMovingAABBs(tw, start, boxA, boxB, end) {
     //   // console.log(v);
     // }
 
-
-    tw.trace.fraction = Math.max(enterFrac, 0);
-    tw.trace.normal.copy(normal);
-    tw.trace.endpos = start.clone().addScaledVector(v, tw.trace.fraction);
+    trace.fraction = Math.max(enterFrac, 0);
+    trace.normal.copy(normal);
+    trace.endpos = start.clone().addScaledVector(v, trace.fraction);
     return true;
   }
 
@@ -529,17 +667,17 @@ function intersectMovingAABBs(tw, start, boxA, boxB, end) {
 
 const ZERO = new THREE.Vector3();
 
-const trace = (() => {
+const pm_trace = (() => {
   const boxA = new THREE.Box3();
   const boxB = new THREE.Box3();
 
   const end = new THREE.Vector3();
   const velocity = new THREE.Vector3();
 
-  return (tw, start, bodyA, bodies, dt) => {
+  return (trace, start, bodyA, bodies, dt) => {
     boxA.copy(bodyA.boundingBox).translate(start);
 
-    tw.trace.fraction = 1; // assume it goes the entire distance until shown otherwise
+    trace.fraction = 1; // assume it goes the entire distance until shown otherwise
 
     let count = 0;
 
@@ -549,15 +687,19 @@ const trace = (() => {
       boxB.copy(bodyB.boundingBox).translate(bodyB.position);
       velocity.subVectors(bodyB.velocity || ZERO, bodyA.velocity || ZERO);
       end.copy(start).addScaledVector(velocity, dt);
-      if (intersectMovingAABBs(tw, start, boxA, boxB, end)) {
+      if (intersectMovingAABBs(trace, start, boxA, boxB, end)) {
         bodyB.material.color.set('#0f0');
         count++;
       }
     }
 
+    if (trace.fraction === 1) {
+      trace.endpos = start.addScaledVector(bodyA.velocity || ZERO, dt);
+    }
+
     // console.log(count);
 
-    return tw;
+    return trace;
   };
 })();
 
