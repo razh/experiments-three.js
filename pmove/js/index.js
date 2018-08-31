@@ -1,4 +1,4 @@
-import { Player } from './player.js';
+import { Player } from './player-aabb.js';
 
 const { THREE } = window;
 
@@ -91,16 +91,10 @@ function init() {
   light.position.set(128, 64, 128);
   scene.add(light);
 
-  // Plane
-  const plane = new THREE.Mesh(
-    new THREE.PlaneGeometry(512, 512),
-    new THREE.MeshStandardMaterial(),
-  );
-  plane.rotateX(-Math.PI / 2);
-  scene.add(plane);
-
-  // Walls
-  const walls = [
+  const boxes = [
+    // Floor
+    [[-256, -4, -256], [256, 0, 256]],
+    // Walls
     [[-16, 0, -129], [16, 56, -128]],
     [[-64, 0, -129], [-32, 116, -128]],
     [[-768, 24, -64], [-128, 32, 64]],
@@ -110,23 +104,23 @@ function init() {
   const max = new THREE.Vector3();
   const dimensions = new THREE.Vector3();
 
-  walls.forEach(wall => {
-    min.fromArray(wall[0]);
-    max.fromArray(wall[1]);
+  boxes.forEach(box => {
+    min.fromArray(box[0]);
+    max.fromArray(box[1]);
 
     dimensions.subVectors(max, min);
 
-    const wallMesh = new THREE.Mesh(
+    const boxMesh = new THREE.Mesh(
       new THREE.BoxGeometry(...dimensions.toArray()),
       new THREE.MeshStandardMaterial(),
     );
 
-    wallMesh.position
+    boxMesh.position
       .copy(dimensions)
       .multiplyScalar(0.5)
       .add(min);
 
-    scene.add(wallMesh);
+    scene.add(boxMesh);
   });
 
   player = new Player();
@@ -138,6 +132,7 @@ function init() {
     ),
     new THREE.MeshStandardMaterial({ color: '#0f0' }),
   );
+  playerMesh.boundingBox = new THREE.Box3().setFromObject(playerMesh);
   player.mesh = playerMesh;
   player.scene = scene;
   scene.add(playerMesh);
