@@ -28,7 +28,7 @@ class PlayerState {
   }
 }
 
-function clipVelocity(vector, normal, overbounce) {
+function pm_clipVelocity(vector, normal, overbounce) {
   let backoff = vector.dot(normal);
 
   if (backoff < 0) {
@@ -134,8 +134,8 @@ export class Player {
     this.viewRight.y = 0;
 
     // project the forward and right directions onto the ground plane
-    clipVelocity(this.viewForward, this.groundTrace.normal, OVERCLIP);
-    clipVelocity(this.viewRight, this.groundTrace.normal, OVERCLIP);
+    pm_clipVelocity(this.viewForward, this.groundTrace.normal, OVERCLIP);
+    pm_clipVelocity(this.viewRight, this.groundTrace.normal, OVERCLIP);
     //
     this.viewForward.normalize();
     this.viewRight.normalize();
@@ -153,7 +153,7 @@ export class Player {
 
     const vel = this.current.velocity.length();
 
-    clipVelocity(this.current.velocity, this.groundTrace.normal, OVERCLIP);
+    pm_clipVelocity(this.current.velocity, this.groundTrace.normal, OVERCLIP);
 
     // don't decrease velocity when going up or down a slope
     this.current.velocity.normalize();
@@ -199,7 +199,7 @@ export class Player {
     // though we don't have a groundentity
     // slide along the steep plane
     if (this.groundPlane) {
-      clipVelocity(this.current.velocity, this.groundTrace.normal, OVERCLIP);
+      pm_clipVelocity(this.current.velocity, this.groundTrace.normal, OVERCLIP);
     }
 
     this.stepSlideMove(true);
@@ -316,9 +316,7 @@ export class Player {
     this.walking = true;
   }
 
-  slideMove() {}
-
-  stepSlideMove(gravity) {
+  slideMove(gravity) {
     const objects = [];
     this.scene.traverse(object => {
       if (object instanceof THREE.Mesh && object !== this.mesh) {
@@ -326,14 +324,13 @@ export class Player {
       }
     });
 
-    const start_o = this.current.position.clone();
-    const start_v = this.current.velocity.clone();
+    let bumpcount;
 
     const MAX_CLIP_PLANES = 5;
     const numbumps = 4;
 
     const dir = new THREE.Vector3();
-    const _clipVelocity = new THREE.Vector3();
+    const clipVelocity = new THREE.Vector3();
     const endVelocity = new THREE.Vector3();
     const endClipVelocity = new THREE.Vector3();
 
@@ -348,7 +345,7 @@ export class Player {
       // primal_velocity = endVelocity;
       if (this.groundPlane) {
         // slide along the ground plane
-        clipVelocity(
+        pm_clipVelocity(
           this.current.velocity,
           this.groundTrace.normal,
           // calculateNormal(this.groundTrace.object.geometry, this.groundTrace.face),
@@ -376,7 +373,7 @@ export class Player {
 
     const end = new THREE.Vector3();
     let trace = new Trace();
-    for (let bumpcount = 0; bumpcount < numbumps; bumpcount++) {
+    for (bumpcount = 0; bumpcount < numbumps; bumpcount++) {
       // calculate position we are trying to move to
       // see if we can make it there
       trace = pm_trace(
@@ -436,28 +433,34 @@ export class Player {
         }
 
         // slide along the plane
-        _clipVelocity.copy(this.current.velocity);
-        clipVelocity(_clipVelocity, planes[i], OVERCLIP);
+        clipVelocity.copy(this.current.velocity);
+        pm_clipVelocity(clipVelocity, planes[i], OVERCLIP);
 
-        // slide along the plane
-        endClipVelocity.copy(endVelocity);
-        clipVelocity(endVelocity, planes[i], OVERCLIP);
+        if (gravity) {
+          // slide along the plane
+          endClipVelocity.copy(endVelocity);
+          pm_clipVelocity(endClipVelocity, planes[i], OVERCLIP);
+        }
 
         // see if there is a second plane that the new move enters
         for (let j = 0; j < numplanes; j++) {
           if (j === i) {
             continue;
           }
-          if (_clipVelocity.dot(planes[j]) >= 0.1) {
+
+          if (clipVelocity.dot(planes[j]) >= 0.1) {
             continue; // move doesn't interact with the plane
           }
 
           // try clipping the move to the plane
-          clipVelocity(_clipVelocity, planes[j], OVERCLIP);
-          clipVelocity(endClipVelocity, planes[j], OVERCLIP);
+          pm_clipVelocity(clipVelocity, planes[j], OVERCLIP);
+
+          if (gravity) {
+            pm_clipVelocity(endClipVelocity, planes[j], OVERCLIP);
+          }
 
           // see if it goes back into the first clip plane
-          if (_clipVelocity.dot(planes[i]) >= 0) {
+          if (clipVelocity.dot(planes[i]) >= 0) {
             continue;
           }
 
@@ -465,17 +468,19 @@ export class Player {
           dir.crossVectors(planes[i], planes[j]).normalize();
 
           let d = dir.dot(this.current.velocity);
-          _clipVelocity.copy(dir).multiplyScalar(d);
+          clipVelocity.copy(dir).multiplyScalar(d);
 
-          d = dir.dot(endVelocity);
-          endClipVelocity.copy(dir).multiplyScalar(d);
+          if (gravity) {
+            d = dir.dot(endVelocity);
+            endClipVelocity.copy(dir).multiplyScalar(d);
+          }
 
           // see if there is a third plane that the new move enters
           for (let k = 0; k < numplanes; k++) {
             if (k === i || k === j) {
               continue;
             }
-            if (_clipVelocity.dot(planes[k]) >= 0.1) {
+            if (clipVelocity.dot(planes[k]) >= 0.1) {
               continue; // move doesn't interact with the plane
             }
 
@@ -486,14 +491,29 @@ export class Player {
         }
 
         // if we have fixed all interactions, try another move
-        this.current.velocity.copy(_clipVelocity);
-        endVelocity.copy(endClipVelocity);
+        this.current.velocity.copy(clipVelocity);
+
+        if (gravity) {
+          endVelocity.copy(endClipVelocity);
+        }
+
         break;
       }
     }
 
     if (gravity) {
       this.current.velocity.copy(endVelocity);
+    }
+
+    return bumpcount !== 0;
+  }
+
+  stepSlideMove(gravity) {
+    const start_o = this.current.position.clone();
+    const start_v = this.current.velocity.clone();
+
+    if (this.slideMove(gravity) === 0) {
+      return; // we got exactly where we wanted to go first try
     }
   }
 }
