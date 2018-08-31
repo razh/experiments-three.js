@@ -89,10 +89,10 @@ export class Player {
 
     this.checkGround();
 
-    this.current.position.addScaledVector(
-      this.current.velocity,
-      this.frametime,
-    );
+    // this.current.position.addScaledVector(
+    //   this.current.velocity,
+    //   this.frametime,
+    // );
   }
 
   checkJump() {
@@ -307,7 +307,7 @@ export class Player {
     this.groundTrace = trace;
 
     if (trace.fraction === 1) {
-      this.groundPane = false;
+      this.groundPlane = false;
       this.walking = false;
       return;
     }
@@ -522,7 +522,7 @@ class Trace {
   constructor() {
     this.allsolid = false; // if true, plane is not valid
     this.fraction = 0; // time completed, 1.0 = didn't hit anything
-    this.endpos = undefined; // final position
+    this.endpos = new THREE.Vector3(); // final position
     this.face = undefined;
     this.normal = new THREE.Vector3(); // surface normal at impact, transformed to world space
   }
@@ -597,14 +597,16 @@ function intersectMovingAABBs(trace, start, boxA, boxB, end) {
     normal.set(0, 0, -dz);
   }
 
-  if (boxB.intersectsBox(boxA)) {
-    trace.allsolid = false;
+  const v = new THREE.Vector3().subVectors(end, start);
+
+  if (dx && dy && dz) {
+    trace.allsolid = boxB.containsBox(boxA);
     trace.fraction = 0;
+    // trace.endpos.copy(end);
+    trace.endpos.copy(start).addScaledVector(v, 1);
     trace.normal.copy(normal).normalize();
     return true;
   }
-
-  const v = new THREE.Vector3().subVectors(end, start);
 
   // console.log(v);
   // console.log(start, end);
