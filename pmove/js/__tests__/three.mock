@@ -1,0 +1,1 @@
+window.THREE = require('three');
