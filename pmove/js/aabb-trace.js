@@ -1,8 +1,15 @@
 const { THREE } = window;
 
-export function pm_trace(trace, start, end, boxA, boxB) {
+export const pm_trace = (() => {
+  const delta = new THREE.Vector3();
+  return (trace, start, end, boxA, boxB) => {
+    delta.subVectors(end, start);
 
-}
+
+
+    return boxA.intersectsBox(boxB);
+  };
+})();
 
 export class Trace {
   constructor() {
