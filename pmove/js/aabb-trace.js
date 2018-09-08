@@ -1,13 +1,53 @@
 const { THREE } = window;
 
 export const pm_trace = (() => {
-  const delta = new THREE.Vector3();
-  return (trace, start, end, boxA, boxB) => {
-    delta.subVectors(end, start);
+  const v = new THREE.Vector3();
+  const boxA = new THREE.Box3();
+  const boxB = new THREE.Box3();
 
+  return (trace, start, end, a, b) => {
+    v.subVectors(end, start);
 
+    let enterFrac = 0;
+    let leaveFrac = 1;
 
-    return boxA.intersectsBox(boxB);
+    trace.fraction = 1;
+
+    boxA.copy(a).translate(start);
+    boxB.copy(b);
+
+    // For each axis, determine times of first and last contact, if any
+    for (const i of ['x', 'y', 'z']) {
+      const d0 = boxA.min[i] - boxB.max[i];
+      const d1 = boxA.max[i] - boxB.min[i];
+
+      console.log({ i, d0, d1, v: v[i] });
+
+      if (v[i] === 0) {
+        if (d0 >= 0 || d1 <= 0) {
+          return false;
+        }
+      }
+
+      if (v[i] < 0) {
+        if (d0 < 0) return false; // Nonintersecting and moving apart
+        if (d0 > 0) enterFrac = Math.max(-d0 / v[i], enterFrac);
+        if (d1 > 0) leaveFrac = Math.min(-d1 / v[i], leaveFrac);
+      }
+
+      if (v[i] > 0) {
+        if (d1 < 0) return false; // Nonintersecting and moving apart
+        if (d0 > 0) enterFrac = Math.max(d0 / v[i], enterFrac);
+        if (d1 > 0) leaveFrac = Math.min(d1 / v[i], leaveFrac);
+      }
+
+      console.log(enterFrac, leaveFrac);
+
+      // No overlap possible if time of first contact occurs after time of last contact
+      if (enterFrac > leaveFrac) return false;
+    }
+
+    trace.fraction = enterFrac;
   };
 })();
 

@@ -56,7 +56,7 @@ test('sliding without overlap', () => {
 
   const trace = new Trace();
   pm_trace(trace, new THREE.Vector3(), new THREE.Vector3(6, 0, 0), boxA, boxB);
-  expect(trace.fraction).toBe(0);
+  expect(trace.fraction).toBe(1);
 });
 
 /*
