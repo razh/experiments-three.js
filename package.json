@@ -22,11 +22,11 @@
   "dependencies": {
     "dat.gui": "0.7.2",
     "lz-string": "1.4.4",
-    "three": "0.95.0",
+    "three": "0.96.0",
     "three.meshline": "1.1.0"
   },
   "devDependencies": {
-    "eslint": "5.3.0",
+    "eslint": "5.5.0",
     "jest": "23.5.0"
   }
 }
