@@ -14,6 +14,11 @@ let player, playerMesh;
 const clock = new THREE.Clock();
 let running = true;
 
+setTimeout(() => {
+  running = false;
+}, 32);
+
+
 window.Debug = {};
 
 function pointerLock(controls, element) {

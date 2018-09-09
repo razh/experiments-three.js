@@ -112,12 +112,13 @@ test('ground trace', () => {
   );
 
   const trace = new Trace();
-  pm_trace(
+  const intersects = pm_trace(
     trace,
     new THREE.Vector3(),
     new THREE.Vector3(0, -0.25, 0),
     boxA,
     boxB,
   );
+  expect(intersects).toBe(true);
   expect(trace.fraction).toBe(0);
 });

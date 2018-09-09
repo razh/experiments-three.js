@@ -1,4 +1,5 @@
 const { THREE } = window;
+import { pm_trace } from './aabb-trace.js';
 
 const PMF_JUMP_HELD = 1;
 
@@ -297,7 +298,7 @@ export class Player {
     const point = this.current.position.clone();
     point.y -= 0.25;
 
-    pm_trace(
+    pm_trace2(
       trace,
       point,
       { boundingBox: this.mesh.boundingBox, velocity: this.current.velocity },
@@ -376,7 +377,7 @@ export class Player {
     for (bumpcount = 0; bumpcount < numbumps; bumpcount++) {
       // calculate position we are trying to move to
       // see if we can make it there
-      trace = pm_trace(
+      trace = pm_trace2(
         trace,
         this.current.position,
         { boundingBox: this.mesh.boundingBox, velocity: this.current.velocity },
@@ -689,7 +690,7 @@ function intersectMovingAABBs(trace, start, boxA, boxB, end) {
 
 const ZERO = new THREE.Vector3();
 
-const pm_trace = (() => {
+const pm_trace2 = (() => {
   const boxA = new THREE.Box3();
   const boxB = new THREE.Box3();
 
@@ -697,7 +698,7 @@ const pm_trace = (() => {
   const velocity = new THREE.Vector3();
 
   return (trace, start, bodyA, bodies, dt) => {
-    boxA.copy(bodyA.boundingBox).translate(start);
+    boxA.copy(bodyA.boundingBox); //.translate(start);
 
     trace.fraction = 1; // assume it goes the entire distance until shown otherwise
 
@@ -709,7 +710,8 @@ const pm_trace = (() => {
       boxB.copy(bodyB.boundingBox).translate(bodyB.position);
       velocity.subVectors(bodyB.velocity || ZERO, bodyA.velocity || ZERO);
       end.copy(start).addScaledVector(velocity, dt);
-      if (intersectMovingAABBs(trace, start, boxA, boxB, end)) {
+      console.log(start, end, boxA, boxB);
+      if (pm_trace(trace, start, end, boxA, boxB)) {
         bodyB.material.color.set('#0f0');
         count++;
       }

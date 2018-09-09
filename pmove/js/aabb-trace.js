@@ -21,7 +21,7 @@ export const pm_trace = (() => {
       const d0 = boxA.min[i] - boxB.max[i];
       const d1 = boxA.max[i] - boxB.min[i];
 
-      console.log({ i, d0, d1, v: v[i] });
+      // console.log({ i, d0, d1, v: v[i] });
 
       if (v[i] === 0) {
         if (d0 >= 0 || d1 <= 0) {
@@ -41,13 +41,14 @@ export const pm_trace = (() => {
         if (d1 > 0) leaveFrac = Math.min(d1 / v[i], leaveFrac);
       }
 
-      console.log(enterFrac, leaveFrac);
+      // console.log(enterFrac, leaveFrac);
 
       // No overlap possible if time of first contact occurs after time of last contact
       if (enterFrac > leaveFrac) return false;
     }
 
     trace.fraction = enterFrac;
+    return true;
   };
 })();
 
