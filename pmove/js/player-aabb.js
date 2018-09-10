@@ -300,13 +300,14 @@ export class Player {
 
     pm_trace2(
       trace,
+      this.current.position,
       point,
-      { boundingBox: this.mesh.boundingBox, velocity: this.current.velocity },
+      { boundingBox: this.mesh.boundingBox },
       objects,
-      this.frametime,
     );
     this.groundTrace = trace;
 
+    // if the trace didn't hit anything, we are in free fall
     if (trace.fraction === 1) {
       this.groundPlane = false;
       this.walking = false;
@@ -374,15 +375,18 @@ export class Player {
 
     const end = new THREE.Vector3();
     let trace = new Trace();
+
     for (bumpcount = 0; bumpcount < numbumps; bumpcount++) {
       // calculate position we are trying to move to
       // see if we can make it there
-      trace = pm_trace2(
+      pm_trace2(
         trace,
         this.current.position,
-        { boundingBox: this.mesh.boundingBox, velocity: this.current.velocity },
+        this.current.position
+          .clone()
+          .addScaledVector(this.current.velocity, time_left),
+        { boundingBox: this.mesh.boundingBox },
         objects,
-        time_left,
       );
 
       if (trace.allsolid) {
@@ -512,9 +516,76 @@ export class Player {
   stepSlideMove(gravity) {
     const start_o = this.current.position.clone();
     const start_v = this.current.velocity.clone();
+    const up = new THREE.Vector3();
+    const down = new THREE.Vector3();
 
     if (this.slideMove(gravity) === 0) {
       return; // we got exactly where we wanted to go first try
+    }
+
+    const objects = [];
+    this.scene.traverse(object => {
+      if (object instanceof THREE.Mesh && object !== this.mesh) {
+        objects.push(object);
+      }
+    });
+
+    down.copy(start_o);
+    down.y -= STEPSIZE;
+    const trace = new Trace();
+    pm_trace2(
+      trace,
+      start_o,
+      down,
+      { boundingBox: this.mesh.boundingBox },
+      objects,
+    );
+    up.set(0, 1, 0);
+    // never step up when you still have up velocity
+    if (
+      this.current.velocity.y > 0 &&
+      (trace.fraction === 1 || trace.normal.dot(up) < 0.7)
+    ) {
+      return;
+    }
+
+    up.copy(start_o);
+    up.y += STEPSIZE;
+
+    // test the player position if they were a stepheight higher
+    pm_trace2(
+      trace,
+      start_o,
+      up,
+      { boundingBox: this.mesh.boundingBox },
+      objects,
+    );
+    if (trace.allsolid) {
+      return; // can't step up
+    }
+
+    const stepSize = trace.endpos.y - start_o.y;
+    // try slidemove from this position
+    this.current.position.copy(trace.endpos);
+    this.current.velocity.copy(start_v);
+
+    this.slideMove(gravity);
+
+    // push down the final amount
+    down.copy(this.current.position);
+    down.y -= stepSize;
+    pm_trace2(
+      trace,
+      this.current.position,
+      down,
+      { boundingBox: this.mesh.boundingBox },
+      objects,
+    );
+    if (!trace.allsolid) {
+      this.current.position.copy(trace.endpos);
+    }
+    if (trace.fraction < 1) {
+      pm_clipVelocity(this.current.velocity, trace.normal, OVERCLIP);
     }
   }
 }
@@ -697,7 +768,7 @@ const pm_trace2 = (() => {
   const end = new THREE.Vector3();
   const velocity = new THREE.Vector3();
 
-  return (trace, start, bodyA, bodies, dt) => {
+  return (trace, start, end, bodyA, bodies, dt) => {
     boxA.copy(bodyA.boundingBox); //.translate(start);
 
     trace.fraction = 1; // assume it goes the entire distance until shown otherwise
@@ -705,20 +776,48 @@ const pm_trace2 = (() => {
     let count = 0;
 
     for (let i = 0; i < bodies.length; i++) {
+      let oldFrac = trace.fraction;
+      let oldNormal = trace.normal;
       const bodyB = bodies[i];
       bodyB.material.color.set('#fff');
       boxB.copy(bodyB.boundingBox).translate(bodyB.position);
-      velocity.subVectors(bodyB.velocity || ZERO, bodyA.velocity || ZERO);
-      end.copy(start).addScaledVector(velocity, dt);
-      console.log(start, end, boxA, boxB);
-      if (pm_trace(trace, start, end, boxA, boxB)) {
+      // velocity.subVectors(bodyB.velocity || ZERO, bodyA.velocity || ZERO);
+      // end.copy(start).addScaledVector(velocity, dt);
+      // console.log(start, end, boxA.min, boxA.max, boxB.min, boxB.max);
+      const intersects = pm_trace(trace, start, end, boxA, boxB);
+      if (intersects) {
         bodyB.material.color.set('#0f0');
         count++;
+
+        if (oldFrac < trace.fraction) {
+          trace.fraction = oldFrac;
+          trace.normal = oldNormal;
+        }
       }
     }
 
+    velocity.subVectors(end, start);
+    const adx = Math.abs(velocity.x);
+    const ady = Math.abs(velocity.y);
+    const adz = Math.abs(velocity.z);
+
+    // console.log(adx, ady, adz);
+
+    if (adx < ady && adx < adz) {
+      trace.normal.set(Math.sign(velocity.x), 0, 0);
+    } else if (ady < adz) {
+      trace.normal.set(0, Math.sign(velocity.y), 0);
+    } else {
+      trace.normal.set(0, 0, Math.sign(velocity.z));
+    }
+
     if (trace.fraction === 1) {
-      trace.endpos = start.addScaledVector(bodyA.velocity || ZERO, dt);
+      trace.endpos.copy(end);
+    } else {
+      trace.endpos
+        .copy(start)
+        .addScaledVector(velocity.subVectors(end, start), trace.fraction);
+
     }
 
     // console.log(count);

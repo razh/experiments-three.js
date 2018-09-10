@@ -32,8 +32,15 @@ test('tunneling', () => {
   );
 
   const trace = new Trace();
-  pm_trace(trace, new THREE.Vector3(), new THREE.Vector3(0, -8, 0), boxA, boxB);
+  const intersects = pm_trace(
+    trace,
+    new THREE.Vector3(),
+    new THREE.Vector3(0, -8, 0),
+    boxA,
+    boxB,
+  );
   expect(trace.fraction).toBe(0.25);
+  expect(intersects).toBe(true);
 });
 
 /*
@@ -55,8 +62,15 @@ test('sliding without overlap', () => {
   );
 
   const trace = new Trace();
-  pm_trace(trace, new THREE.Vector3(), new THREE.Vector3(6, 0, 0), boxA, boxB);
+  const intersects = pm_trace(
+    trace,
+    new THREE.Vector3(),
+    new THREE.Vector3(6, 0, 0),
+    boxA,
+    boxB,
+  );
   expect(trace.fraction).toBe(1);
+  expect(intersects).toBe(false);
 });
 
 /*
@@ -82,7 +96,7 @@ test('freefall', () => {
   );
 
   const trace = new Trace();
-  pm_trace(
+  const intersects = pm_trace(
     trace,
     new THREE.Vector3(),
     new THREE.Vector3(0, -10, 0),
@@ -90,6 +104,7 @@ test('freefall', () => {
     boxB,
   );
   expect(trace.fraction).toBe(1);
+  expect(intersects).toBe(false);
 });
 
 /*
@@ -119,6 +134,6 @@ test('ground trace', () => {
     boxA,
     boxB,
   );
-  expect(intersects).toBe(true);
   expect(trace.fraction).toBe(0);
+  expect(intersects).toBe(true);
 });

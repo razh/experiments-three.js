@@ -11,8 +11,6 @@ export const pm_trace = (() => {
     let enterFrac = 0;
     let leaveFrac = 1;
 
-    trace.fraction = 1;
-
     boxA.copy(a).translate(start);
     boxB.copy(b);
 
@@ -20,8 +18,6 @@ export const pm_trace = (() => {
     for (const i of ['x', 'y', 'z']) {
       const d0 = boxA.min[i] - boxB.max[i];
       const d1 = boxA.max[i] - boxB.min[i];
-
-      // console.log({ i, d0, d1, v: v[i] });
 
       if (v[i] === 0) {
         if (d0 >= 0 || d1 <= 0) {
@@ -41,8 +37,6 @@ export const pm_trace = (() => {
         if (d1 > 0) leaveFrac = Math.min(d1 / v[i], leaveFrac);
       }
 
-      // console.log(enterFrac, leaveFrac);
-
       // No overlap possible if time of first contact occurs after time of last contact
       if (enterFrac > leaveFrac) return false;
     }
@@ -55,7 +49,7 @@ export const pm_trace = (() => {
 export class Trace {
   constructor() {
     this.allsolid = false; // if true, plane is not valid
-    this.fraction = 0; // time completed, 1.0 = didn't hit anything
+    this.fraction = 1; // time completed, 1.0 = didn't hit anything
     this.endpos = new THREE.Vector3(); // final position
     this.normal = new THREE.Vector3(); // surface normal at impact, transformed to world space
   }
