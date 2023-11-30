@@ -524,31 +524,27 @@ chars = {
   '~': TILDE,
 }
 
-log = string =>
+log = (string) =>
   string
     .trim()
     .split('\n')
-    .reduce((array, line, lineIndex) => (
-      array.concat(
-        line
-          .trim()
-          .split('')
-          .map(key => key.toUpperCase())
-          .reduce((charArray, key, charIndex) => {
-            if (chars[key]) {
-              charArray.push(
-                _(
-                  chars[key].clone(),
-                  tx(_4 * (charIndex - line.length / 2)),
-                  ty(-_6 * lineIndex),
-                ),
-              )
-            }
+    .flatMap((line, lineIndex) =>
+      line
+        .trim()
+        .split('')
+        .map((key) => key.toUpperCase())
+        .flatMap((key, charIndex) => {
+          if (chars[key]) {
+            return _(
+              chars[key].clone(),
+              tx(_4 * (charIndex - line.length / 2)),
+              ty(-_6 * lineIndex),
+            );
+          }
 
-            return charArray;
-          }, []),
-      )
-    ), [])
+          return [];
+        }),
+    );
 
 return log([
   'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
